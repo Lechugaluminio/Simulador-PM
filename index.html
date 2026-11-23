@@ -75,12 +75,11 @@ body.sb-hidden #side{display:none}
 .u-row .rt{font-family:var(--fc);font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums}
 .chip{display:inline-block;font-family:var(--fc);font-weight:800;font-size:17px;line-height:1;padding:5px 8px 4px;background:var(--c);color:var(--fg);border-radius:5px;border:2px solid rgba(0,0,0,.28);white-space:nowrap;user-select:none;touch-action:none;cursor:grab}
 .chip.st-retirado{background:#a3a7ad;color:#333;text-decoration:line-through}
-#typeLegend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:3px;background:var(--c);vertical-align:-2px;margin-right:4px;border:1px solid rgba(0,0,0,.35)}
 
 /* ---------- mapa ---------- */
 #mapwrap{flex:1;position:relative;min-width:0}
-#map{position:absolute;inset:0;background:#1d1f22}
+#map{position:absolute;inset:0;background:#1d1f22;z-index:0}
 #maperr{position:absolute;inset:auto 20px 20px 110px;z-index:9;background:#7f1d1d;color:#fff;padding:14px 16px;border-radius:10px;font-weight:600;display:none}
 #tools{position:absolute;left:10px;top:10px;z-index:5;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:5px;display:flex;flex-direction:column;gap:1px;max-height:calc(100% - 56px);overflow:auto;width:80px}
 #tools button{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;border-radius:8px;padding:6px 2px;font-size:11.5px;font-weight:700;line-height:1.05;background:transparent;text-align:center}
@@ -105,12 +104,6 @@ body.sb-hidden #side{display:none}
 #hint .hb button{background:#fff;color:#111;border:0;padding:6px 11px;font-size:14px}
 #hint .hb button:hover{background:#dfe9f7}
 #hint .hb button[data-hact="finish"]{background:#00d5ff}
-#legend{position:absolute;right:10px;bottom:30px;z-index:4;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:8px 10px;font-size:12.5px;max-width:380px;display:flex;flex-direction:column;gap:6px}
-#legend .lg{display:flex;flex-wrap:wrap;gap:5px 12px;align-items:center}
-#legend .tok{font-size:13px!important}
-#legend .li{max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.no-legend #legend{display:none}
-
 /* panel de selección */
 #panel{position:absolute;right:10px;top:62px;width:340px;z-index:6;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;box-shadow:var(--shadow);max-height:calc(100% - 170px);overflow:auto;display:none}
 #panel.open{display:block}
@@ -150,7 +143,7 @@ body.no-legend #legend{display:none}
 .m-fire svg{width:calc(50px * var(--tok));height:calc(50px * var(--tok));filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));display:block}
 .m-pm{font-family:var(--fc);font-weight:800;font-size:calc(21px * var(--tok));background:#ffd60a;color:#111;border:3px solid #111;width:calc(48px * var(--tok));height:calc(48px * var(--tok));border-radius:50%;display:grid;place-items:center;line-height:1;padding-top:.08em;box-shadow:0 0 0 2px #fff,0 3px 8px rgba(0,0,0,.45);white-space:nowrap}
 .m-pm.wide{width:auto;min-width:calc(48px * var(--tok));padding:0 .55em;border-radius:999px}
-.m-grifo{width:calc(28px * var(--tok));height:calc(28px * var(--tok));border-radius:50%;background:#0b84d8;color:#fff;font-family:var(--fc);font-weight:800;display:grid;place-items:center;font-size:calc(17px * var(--tok));border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.4)}
+.m-grifo{width:calc(30px * var(--tok));height:calc(30px * var(--tok));border-radius:50%;background:#ffd60a;color:#111;font-family:var(--fc);font-weight:800;display:grid;place-items:center;font-size:calc(18px * var(--tok));border:2.5px solid #111;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.45)}
 .m-pisc{width:calc(40px * var(--tok));height:calc(26px * var(--tok));border-radius:6px;background:#0b84d8;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.4);display:grid;place-items:center}
 .m-pisc svg{width:80%;height:auto}
 .m-mayday{position:relative;font-family:var(--fc);font-weight:800;font-size:calc(19px * var(--tok));line-height:1;background:#e00000;color:#fff;padding:.28em .75em .22em;border-radius:999px;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 3px 8px rgba(0,0,0,.45);letter-spacing:.06em;white-space:nowrap}
@@ -244,7 +237,6 @@ body.present #exitPresent{display:inline-flex!important}
       <h3>Retirados <span class="n" id="nOut">0</span></h3>
       <div id="outList"></div>
     </div>
-    <div class="sec"><div id="typeLegend"></div></div>
   </aside>
 
   <div id="mapwrap">
@@ -286,7 +278,6 @@ body.present #exitPresent{display:inline-flex!important}
     </div>
 
     <section id="panel"></section>
-    <div id="legend"></div>
     <div id="hint"></div>
   </div>
 </div>
@@ -585,8 +576,9 @@ function decodeGrifos(enc){
 function grifosGeo(pts){return {type:'FeatureCollection',features:pts.map(p=>({type:'Feature',properties:{e:p[2]},geometry:{type:'Point',coordinates:[p[0],p[1]]}}))};}
 function addGrifosLayer(){
   const s=64,cv=document.createElement('canvas');cv.width=cv.height=s;const g=cv.getContext('2d');
-  g.beginPath();g.arc(s/2,s/2,s/2-5,0,Math.PI*2);g.fillStyle='#0b84d8';g.fill();g.lineWidth=5;g.strokeStyle='#fff';g.stroke();
-  g.fillStyle='#fff';g.font='bold 34px Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('G',s/2,s/2+2);
+  g.beginPath();g.arc(s/2,s/2,s/2-4,0,Math.PI*2);g.fillStyle='#fff';g.fill();
+  g.beginPath();g.arc(s/2,s/2,s/2-7,0,Math.PI*2);g.fillStyle='#ffd60a';g.fill();g.lineWidth=4;g.strokeStyle='#111';g.stroke();
+  g.fillStyle='#111';g.font='bold 32px Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('G',s/2,s/2+2);
   if(!map.hasImage('grifo-auto'))map.addImage('grifo-auto',g.getImageData(0,0,s,s),{pixelRatio:2});
   map.addSource('grifos',{type:'geojson',data:EMPTY});
   map.addLayer({id:'grifos',type:'symbol',source:'grifos',minzoom:14.5,layout:{'icon-image':'grifo-auto','icon-allow-overlap':true,'icon-ignore-placement':true,
@@ -879,22 +871,13 @@ function renderLists(){
   $('#tray').innerHTML=tray.length?tray.map(chipHTML).join(''):'<div class="empty">Sin carros pendientes</div>';
   $('#sceneList').innerHTML=scene.length?scene.map(rowHTML).join(''):'<div class="empty">Ningún carro ubicado aún</div>';
   $('#outList').innerHTML=out.length?out.map(rowHTML).join(''):'<div class="empty">—</div>';
-  const used=[...new Map(state.units.map(u=>{const t=typeOf(u.code);return [t.prefix,t];})).values()];
-  const list=used.length?used:settings.types;
-  $('#typeLegend').innerHTML=list.map(t=>`<span><span class="sw" style="--c:${t.color}"></span>${esc(t.name===t.prefix?t.prefix:t.prefix+' · '+t.name)}</span>`).join('');
 }
 function renderSummary(){
   const {tray,scene}=groups();const c=st=>scene.filter(u=>u.status===st).length;
   const idle=scene.filter(u=>XSTAT.includes(u.status)).length;
   $('#summary').innerHTML=`<b>${scene.length}</b> en escena · <b>${c('trabajando')}</b> trabajando<br><b>${idle}</b> ✕ sin función · <b>${c('retirandose')}</b> ◯ se retiran · <b>${tray.length}</b> por llegar`;
 }
-function renderLegend(){
-  document.body.classList.toggle('no-legend',!settings.legend);
-  const used=[...new Map(state.units.filter(u=>u.pos).map(u=>{const t=typeOf(u.code);return [t.prefix,t];})).values()];
-  const ex=c=>({code:'B-1',status:c,fn:'',side:'',note:''});
-  const st=`<div class="lg"><span>${tokenHTML(ex('trabajando'),true)}</span> Trabajando <span>${tokenHTML(ex('lugar'),true)}</span> Sin función / no cumple <span>${tokenHTML(ex('retirandose'),true)}</span> Se retira <span>${tokenHTML({code:'B-1',status:'trabajando',fn:'RIT',side:'',note:''},true)}</span> RIT</div>`;
-  $('#legend').innerHTML=(used.length?`<div class="lg">${used.map(t=>`<span class="li" title="${esc(t.prefix+' · '+t.name)}"><span class="sw" style="--c:${t.color}"></span><b>${esc(t.prefix)}</b> ${esc(t.name===t.prefix?'':t.name)}</span>`).join('')}</div>`:'')+st;
-}
+function renderLegend(){}
 
 /* ---- panel de selección ---- */
 function segBtns(act,opts,cur){return `<div class="seg">${opts.map(([v,l])=>`<button data-act="${act}" data-v="${esc(v)}" class="${v===cur?'on':''}">${esc(l)}</button>`).join('')}</div>`;}
@@ -1115,7 +1098,7 @@ function onPointerUp(ev){
     else{select({type:'unit',id:u.id});if(u.pos&&map){const pt=map.project(u.pos);const c=map.getContainer();if(pt.x<60||pt.y<60||pt.x>c.clientWidth-60||pt.y>c.clientHeight-60)map.easeTo({center:u.pos});}}
     return;}
   const over=document.elementFromPoint(ev.clientX,ev.clientY);
-  if(map&&over&&over.closest('#mapwrap')&&!over.closest('#panel,#tools,#mapctl,#legend')){
+  if(map&&over&&over.closest('#mapwrap')&&!over.closest('#panel,#tools,#mapctl')){
     const r=$('#map').getBoundingClientRect();const ll=map.unproject([ev.clientX-r.left,ev.clientY-r.top]);
     placeUnit(u.id,[ll.lng,ll.lat]);
   }
@@ -1185,7 +1168,7 @@ function openSettings(){
   openModal('Ajustes',`
     <div class="row2"><label>Tamaño de las piezas <input id="sTok" type="range" min="0.7" max="2" step="0.05" value="${settings.tok}"></label>
     <label><input id="sHide" type="checkbox" ${settings.hideRetired?'checked':''}> Ocultar retirados del mapa</label>
-    <label><input id="sLegend" type="checkbox" ${settings.legend?'checked':''}> Mostrar leyenda</label></div>
+</div>
     <h4>Tipos de carro (por prefijo del código)</h4>
     <p class="help" style="margin-top:0">El color se asigna por las letras iniciales: “BX-22” usa BX; si no existe, usa B. También puedes poner un código exacto (ej: K-3) para darle color propio.</p>
     <table><thead><tr><th>Prefijo</th><th>Nombre</th><th>Color</th><th></th></tr></thead><tbody id="sTypes">${rows}</tbody></table>
@@ -1194,7 +1177,7 @@ function openSettings(){
     <textarea id="sFns">${esc(settings.functions.join('\n'))}</textarea>
     <p class="help">Restaurar valores originales: <button id="sReset" style="padding:3px 8px">Restaurar</button></p>`,
     [{label:'Cancelar'},{label:'Guardar',cls:'pri',fn:()=>{
-      settings.tok=+$('#sTok').value;settings.hideRetired=$('#sHide').checked;settings.legend=$('#sLegend').checked;
+      settings.tok=+$('#sTok').value;settings.hideRetired=$('#sHide').checked;
       const normP=v=>{v=v.trim().toUpperCase();return /\d/.test(v)?(parseCodes(v)[0]||''):v.replace(/[^A-ZÑ]/g,'');};
       settings.types=$$('#sTypes tr').map(tr=>({prefix:normP($('.tp',tr).value),name:$('.tn',tr).value.trim(),color:$('.tc',tr).value})).filter(t=>t.prefix).map(t=>({...t,name:t.name||t.prefix}));
       settings.functions=$('#sFns').value.split('\n').map(s=>s.trim()).filter(Boolean);
