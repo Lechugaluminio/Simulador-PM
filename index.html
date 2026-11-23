@@ -189,21 +189,54 @@ body.present #viewbar{display:flex!important}
 body.dragging-unit,body.dragging-unit *{cursor:grabbing!important}
 
 
-/* ---------- modo vista (celular) ---------- */
-body.viewer #side,body.viewer #tools,body.viewer #search,body.viewer #btnMenu,body.viewer #btnSide,body.viewer #btnPresent,body.viewer #btnPhone,body.viewer #btnSnap,body.viewer #btnStreet,body.viewer #summary,body.viewer #elapsedBox,body.viewer #viewbar [data-act="undo"],body.viewer #panel,body.viewer #grifosLbl,body.viewer #exitPresent{display:none!important}
-body.viewer #viewerInfo,body.viewer #btnShareView{display:inline-flex!important}
-body.viewer #title{pointer-events:none;font-size:22px}
-@media (max-width:760px){
+/* ---------- copia de terreno (fork en el celular) ---------- */
+#forkInfo{display:none;flex-direction:column;align-items:flex-start;line-height:1.05;background:#7c3aed;color:#fff;border-radius:8px;padding:4px 9px;font-family:var(--fc)}
+#forkInfo small{font-family:var(--fb);font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+#forkInfo b{font-size:18px;font-weight:800}
+body.fork #top{border-bottom-color:#7c3aed}
+body.fork #btnPhone,body.fork #search,body.fork #btnPresent,body.fork .master-only{display:none!important}
+body.fork #forkInfo,body.fork #btnChanges,body.fork #btnShareView,body.fork .fork-only{display:inline-flex!important}
+#btnChanges b{background:#7c3aed;color:#fff;border-radius:10px;padding:0 7px;font-size:13px}
+.ghost-lbl{font-family:var(--fc);font-weight:700;font-size:calc(13px * var(--tok));color:#111;background:rgba(255,255,255,.8);border:1.5px dashed #111;border-radius:4px;padding:1px 5px;pointer-events:none;white-space:nowrap}
+.chg{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:9px 4px;font-weight:500;background:transparent}
+.chg b{font-family:var(--fc);font-size:17px;margin-right:4px}
+#scrim{display:none}
+.menu-compact{display:none!important}
+
+/* ---------- pantallas chicas: celular y tablet vertical ---------- */
+@media (max-width:900px){
   #top{flex-wrap:wrap;gap:6px;padding:6px 8px;min-height:0}
-  #title{flex:1 1 100%;font-size:20px!important;padding:0 4px}
-  .clock b{font-size:19px}.clock small{font-size:9.5px}
-  #mapctl{right:50px;top:8px;gap:6px;padding:4px 6px;font-size:12px;flex-wrap:wrap;max-width:calc(100% - 64px)}
-  #mapctl label:last-child{display:none}
-  #viewbar{left:8px;bottom:8px}
-  #viewbar button{font-size:0;gap:0;padding:8px 9px}
-  #toasts{bottom:70px;width:92vw}
+  #btnSide{order:0}
+  #title{order:1;flex:1 1 calc(100% - 110px);font-size:20px!important;padding:0 4px}
+  #btnMenu{order:2}
+  .clock,#forkInfo{order:3}
+  #btnChanges,#btnShareView{order:4}
+  #search{order:5;flex:1 1 100%}
+  #summary,#btnSnap,#btnPhone,#btnStreet,#btnPresent,#btnFull{display:none}
+  .menu-compact{display:flex!important}
+  .clock b{font-size:18px}.clock small{font-size:9px}
+  #side{position:fixed;left:0;top:0;bottom:0;width:min(88vw,360px);z-index:80;transform:translateX(-105%);transition:transform .2s;box-shadow:4px 0 24px rgba(0,0,0,.35);display:flex!important}
+  body.drawer #side{transform:none}
+  body.drawer #scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:79}
+  #tools{top:auto;left:0;right:0;bottom:0;width:auto;max-height:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;border-radius:0;border-width:1.5px 0 0;padding:4px 6px;gap:2px;-webkit-overflow-scrolling:touch}
+  #tools button{flex:0 0 auto;min-width:66px;padding:8px 4px;font-size:11.5px}
+  #tools .sep{width:1px;height:auto;margin:6px 3px}
+  #tools .grp .chev{display:none}
+  #viewbar{left:8px;bottom:80px;padding:3px}
+  #viewbar button{font-size:0;gap:0;padding:9px}
+  #hint{bottom:134px;max-width:94%;font-size:14px}
+  #hint .hb{display:flex;justify-content:center;margin:8px 0 0}
+  #toasts{bottom:190px;width:92vw}
   .tst{font-size:14px}
+  #panel{left:0;right:0;top:auto;bottom:0;width:auto;max-height:60%;border-radius:16px 16px 0 0;z-index:9}
+  #mapctl{right:50px;top:8px;gap:6px;padding:4px 6px;font-size:12px;flex-wrap:wrap;max-width:calc(100% - 64px)}
+  #mapctl label:last-child,#grifosInfo{display:none}
+  .maplibregl-ctrl-bottom-right{bottom:72px}
+  .u-row{padding:9px 6px}
+  .chip{font-size:19px;padding:7px 10px 6px}
+  #modal{padding:8px}
 }
+
 /* ---------- modo presentación ---------- */
 body.present #side,body.present #tools,body.present #search,body.present .hide-present{display:none!important}
 body.present #title{font-size:34px}
@@ -242,7 +275,8 @@ body.present #exitPresent{display:inline-flex!important}
   <div id="summary"></div>
   <div class="clock"><small>Hora</small><b id="clock">--:--:--</b></div>
   <div class="clock" id="elapsedBox" title="Tiempo desde el inicio del incidente (clic para ajustar)"><small>Tiempo</small><b id="elapsed">00:00:00</b></div>
-  <span id="viewerInfo" class="clock" style="display:none"><small>Vista del celular</small><b id="viewerAt" style="font-size:20px">--:--</b></span>
+  <span id="forkInfo" title="Copia de terreno: los cambios quedan solo en este celular"><small>Copia de terreno</small><b>tomada <span id="forkAt">--:--</span></b></span>
+  <button id="btnChanges" class="tbtn" style="display:none" title="Ver qué cambió respecto del croquis del puesto de comando">Cambios <b id="nChanges">0</b></button>
   <button id="btnShareView" class="tbtn pri" style="display:none"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>Compartir imagen</button>
   <button id="btnPhone" class="tbtn" title="Abrir este croquis en un celular escaneando un código QR"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Celular</button>
   <button id="btnSnap" class="tbtn" title="Exportar imagen del croquis en alta resolución"><svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Imagen</button>
@@ -252,10 +286,14 @@ body.present #exitPresent{display:inline-flex!important}
   <button id="btnFull" class="tbtn" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   <button id="btnMenu" class="tbtn hide-present" title="Menú"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button>
   <div id="menu">
-    <button data-menu="new">Nuevo incidente…</button>
-    <button data-menu="export">Exportar croquis (.json)</button>
-    <button data-menu="import">Importar croquis…</button>
+    <button data-menu="new" class="master-only">Nuevo incidente…</button>
+    <button data-menu="export" class="master-only">Exportar croquis (.json)</button>
+    <button data-menu="import" class="master-only">Importar croquis…</button>
     <button data-menu="snap">Exportar imagen del croquis</button>
+    <button data-menu="phone" class="master-only menu-compact">Código QR para celular</button>
+    <button data-menu="street" class="menu-compact">Street View</button>
+    <button data-menu="full" class="menu-compact">Pantalla completa</button>
+    <button data-menu="discard" class="fork-only" style="display:none">Descartar esta copia…</button>
     <hr>
     <button data-menu="gmaps">Abrir esta zona en Google Maps</button>
     <button data-menu="grifos">Actualizar grifos desde Aguas Andinas</button>
@@ -340,6 +378,7 @@ body.present #exitPresent{display:inline-flex!important}
   </div>
 </div>
 
+<div id="scrim"></div>
 <div id="toasts"></div>
 <div id="modal"><div class="box"><div class="mh"><span id="mTitle"></span><button class="x" data-mclose style="border:0;font-size:18px">✕</button></div><div class="mb" id="mBody"></div><div class="mf" id="mFoot"></div></div></div>
 
@@ -421,11 +460,15 @@ let map=null,mapReady=false,lastTileErr=0;
 let lastLineColor=LINE_COLORS[0];
 let lastResults=[];
 
-let viewer=false,viewerAt=null;   // modo vista (celular): solo lectura y sin guardar
-function saveSettings(){if(!viewer)LS.set(KEY_SET,JSON.stringify(settings));}
+// Copia de terreno (fork): el celular trabaja sobre una copia del croquis tomada por QR
+const KEY_FORK='croquisPM.fork.v1';
+let fork=false,forkAt=null,forkBase=null,forkFid=null,forkView=null,forkResumed=false;
+const isCompact=()=>window.matchMedia('(max-width:900px)').matches;
+function saveFork(){LS.set(KEY_FORK,JSON.stringify({fid:forkFid,at:forkAt,base:forkBase,state,view:forkView,types:settings.types}));}
+function saveSettings(){LS.set(KEY_SET,JSON.stringify(settings));}
 function commit(opts){
   const s=JSON.stringify(state);
-  if(s!==lastSaved){undoStack.push(lastSaved);if(undoStack.length>100)undoStack.shift();lastSaved=s;if(!viewer&&!LS.set(KEY_STATE,s))console.warn('No se pudo guardar en este navegador');}
+  if(s!==lastSaved){undoStack.push(lastSaved);if(undoStack.length>100)undoStack.shift();lastSaved=s;if(fork)saveFork();else if(!LS.set(KEY_STATE,s))console.warn('No se pudo guardar en este navegador');}
   render(opts);
 }
 function undo(){
@@ -553,7 +596,7 @@ function loadMapLib(){
 function showMapError(msg){const e=$('#maperr');e.textContent=msg;e.style.display='block';}
 function initMap(){
   let v=null;try{v=JSON.parse(LS.get(KEY_VIEW)||'null');}catch(e){}
-  if(viewer)v={center:state.center,zoom:17,bearing:window.__viewerBearing||0};
+  if(fork)v=forkView||{center:state.center,zoom:17,bearing:0};
   const center=(v&&v.center)||state.center||[-70.6506,-33.4372];
   const zoom=v&&typeof v.zoom==='number'?v.zoom:(state.center?18:13);
   try{
@@ -564,11 +607,11 @@ function initMap(){
   map.addControl(new maplibregl.NavigationControl({visualizePitch:false}),'top-right');
   map.addControl(new maplibregl.ScaleControl({unit:'metric',maxWidth:140}),'bottom-right');
   if(map.touchPitch)map.touchPitch.disable();
-  map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();if(viewer)setTimeout(fitAll,50);else initGrifos();});
+  map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();if(fork&&!forkResumed)setTimeout(fitAll,50);initGrifos();});
   map.on('click',onMapClick);
   map.on('mousemove',onMapMove);
   map.on('dblclick',onMapDbl);
-  map.on('moveend',()=>!viewer&&LS.set(KEY_VIEW,JSON.stringify({center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()})));
+  map.on('moveend',()=>{const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
   map.on('error',e=>{const now=Date.now();if(e&&e.sourceId&&now-lastTileErr>30000){lastTileErr=now;toast('Algunas imágenes del mapa no cargan. Revisa la conexión o cambia a “Calles”.');}});
 }
 function addImages(){
@@ -603,6 +646,10 @@ function addShapeLayers(){
   L({id:'ataque-casing',type:'line',source:'shapes',filter:K('ataque'),paint:{'line-color':'#ffffff','line-width':9},layout:{'line-cap':'round','line-join':'round'}});
   L({id:'ataque-line',type:'line',source:'shapes',filter:K('ataque'),paint:{'line-color':['get','color'],'line-width':5},layout:{'line-cap':'round','line-join':'round'}});
   L({id:'arrows',type:'symbol',source:'arrows',layout:{'icon-image':['get','icon'],'icon-rotate':['get','bearing'],'icon-rotation-alignment':'map','icon-allow-overlap':true,'icon-ignore-placement':true}});
+  map.addSource('ghosts',{type:'geojson',data:EMPTY});
+  L({id:'ghost-casing',type:'line',source:'ghosts',filter:['==',['geometry-type'],'LineString'],paint:{'line-color':'#000','line-width':5,'line-opacity':.55}});
+  L({id:'ghost-line',type:'line',source:'ghosts',filter:['==',['geometry-type'],'LineString'],paint:{'line-color':'#fff','line-width':2.5,'line-dasharray':[2,1.5]}});
+  L({id:'ghost-pt',type:'circle',source:'ghosts',filter:['==',['geometry-type'],'Point'],paint:{'circle-radius':6,'circle-color':'#fff','circle-opacity':.85,'circle-stroke-color':'#111','circle-stroke-width':2}});
   L({id:'sel',type:'line',source:'shapes',filter:['==',['get','id'],'__none'],paint:{'line-color':'#00d5ff','line-width':3,'line-dasharray':[1.2,1]}});
   L({id:'draft-fill',type:'fill',source:'draft',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#00d5ff','fill-opacity':0.12}});
   L({id:'draft-line',type:'line',source:'draft',filter:['!=',['geometry-type'],'Point'],paint:{'line-color':'#00d5ff','line-width':3,'line-dasharray':[2,1]}});
@@ -726,7 +773,6 @@ function makeDraggable(kind,id,el,m){
     ev.stopPropagation();
     if(Date.now()-(el._dragEnd||0)<300)return;
     const o=kind==='unit'?getUnit(id):getMark(id);
-    if(o&&viewer){viewerInfoToast(kind,o);return;}
     if(o&&draftFromMarker(o.pos))return;
     if(o&&mode==='select'){select({type:kind,id});}
   });
@@ -737,7 +783,7 @@ function syncUnits(){
     if(!u.pos||(settings.hideRetired&&u.status==='retirado'))continue;
     seen.add(u.id);let r=mkUnits.get(u.id);
     if(!r){const el=document.createElement('div');el.className='tw';
-      const m=new maplibregl.Marker({element:el,draggable:!viewer}).setLngLat(u.pos).addTo(map);
+      const m=new maplibregl.Marker({element:el,draggable:true}).setLngLat(u.pos).addTo(map);
       r={m,el};mkUnits.set(u.id,r);makeDraggable('unit',u.id,el,m);}
     else if(!r.el._drag)r.m.setLngLat(u.pos);
     const h=tokenHTML(u);if(r.el._h!==h){r.el.innerHTML=h;r.el._h=h;}
@@ -750,7 +796,7 @@ function syncMarks(){
   for(const k of state.marks){
     seen.add(k.id);let r=mkMarks.get(k.id);
     if(!r){const el=document.createElement('div');el.className='mw';
-      const m=new maplibregl.Marker({element:el,draggable:!viewer}).setLngLat(k.pos).addTo(map);
+      const m=new maplibregl.Marker({element:el,draggable:true}).setLngLat(k.pos).addTo(map);
       r={m,el};mkMarks.set(k.id,r);makeDraggable('mark',k.id,el,m);}
     else if(!r.el._drag)r.m.setLngLat(k.pos);
     const h=markHTML(k);if(r.el._h!==h){r.el.innerHTML=h;r.el._h=h;}
@@ -851,7 +897,6 @@ function finishDraft(){
   else{selected={type:'shape',id:s.id};setMode('select');commit();if(kind==='ataque')focusPanel('#pnLabel');}
 }
 function onMapClick(e){
-  if(viewer)return;
   const t=e.originalEvent&&e.originalEvent.target;
   if(t&&t.closest&&t.closest('.maplibregl-marker'))return;
   const ll=[e.lngLat.lng,e.lngLat.lat];
@@ -904,7 +949,7 @@ function fitAll(){
   const pts=[...state.units.filter(u=>u.pos).map(u=>u.pos),...state.marks.map(m=>m.pos),...state.shapes.flatMap(s=>s.coords)];
   if(!pts.length){if(state.center)map.flyTo({center:state.center,zoom:18});return;}
   const b=new maplibregl.LngLatBounds(pts[0],pts[0]);pts.forEach(p=>b.extend(p));
-  const narrow=map.getContainer().clientWidth<760;
+  const narrow=isCompact()||map.getContainer().clientWidth<760;
   map.fitBounds(b,{padding:narrow?{top:70,bottom:80,left:40,right:40}:{top:80,bottom:80,left:110,right:selected?380:110},maxZoom:19.3,bearing:map.getBearing(),duration:700});
 }
 function select(sel){
@@ -925,7 +970,7 @@ function deleteSelected(){
    ========================================================= */
 function render(){
   if(mapReady){syncUnits();syncMarks();pushShapes();syncLabels();syncHandles();}
-  renderLists();renderPanel();renderSummary();renderLegend();
+  renderLists();renderPanel();renderSummary();renderLegend();renderForkUI();
   const ti=$('#title');if(document.activeElement!==ti)ti.value=state.title||'';
 }
 function renderMapOnly(){if(mapReady){syncUnits();syncMarks();pushShapes();syncLabels();}renderLists();renderSummary();}
@@ -1173,13 +1218,15 @@ function onPointerMove(ev){
   if(!drag)return;
   if(!drag.moved&&Math.hypot(ev.clientX-drag.x0,ev.clientY-drag.y0)>6){
     drag.moved=true;const u=getUnit(drag.id);if(!u){drag=null;return;}
-    const g=document.createElement('div');g.className='ghost';g.innerHTML=tokenHTML(u,true);document.body.appendChild(g);drag.ghost=g;document.body.classList.add('dragging-unit');}
+    const g=document.createElement('div');g.className='ghost';g.innerHTML=tokenHTML(u,true);document.body.appendChild(g);drag.ghost=g;document.body.classList.add('dragging-unit');
+    if(isCompact())document.body.classList.remove('drawer');}
   if(drag.ghost){drag.ghost.style.left=ev.clientX+'px';drag.ghost.style.top=ev.clientY+'px';}
 }
 function onPointerUp(ev){
   if(!drag)return;const d=drag;drag=null;document.body.classList.remove('dragging-unit');if(d.ghost)d.ghost.remove();
   const u=getUnit(d.id);if(!u)return;
   if(!d.moved){
+    if(isCompact())document.body.classList.remove('drawer');
     if(!u.pos&&u.status!=='retirado'){select({type:'unit',id:u.id});setMode('place:'+u.id);}
     else{select({type:'unit',id:u.id});if(u.pos&&map){const pt=map.project(u.pos);const c=map.getContainer();if(pt.x<60||pt.y<60||pt.x>c.clientWidth-60||pt.y>c.clientHeight-60)map.easeTo({center:u.pos});}}
     return;}
@@ -1275,7 +1322,7 @@ async function renderSnapshot(scale){
   try{g.drawImage(map.getCanvas(),0,HEAD,W,H);}catch(e){console.warn(e);}
   if(canPR&&prev<scale)map.setPixelRatio(prev);
   // encabezado
-  const now=new Date(viewerAt||Date.now());const {tray,scene}=groups();const cnt=st=>scene.filter(u=>u.status===st).length;
+  const now=new Date();const snapAddr=fork?`Copia de terreno (tomada ${hhmm(forkAt)})${state.address?' · '+state.address:''}`:(state.address||'');const {tray,scene}=groups();const cnt=st=>scene.filter(u=>u.status===st).length;
   const fit=(t,maxW)=>{t=String(t||'');if(g.measureText(t).width<=maxW)return t;while(t.length>1&&g.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';};
   const l1=`${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())} · T+ ${hms(now-state.startedAt)}`;
   const l2=`${scene.length} en escena · ${cnt('trabajando')} trabajando · ${scene.filter(u=>XSTAT.includes(u.status)).length} ✕ sin función · ${cnt('retirandose')} ◯ se retiran · ${tray.length} por llegar`;
@@ -1284,13 +1331,13 @@ async function renderSnapshot(scale){
     g.textAlign='left';g.fillStyle='#fff';g.font=FONT(800,26);g.fillText(fit(state.title||'Croquis PM',W-28),14,32);
     g.font=FONT(700,18);g.fillText(fit(l1,W-28),14,56);
     g.font=FONT(600,15);g.fillStyle='#e6e6e6';g.fillText(fit(l2,W-28),14,78);
-    g.font='500 12px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText(fit(state.address||'',W-28),14,98);
+    g.font='500 12px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText(fit(snapAddr,W-28),14,98);
   }else{
     g.font=FONT(700,22);const w1=g.measureText(l1).width;g.font=FONT(600,17);const w2=Math.min(g.measureText(l2).width,W*.62);
     g.textAlign='right';g.fillStyle='#fff';g.font=FONT(700,22);g.fillText(l1,W-14,32);
     g.font=FONT(600,17);g.fillStyle='#e6e6e6';g.fillText(fit(l2,w2),W-14,56);
     g.textAlign='left';g.fillStyle='#fff';g.font=FONT(800,28);g.fillText(fit(state.title||'Croquis PM',W-w1-48),14,34);
-    g.font='500 13px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText(fit(state.address||'',W-w2-48),14,56);
+    g.font='500 13px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText(fit(snapAddr,W-w2-48),14,56);
   }
   g.save();g.translate(0,HEAD);g.beginPath();g.rect(0,0,W,H);g.clip();
   const P=c=>{const p=map.project(c);return [p.x,p.y];};
@@ -1349,7 +1396,7 @@ async function packState(){
   const o={v:1,t:state.title||'',a:state.address||'',s:state.startedAt,x:Date.now(),r:r0,b:map?Math.round(map.getBearing()):0,
     u:state.units.filter(u=>u.status!=='retirado').map(u=>{const a=[u.code,ST_KEYS.indexOf(u.status),u.fn||'',u.side||'',u.note||'',u.wave||''];if(u.pos)a.push(...P(u.pos));return a;}),
     m:state.marks.map(m=>[m.kind,...P(m.pos),m.kind==='lado'?m.letter:(m.text||'')]),
-    g:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map(s=>[SH_KEYS.indexOf(s.kind),s.kind==='ataque'?Math.max(0,LINE_COLORS.indexOf(s.color||LINE_COLORS[0])):0,s.label||'',...flat(s.coords)]),
+    g:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map(s=>[SH_KEYS.indexOf(s.kind),s.kind==='ataque'?Math.max(0,LINE_COLORS.indexOf(s.color||LINE_COLORS[0])):(s.kind==='estructura'&&s.front!=null?s.front+1:0),s.label||'',...flat(s.coords)]),
     y:settings.types.map(t=>[t.prefix,t.color.replace('#','')])};
   return b64u.enc(await zip(new TextEncoder().encode(JSON.stringify(o)),'c'));
 }
@@ -1360,20 +1407,100 @@ async function unpackState(txt){
   st.units=o.u.map((a,i)=>({id:'u'+i,code:a[0],status:ST_KEYS[a[1]]||'lugar',fn:a[2],side:a[3],note:a[4],wave:a[5],pos:a.length>=8?L(a[6],a[7]):null,arrivedAt:a.length>=8?o.x:null,addedAt:i}));
   st.marks=o.m.map((a,i)=>{const m={id:'m'+i,kind:a[0],pos:L(a[1],a[2]),text:''};if(a[0]==='lado')m.letter=a[3];else m.text=a[3];return m;});
   st.shapes=o.g.map((a,i)=>{const cs=[];let x=0,y=0;for(let k=3;k<a.length;k+=2){x+=a[k];y+=a[k+1];cs.push(L(x,y));}
-    const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque')s.color=LINE_COLORS[a[1]]||LINE_COLORS[0];return s;});
+    const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque')s.color=LINE_COLORS[a[1]]||LINE_COLORS[0];
+    if(s.kind==='estructura'&&a[1]>0&&a[1]-1<cs.length){s.front=a[1]-1;s.azA=computeSides(cs,s.front).azA;}return s;});
   return {st,at:o.x,bearing:o.b||0,types:(o.y||[]).map(([p,c])=>({prefix:p,name:p,color:'#'+c}))};
 }
-function enterViewer(v){
-  viewer=true;viewerAt=v.at;state=v.st;lastSaved=JSON.stringify(state);
-  if(v.types.length){const names=Object.fromEntries(settings.types.map(t=>[t.prefix,t.name]));settings.types=v.types.map(t=>({...t,name:names[t.prefix]||t.prefix}));}
-  settings.grifos=false;settings.hideRetired=true;
-  document.body.classList.add('viewer');document.title='Vista · '+(state.title||'Croquis PM');
-  window.__viewerBearing=v.bearing;
+function fnv(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36);}
+async function setupFork(data){
+  forkFid=fnv(data);let saved=null;try{saved=JSON.parse(LS.get(KEY_FORK)||'null');}catch(e){}
+  if(saved&&saved.fid===forkFid&&saved.state&&saved.base){
+    state=saved.state;forkBase=saved.base;forkAt=saved.at;forkView=saved.view||null;if(saved.types)settings.types=saved.types;forkResumed=true;
+  }else{
+    const v=await unpackState(data);state=v.st;forkBase=JSON.parse(JSON.stringify(v.st));forkAt=v.at;
+    forkView={center:v.st.center,zoom:17,bearing:v.bearing};
+    if(v.types.length){const names=Object.fromEntries(settings.types.map(t=>[t.prefix,t.name]));settings.types=v.types.map(t=>({...t,name:names[t.prefix]||t.prefix}));}
+  }
+  fork=true;lastSaved=JSON.stringify(state);undoStack=[];
+  document.body.classList.add('fork');document.title='Copia · '+(state.title||'Croquis PM');
+  if(!forkResumed)saveFork();
 }
-function viewerInfoToast(kind,o){
-  if(kind==='unit'){const t=typeOf(o.code);const w=waveOf(o.wave);
-    toast(`${o.code} · ${t.name} · ${STATUS_LABEL[o.status]}${o.fn?' · '+o.fn:''}${o.side?' · '+(o.side==='INT'?'Interior':'Lado '+o.side):''}${w?' · '+w[2]:''}${o.note?' — '+o.note:''}`,null,5000);}
-  else toast((o.kind==='lado'?'Lado '+o.letter:MARK_LABEL[o.kind]||'')+(o.text?' — '+o.text:''),null,4000);
+/* --- cambios de la copia respecto de lo escaneado --- */
+function moveDesc(from,to){
+  const d=localProj(from).to(to);const dist=Math.hypot(d[0],d[1]);const az=azOf(d);
+  const st=state.shapes.find(s=>s.kind==='estructura'&&s.azA!=null);
+  const dir=st?'hacia el lado '+'ABCD'[Math.round(((az-st.azA)+360)%360/90)%4]:'hacia el '+['norte','noreste','este','sureste','sur','suroeste','oeste','noroeste'][Math.round(az/45)%8];
+  return {dist,dir};
+}
+const markName=m=>(m.kind==='lado'?'Lado '+m.letter:(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
+function computeChanges(){
+  if(!fork||!forkBase)return [];
+  const out=[],MIN=3;const sameC=(a,b)=>a&&b&&moveDesc(a,b).dist<MIN;
+  const bU=new Map(forkBase.units.map(u=>[u.id,u])),cU=new Set(state.units.map(u=>u.id));
+  for(const u of state.units){const b=bU.get(u.id);
+    if(!b){out.push({id:u.id,t:'unit',who:u.code,txt:'agregado'+(u.pos?' y ubicado en el mapa':''),pos:u.pos});continue;}
+    const p=[];
+    if(b.code!==u.code)p.push(`código ${b.code} → ${u.code}`);
+    if(u.pos&&!b.pos)p.push('ubicado en el mapa');else if(!u.pos&&b.pos)p.push('quitado del mapa');
+    else if(u.pos&&b.pos){const m=moveDesc(b.pos,u.pos);if(m.dist>=MIN)p.push(`movido ${Math.round(m.dist)} m ${m.dir}`);}
+    if(b.status!==u.status)p.push(`estado: ${STATUS_LABEL[b.status]} → ${STATUS_LABEL[u.status]}`);
+    if((b.fn||'')!==(u.fn||''))p.push(`función: ${b.fn||'—'} → ${u.fn||'—'}`);
+    if((b.side||'')!==(u.side||''))p.push(`lado: ${b.side||'—'} → ${u.side||'—'}`);
+    if((b.wave||'')!==(u.wave||''))p.push(`salida: ${(waveOf(b.wave)||['','','—'])[2]} → ${(waveOf(u.wave)||['','','—'])[2]}`);
+    if((b.note||'')!==(u.note||''))p.push(u.note?`nota: “${u.note}”`:'nota borrada');
+    if(p.length)out.push({id:u.id,t:'unit',who:u.code,txt:p.join(' · '),pos:u.pos,from:b.pos});
+  }
+  for(const b of forkBase.units)if(!cU.has(b.id))out.push({id:b.id,t:'unit',who:b.code,txt:'eliminado en la copia',pos:b.pos,gone:true});
+  const bM=new Map(forkBase.marks.map(m=>[m.id,m])),cM=new Set(state.marks.map(m=>m.id));
+  for(const m of state.marks){const b=bM.get(m.id);
+    if(!b){out.push({id:m.id,t:'mark',who:markName(m),txt:'agregado',pos:m.pos});continue;}
+    const p=[];if(!sameC(b.pos,m.pos)){const d=moveDesc(b.pos,m.pos);p.push(`movido ${Math.round(d.dist)} m ${d.dir}`);}
+    if((b.text||'')!==(m.text||''))p.push(`rótulo: “${m.text||''}”`);
+    if(p.length)out.push({id:m.id,t:'mark',who:markName(m),txt:p.join(' · '),pos:m.pos,from:b.pos});
+  }
+  for(const b of forkBase.marks)if(!cM.has(b.id))out.push({id:b.id,t:'mark',who:markName(b),txt:'eliminado en la copia',pos:b.pos,gone:true});
+  const bS=new Map(forkBase.shapes.map(x=>[x.id,x])),cS=new Set(state.shapes.map(x=>x.id));
+  for(const x of state.shapes){const b=bS.get(x.id);const nm=SHAPE_LABEL[x.kind]+(x.label?' “'+x.label+'”':'');
+    if(!b){out.push({id:x.id,t:'shape',who:nm,txt:'dibujado en la copia',pos:x.coords[0]});continue;}
+    const p=[];if(b.coords.length!==x.coords.length||b.coords.some((c,i)=>!sameC(c,x.coords[i])))p.push('forma modificada');
+    if((b.label||'')!==(x.label||''))p.push(`rótulo: “${x.label||''}”`);
+    if(p.length)out.push({id:x.id,t:'shape',who:nm,txt:p.join(' · '),pos:x.coords[0]});
+  }
+  for(const b of forkBase.shapes)if(!cS.has(b.id))out.push({id:b.id,t:'shape',who:SHAPE_LABEL[b.kind],txt:'borrado en la copia',pos:b.coords[0],gone:true});
+  return out;
+}
+const mkGhosts=new Map();
+function syncGhosts(list){
+  const show=fork&&settings.ghosts!==false&&mapReady;const feats=[],seen=new Set();
+  if(show)for(const c of list){if(!c.from&&!c.gone)continue;const at=c.from||c.pos;if(!at)continue;
+    if(c.from&&c.pos)feats.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:[c.from,c.pos]}});
+    feats.push({type:'Feature',properties:{},geometry:{type:'Point',coordinates:at}});
+    if(c.t!=='shape'){const key=c.t+c.id;seen.add(key);let r=mkGhosts.get(key);
+      if(!r){const el=document.createElement('div');el.className='ghost-lbl';const m=new maplibregl.Marker({element:el,offset:[0,-16]}).setLngLat(at).addTo(map);el.style.zIndex=1;r={m,el};mkGhosts.set(key,r);}
+      r.m.setLngLat(at);r.el.textContent=(c.gone?'✕ ':'')+(c.t==='unit'?c.who:c.who.split(' “')[0]);}}
+  if(mapReady&&map.getSource('ghosts'))map.getSource('ghosts').setData({type:'FeatureCollection',features:feats});
+  for(const [k,r] of mkGhosts)if(!seen.has(k)){r.m.remove();mkGhosts.delete(k);}
+}
+function renderForkUI(){
+  if(!fork)return;const list=computeChanges();
+  $('#nChanges').textContent=list.length;syncGhosts(list);
+  if($('#modal').classList.contains('open')&&$('#mBody .chglist'))fillChanges(list);
+}
+function fillChanges(list){
+  const box=$('#mBody .chglist');
+  box.innerHTML=list.length?list.map((c,i)=>`<button class="chg" data-i="${i}"><b>${esc(c.who)}</b>${esc(c.txt)}</button>`).join(''):'<p class="help">Aún no hay cambios respecto del croquis escaneado.</p>';
+  box.onclick=e=>{const b=e.target.closest('.chg');if(!b)return;const c=list[+b.dataset.i];if(c&&c.pos&&map){closeModal();map.flyTo({center:c.pos,zoom:Math.max(map.getZoom(),18.5)});}};
+}
+function openChanges(){
+  openModal('Cambios en esta copia',`<p class="help" style="margin-top:0">Comparado con el croquis del puesto de comando escaneado a las <b>${hhmm(forkAt)}</b>. Muestra esta lista (o el mapa con las líneas punteadas) para ajustar la pantalla principal.</p>
+    <label style="display:flex;gap:8px;align-items:center;margin:6px 0 10px;font-weight:600"><input type="checkbox" id="chkGhosts" ${settings.ghosts!==false?'checked':''}> Mostrar en el mapa las posiciones originales (línea punteada)</label>
+    <div class="chglist"></div>`,[{label:'Cerrar'}]);
+  fillChanges(computeChanges());
+  $('#chkGhosts').onchange=e=>{settings.ghosts=e.target.checked;saveSettings();renderForkUI();};
+}
+function discardFork(){
+  openModal('Descartar copia','<p>Se borrará esta copia de terreno de este celular (incluidos los cambios que hiciste). El croquis del puesto de comando no se ve afectado.</p>',[
+    {label:'Cancelar'},{label:'Descartar copia',cls:'danger',fn:()=>{try{localStorage.removeItem(KEY_FORK);}catch(e){}location.replace(VIEW_BASE());}}]);
 }
 async function shareFromViewer(){
   if(!mapReady){toast('Espera a que cargue el mapa');return;}
@@ -1381,7 +1508,7 @@ async function shareFromViewer(){
   try{
     const cv=await renderSnapshot(Math.max(2,Math.min(3,window.devicePixelRatio||2)));
     const jpg=await new Promise(r=>cv.toBlob(r,'image/jpeg',.9));
-    const d=new Date(viewerAt||Date.now());const name=`croquis_${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.jpg`;
+    const d=new Date();const name=`croquis_${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.jpg`;
     const file=new File([jpg],name,{type:'image/jpeg'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:state.title||'Croquis PM'});}catch(e){}}
     else{const url=URL.createObjectURL(jpg);openModal('Imagen del croquis',`<img src="${url}" alt="Croquis" style="width:100%;border-radius:8px"><p class="help">Mantén presionada la imagen para guardarla o compartirla.</p>`);}
@@ -1415,8 +1542,8 @@ async function openPhoneQR(){
     const box=document.createElement('div');box.style.cssText='display:flex;gap:18px;align-items:center;flex-wrap:wrap';
     const cv=drawQR(url,Math.min(560,Math.floor(window.innerHeight*.62)));cv.style.cssText='width:min(100%,'+cv.width+'px);height:auto;image-rendering:pixelated;border-radius:6px;flex:none';
     const tx=document.createElement('div');tx.style.cssText='flex:1;min-width:220px';
-    tx.innerHTML=`<p style="margin-top:0"><b>1.</b> Abre la cámara del celular y escanea el código.<br><b>2.</b> Se abre una <b>vista liviana</b> de este croquis, tal como está a las <b>${hhmm(Date.now())}</b>.<br><b>3.</b> Desde ahí: <b>Compartir imagen</b> la envía con las apps del celular.</p>
-      <p class="help">Los datos del incidente van <b>dentro del código</b> y quedan solo en el celular: no se suben a ningún servidor (el celular solo descarga el mapa, igual que este equipo). Para ver cambios posteriores, toca <b>Actualizar código</b> y vuelve a escanear.</p>
+    tx.innerHTML=`<p style="margin-top:0"><b>1.</b> Abre la cámara del celular y escanea el código.<br><b>2.</b> Se abre una <b>copia de terreno</b> de este croquis tal como está a las <b>${hhmm(Date.now())}</b>: se puede editar en el celular (mover carros, cambiar estados, marcar).<br><b>3.</b> Al volver, en el celular toca <b>Cambios</b>: lista lo que se modificó y lo muestra en el mapa con líneas punteadas para ajustar esta pantalla.</p>
+      <p class="help">Los datos del incidente van <b>dentro del código</b> y quedan solo en el celular: no se suben a ningún servidor (el celular solo descarga el mapa, igual que este equipo). Esta pantalla sigue siendo la principal: la copia nunca la modifica. Para llevar una copia más nueva, toca <b>Actualizar código</b> y vuelve a escanear.</p>
       <p class="help">${url.length} caracteres · QR de ${cv.dataset.modules}×${cv.dataset.modules} módulos</p>`;
     box.append(cv,tx);$('#mBody').innerHTML='';$('#mBody').appendChild(box);
     window.__lastViewURL=url;
@@ -1564,12 +1691,15 @@ function bindUI(){
   $('#tools').addEventListener('click',onToolClick);$('#viewbar').addEventListener('click',onToolClick);
   // menú desplegable "Instalaciones": se abre al pasar el mouse (o con clic) y se cierra al salir
   const fly=$('#flyInst'),bi=$('#btnInst');let flyT=null;
+  let flyAt=0;
   const openFly=()=>{clearTimeout(flyT);const r=bi.getBoundingClientRect(),w=$('#mapwrap').getBoundingClientRect(),t=$('#tools').getBoundingClientRect();
-    fly.style.left=(t.right-w.left+6)+'px';fly.style.top=Math.max(6,r.top-w.top-4)+'px';fly.classList.add('open');};
+    fly.classList.add('open');flyAt=Date.now();
+    if(isCompact()){fly.style.left=Math.max(6,Math.min(r.left-w.left,w.width-fly.offsetWidth-6))+'px';fly.style.top=Math.max(6,r.top-w.top-fly.offsetHeight-8)+'px';}
+    else{fly.style.left=(t.right-w.left+6)+'px';fly.style.top=Math.max(6,r.top-w.top-4)+'px';}};
   const closeFly=()=>{clearTimeout(flyT);flyT=setTimeout(()=>fly.classList.remove('open'),250);};
   bi.addEventListener('mouseenter',openFly);bi.addEventListener('mouseleave',closeFly);
   fly.addEventListener('mouseenter',()=>clearTimeout(flyT));fly.addEventListener('mouseleave',closeFly);
-  bi.addEventListener('click',e=>{e.stopPropagation();fly.classList.contains('open')?fly.classList.remove('open'):openFly();});
+  bi.addEventListener('click',e=>{e.stopPropagation();if(fly.classList.contains('open')&&Date.now()-flyAt>450)fly.classList.remove('open');else openFly();});
   fly.addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;fly.classList.remove('open');select(null);setMode(b.dataset.mode===mode?'select':b.dataset.mode);});
   $('#btnAdd').onclick=()=>{addUnitsFromText($('#unitInput').value);$('#unitInput').value='';};
   $('#unitInput').addEventListener('keydown',e=>{if(e.key==='Enter'){addUnitsFromText(e.target.value);e.target.value='';}});
@@ -1590,18 +1720,20 @@ function bindUI(){
   $('#menu').addEventListener('click',e=>{const b=e.target.closest('[data-menu]');if(!b)return;$('#menu').classList.remove('open');
     const k=b.dataset.menu;
     if(k==='new')newIncident();if(k==='export')exportJSON();if(k==='import')$('#fileImport').click();
-    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='snap')openExport();
+    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='snap')openExport();if(k==='phone')openPhoneQR();if(k==='street')$('#btnStreet').click();if(k==='full')$('#btnFull').click();if(k==='discard')discardFork();
     if(k==='theme'){settings.theme=settings.theme==='light'?'dark':'light';saveSettings();applySettings();}
     if(k==='gmaps'){const c=map?map.getCenter():{lat:-33.44,lng:-70.65};window.open(`https://www.google.com/maps/@?api=1&map_action=map&center=${c.lat.toFixed(6)},${c.lng.toFixed(6)}&zoom=19&basemap=satellite`,'_blank','noopener');}});
   $('#fileImport').addEventListener('change',e=>{const f=e.target.files[0];if(f)importJSON(f);e.target.value='';});
   $('#btnSnap').onclick=openExport;
   $('#btnPhone').onclick=openPhoneQR;
   $('#btnShareView').onclick=shareFromViewer;
+  $('#btnChanges').onclick=openChanges;
+  $('#scrim').onclick=()=>document.body.classList.remove('drawer');
   $('#btnStreet').onclick=()=>{const o=getSel();const p=o&&o.pos?{lng:o.pos[0],lat:o.pos[1]}:(map?map.getCenter():null);if(!p)return;
     window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat.toFixed(6)},${p.lng.toFixed(6)}`,'_blank','noopener');};
   const togglePresent=()=>{document.body.classList.toggle('present');setTimeout(()=>map&&map.resize(),60);};
   $('#btnPresent').onclick=togglePresent;$('#exitPresent').onclick=togglePresent;
-  $('#btnSide').onclick=()=>{document.body.classList.toggle('sb-hidden');setTimeout(()=>map&&map.resize(),60);};
+  $('#btnSide').onclick=()=>{if(isCompact()){document.body.classList.toggle('drawer');return;}document.body.classList.toggle('sb-hidden');setTimeout(()=>map&&map.resize(),60);};
   $('#btnFull').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){}};
   $('#elapsedBox').onclick=editStart;
   $('#baseSeg').addEventListener('click',e=>{const b=e.target.closest('[data-base]');if(!b)return;settings.base=b.dataset.base;saveSettings();applySettings();});
@@ -1613,7 +1745,6 @@ function bindUI(){
   window.addEventListener('storage',e=>{if(e.key===KEY_STATE&&e.newValue&&e.newValue!==lastSaved){try{state=JSON.parse(e.newValue);lastSaved=e.newValue;render();}catch(_){}}});
 }
 function onKey(e){
-  if(viewer){if(e.key==='Escape')closeModal();return;}
   const tag=(e.target.tagName||'').toLowerCase();const typing=tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
   if(e.key==='Escape'){
     if($('#modal').classList.contains('open')){closeModal();return;}
@@ -1644,14 +1775,14 @@ function tick(){$('#clock').textContent=new Date().toLocaleTimeString('es-CL',{h
    ========================================================= */
 (async()=>{
   if(location.hash.startsWith('#ver=')){
-    try{const st=await unpackState(location.hash.slice(5));enterViewer(st);}
+    try{await setupFork(location.hash.slice(5));}
     catch(e){console.warn(e);setTimeout(()=>toast('El código QR no se pudo leer completo. Vuelve a escanearlo.'),300);}
   }
   bindUI();applySettings();render();tick();setInterval(tick,1000);
-  if(viewer)$('#viewerAt').textContent=hhmm(viewerAt);
+  if(fork){$('#forkAt').textContent=hhmm(forkAt);if(!forkResumed)setTimeout(()=>toast('Copia de terreno creada: tus cambios quedan solo en este celular.'),600);}
   loadMapLib().then(initMap).catch(err=>showMapError('No se pudo cargar el mapa: '+err.message+'. Revisa la conexión a internet y recarga la página.'));
 })();
-window.__croquis={get state(){return state;},get map(){return map;},setMode,select,orientA,snap:()=>renderSnapshot(2).then(cv=>cv.toDataURL('image/jpeg',.92)),pack:()=>packState()};
+window.__croquis={commit:()=>commit(),changes:()=>computeChanges(),get state(){return state;},get map(){return map;},setMode,select,orientA,snap:()=>renderSnapshot(2).then(cv=>cv.toDataURL('image/jpeg',.92)),pack:()=>packState()};
 })();
 </script>
 </body>
