@@ -743,8 +743,7 @@ async function initGrifos(force){
 const mkUnits=new Map(),mkMarks=new Map(),mkLabels=new Map();let vHandles=[];
 function tokenHTML(u,mini){
   const t=typeOf(u.code);
-  const side=u.side?(u.side==='INT'?'Interior':'Lado '+u.side):'';
-  const badge=[u.status==='retirandose'?'Se retira':(u.status==='nocumple'?'No cumple':''),u.fn,side].filter(Boolean).join(' · ');
+  const badge=[u.status==='retirandose'?'Se retira':(u.status==='nocumple'?'No cumple':''),u.fn].filter(Boolean).join(' · ');
   const bd=(!mini&&(badge||u.note))?`<span class="bd">${esc(badge)}${u.note?`<i>${esc(u.note)}</i>`:''}</span>`:'';
   return `<div class="tok st-${u.status}${u.fn==='RIT'?' rit':''}" style="--c:${t.color};--fg:${fg(t.color)}">${XSTAT.includes(u.status)?XSVG:''}<span class="cd">${esc(u.code)}</span>${bd}</div>`;
 }
@@ -976,7 +975,7 @@ function render(){
 function renderMapOnly(){if(mapReady){syncUnits();syncMarks();pushShapes();syncLabels();}renderLists();renderSummary();}
 function chipHTML(u){const t=typeOf(u.code);const x=u.pos&&XSTAT.includes(u.status);return `<span class="chip st-${u.status}" data-drag="${u.id}" style="--c:${t.color};--fg:${fg(t.color)}" title="${esc(t.name)}">${x?XSVG:''}<span class="cd">${esc(u.code)}</span></span>`;}
 function rowHTML(u){
-  const extra=[u.fn,u.side?(u.side==='INT'?'Interior':'Lado '+u.side):''].filter(Boolean).join(' · ');
+  const extra=u.fn||'';
   return `<div class="u-row${isSel('unit',u.id)?' sel':''}" data-drag="${u.id}">${chipHTML(u)}${waveTag(u)}<div class="ri"><b>${STATUS_LABEL[u.status]||''}</b>${extra?' · '+esc(extra):''}${u.note?`<small>${esc(u.note)}</small>`:''}</div><div class="rt">${u.arrivedAt?hhmm(u.arrivedAt):''}</div></div>`;
 }
 function groups(){
@@ -1012,7 +1011,6 @@ function renderPanel(){
       <label class="l">Salida</label>${segBtns('wave',WAVES.map(w=>[w[0],w[2]]),u.wave||'')}
       <label class="l">Estado</label>${segBtns('status',[['lugar','✕ Sin función'],['trabajando','Trabajando'],['nocumple','✕ No puede cumplir'],['retirandose','◯ Retirándose'],['retirado','Retirado']],u.status)}
       <label class="l">Función</label>${segBtns('fn',[['','—'],...settings.functions.map(f=>[f,f])],u.fn)}
-      <label class="l">Lado</label>${segBtns('side',[['','—'],['A','A'],['B','B'],['C','C'],['D','D'],['INT','Interior']],u.side)}
       <label class="l">Nota (se muestra bajo el carro)</label><input id="pnNote" type="text" value="${esc(u.note)}" placeholder="ej: piso 2 · línea 2½ · techo">
       <div class="meta">${u.arrivedAt?'Ubicado en escena: <b>'+hhmm(u.arrivedAt)+'</b>':'Aún no ubicado en el mapa'} · agregado ${hhmm(u.addedAt)}</div>
       <div class="acts">${u.pos?'<button data-act="unplace">Quitar del mapa</button>':`<button class="pri" data-act="placeMode">Ubicar en el mapa</button>`}<button class="danger" data-act="delete">Eliminar carro</button></div></div>`;
@@ -1050,7 +1048,6 @@ function onPanelClick(ev){
   switch(act){
     case 'status':o.status=v;commit();break;
     case 'fn':o.fn=v;if(v&&o.status==='lugar')o.status='trabajando';if(!v&&(o.status==='trabajando'||o.status==='nocumple'))o.status='lugar';commit();break;
-    case 'side':o.side=v;commit();break;
     case 'unplace':o.pos=null;selected=null;commit();break;
     case 'placeMode':setMode('place:'+o.id);break;
     case 'delete':deleteSelected();break;
@@ -1276,8 +1273,7 @@ function drawUnitSnap(g,u,x,y){
     for(const [lw,c] of [[5,'rgba(0,0,0,.8)'],[1.6,'#fff']]){g.beginPath();g.moveTo(ix,iy);g.lineTo(ix+iw,iy+ih);g.moveTo(ix+iw,iy);g.lineTo(ix,iy+ih);g.lineWidth=lw;g.strokeStyle=c;g.stroke();}g.restore();}
   centerText(g,u.code,x,y+fs*.02,FONT(800,fs),ret?'#2b2b2b':fg(t.color),xs?{w:fs*.2,c:bg}:null);
   g.restore();
-  const side=u.side?(u.side==='INT'?'Interior':'Lado '+u.side):'';
-  const badge=[u.status==='retirandose'?'Se retira':(u.status==='nocumple'?'No cumple':''),u.fn,side].filter(Boolean).join(' · ').toUpperCase();
+    const badge=[u.status==='retirandose'?'Se retira':(u.status==='nocumple'?'No cumple':''),u.fn].filter(Boolean).join(' · ').toUpperCase();
   const lines=[badge,u.note||''].filter(Boolean);
   if(lines.length){if(u.fn==='RIT'&&!u.note&&badge==='RIT'){g.font=FONT(700,fs*.56);const bw=g.measureText('RIT').width+fs*.9;rr(g,x-bw/2,y0+h+fs*.3,bw,fs*.56*1.6,fs*.3);g.fillStyle='#ff9f1c';g.fill();centerText(g,'RIT',x,y0+h+fs*.3+fs*.56*.8,FONT(700,fs*.56),'#111');}
     else darkLabel(g,lines,x,y0+h+fs*.3,fs*.56);}
@@ -1445,7 +1441,6 @@ function computeChanges(){
     else if(u.pos&&b.pos){const m=moveDesc(b.pos,u.pos);if(m.dist>=MIN)p.push(`movido ${Math.round(m.dist)} m ${m.dir}`);}
     if(b.status!==u.status)p.push(`estado: ${STATUS_LABEL[b.status]} → ${STATUS_LABEL[u.status]}`);
     if((b.fn||'')!==(u.fn||''))p.push(`función: ${b.fn||'—'} → ${u.fn||'—'}`);
-    if((b.side||'')!==(u.side||''))p.push(`lado: ${b.side||'—'} → ${u.side||'—'}`);
     if((b.wave||'')!==(u.wave||''))p.push(`salida: ${(waveOf(b.wave)||['','','—'])[2]} → ${(waveOf(u.wave)||['','','—'])[2]}`);
     if((b.note||'')!==(u.note||''))p.push(u.note?`nota: “${u.note}”`:'nota borrada');
     if(p.length)out.push({id:u.id,t:'unit',who:u.code,txt:p.join(' · '),pos:u.pos,from:b.pos});
