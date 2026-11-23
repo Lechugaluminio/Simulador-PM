@@ -21,6 +21,7 @@ Tablero de mapa para el **puesto de mando** de bomberos: reemplaza el croquis de
 - **Imagen** del croquis en alta resolución (doble de la pantalla) con encabezado de incidente, hora y resumen: se copia para pegar en WhatsApp Web / correo, o se descarga en .jpg.
 - **Copia de terreno (celular):** el ayudante escanea un QR en el puesto de comando y se lleva una copia editable del croquis. En terreno ajusta carros, estados y marcadores; al volver, el botón **Cambios** lista lo modificado y muestra en el mapa las posiciones originales con líneas punteadas para ajustar la pantalla principal. Los datos viajan dentro del QR (en la parte `#` del enlace, que no se envía a ningún servidor) y la copia nunca modifica el croquis principal.
 - **Pantallas chicas:** en celular y tablet vertical la lista de carros se abre como panel deslizable y las herramientas quedan en una barra inferior.
+- **Modo sol** (botón ☀ o tecla S): alto contraste para uso al exterior, con piezas más grandes, líneas más gruesas y mapa con más contraste.
 - Modo presentación para la pantalla grande, contador de tiempo del incidente, Street View.
 - Se usa con mouse; el teclado es opcional (atajos en *Menú → Ayuda*).
 
