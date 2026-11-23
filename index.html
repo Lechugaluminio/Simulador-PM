@@ -694,7 +694,7 @@ function markHTML(m){
   }
   return '<div>?</div>';
 }
-const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,pm:6,espera:6,acv:6,rit:30,mayday:40};
+const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,rit:30,pm:50,espera:50,acv:50,mayday:60};
 function draftFromMarker(pos){if(isDrawing()){draft.push(pos);updateDraft();return true;}return false;}
 function makeDraggable(kind,id,el,m){
   m.on('dragstart',()=>{el.classList.add('dragging');el._drag=true;});
@@ -718,7 +718,7 @@ function syncUnits(){
       r={m,el};mkUnits.set(u.id,r);makeDraggable('unit',u.id,el,m);}
     else if(!r.el._drag)r.m.setLngLat(u.pos);
     const h=tokenHTML(u);if(r.el._h!==h){r.el.innerHTML=h;r.el._h=h;}
-    const s=isSel('unit',u.id);r.el.classList.toggle('sel',s);r.el.style.zIndex=s?100:(u.status==='retirado'?8:10);
+    const s=isSel('unit',u.id);r.el.classList.toggle('sel',s);r.el.style.zIndex=s?20:(u.status==='retirado'?8:10);   // carros siempre bajo instalaciones y MAYDAY
   }
   for(const [id,r] of mkUnits)if(!seen.has(id)){r.m.remove();mkUnits.delete(id);}
 }
