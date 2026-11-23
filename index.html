@@ -66,7 +66,7 @@ body.sb-hidden #side{display:none}
 .addrow input{flex:1}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .empty{color:var(--muted);font-size:13px;font-style:italic}
-.u-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:6px;border-radius:8px;cursor:pointer;border:1.5px solid transparent;user-select:none}
+.u-row{display:grid;grid-template-columns:auto auto 1fr auto;gap:8px;align-items:center;padding:6px;border-radius:8px;cursor:pointer;border:1.5px solid transparent;user-select:none}
 .u-row:hover{background:var(--hover)}
 .u-row.sel{border-color:var(--sel);background:var(--hover)}
 .u-row .ri{font-size:13px;line-height:1.2;min-width:0}
@@ -87,8 +87,13 @@ body.sb-hidden #side{display:none}
 #tools button svg{width:23px;height:23px}
 #tools button.on{background:var(--acc);color:var(--accInk)}
 #tools .sep{height:1px;background:var(--line);margin:3px 4px;flex:none}
-#tools .pair{display:flex;gap:2px}
-#tools .pair button{flex:1;padding:7px 0}
+#viewbar{position:absolute;left:10px;bottom:10px;z-index:5;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:4px;display:flex;gap:2px;align-items:stretch}
+#viewbar button{display:flex;align-items:center;gap:6px;border:0;border-radius:8px;padding:7px 10px;font-size:13px;font-weight:700;background:transparent;white-space:nowrap}
+#viewbar button:hover{background:var(--hover)}
+#viewbar button svg{width:20px;height:20px}
+#viewbar .pair{display:flex;gap:2px}
+#viewbar .pair button{padding:7px 8px}
+body.present #viewbar{display:flex!important}
 #tools kbd{font-family:var(--fb);font-size:9.5px;opacity:.6;font-weight:600}
 #mapctl{position:absolute;right:52px;top:10px;z-index:5;display:flex;gap:10px;align-items:center;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:5px 9px;font-size:13px;font-weight:600}
 #mapctl label{display:flex;gap:6px;align-items:center;white-space:nowrap;cursor:pointer}
@@ -97,7 +102,7 @@ body.sb-hidden #side{display:none}
 .seg button{padding:6px 10px;border-radius:7px;font-size:14px}
 .seg button.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 #mapctl .seg button{padding:5px 9px;font-size:13px}
-#hint{position:absolute;left:50%;transform:translateX(-50%);bottom:26px;z-index:7;background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;font-size:15px;box-shadow:0 4px 16px rgba(0,0,0,.45);display:none;max-width:min(780px,70%);text-align:center;line-height:1.35}
+#hint{position:absolute;left:50%;transform:translateX(-50%);bottom:66px;z-index:7;background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;font-size:15px;box-shadow:0 4px 16px rgba(0,0,0,.45);display:none;max-width:min(780px,70%);text-align:center;line-height:1.35}
 #hint.on{display:block}
 #hint b{color:#7fe3ff}
 #hint .hb{display:inline-flex;gap:6px;margin-left:12px;vertical-align:middle}
@@ -146,6 +151,18 @@ body.sb-hidden #side{display:none}
 .m-grifo{width:calc(30px * var(--tok));height:calc(30px * var(--tok));border-radius:50%;background:#ffd60a;color:#111;font-family:var(--fc);font-weight:800;display:grid;place-items:center;font-size:calc(18px * var(--tok));border:2.5px solid #111;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.45)}
 .m-pisc{width:calc(40px * var(--tok));height:calc(26px * var(--tok));border-radius:6px;background:#0b84d8;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.4);display:grid;place-items:center}
 .m-pisc svg{width:80%;height:auto}
+.m-rit{display:inline-flex;align-items:center;gap:.4em;font-family:var(--fc);font-weight:800;font-size:calc(19px * var(--tok));line-height:1;background:#66ff1a;color:#0b0b0b;padding:.28em .75em .22em;border-radius:999px;border:2.5px solid #0b0b0b;box-shadow:0 0 0 2px #fff,0 3px 8px rgba(0,0,0,.45);letter-spacing:.06em;white-space:nowrap}
+.m-rit .rt{border-left:2px solid rgba(0,0,0,.55);padding-left:.4em;letter-spacing:.02em}
+.wv{display:inline-block;font-family:var(--fc);font-weight:800;font-size:13px;line-height:1;padding:4px 6px 3px;border-radius:5px;border:1.5px solid var(--line);background:var(--soft);color:var(--ink);cursor:pointer;min-width:24px;text-align:center;user-select:none}
+.wv:hover{border-color:var(--acc)}
+.wv.w-1{background:#fff3bf;border-color:#e0b400;color:#5c4400}
+.wv.w-2{background:#ffd8a8;border-color:#e8590c;color:#6b2600}
+.wv.w-3{background:#ffc9c9;border-color:#c92a2a;color:#6b0000}
+.wv.w-n{opacity:.55}
+.trayit{display:inline-flex;align-items:center;gap:4px}
+.wvrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.wvl{font-size:12.5px;font-weight:700;color:var(--muted)}
+#waveSeg button{padding:4px 8px;font-size:13px}
 .m-mayday{position:relative;font-family:var(--fc);font-weight:800;font-size:calc(19px * var(--tok));line-height:1;background:#e00000;color:#fff;padding:.28em .75em .22em;border-radius:999px;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 3px 8px rgba(0,0,0,.45);letter-spacing:.06em;white-space:nowrap}
 .m-mayday::before{content:"";position:absolute;inset:-8px;border:3px solid #ff2020;border-radius:999px;animation:pulse 1.2s ease-out infinite;pointer-events:none}
 .m-mayday .t{position:absolute;top:calc(100% + .45em);left:50%;transform:translateX(-50%);font-size:.6em;font-weight:700;letter-spacing:.02em;background:rgba(17,17,17,.9);color:#fff;padding:.25em .5em;border-radius:.3em;white-space:nowrap}
@@ -165,7 +182,7 @@ body.present #title{font-size:34px}
 body.present #exitPresent{display:inline-flex!important}
 
 /* ---------- toast / modal ---------- */
-#toasts{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+#toasts{position:fixed;left:50%;bottom:132px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
 .tst{background:rgba(17,17,17,.94);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;pointer-events:none;font-weight:600;max-width:80vw}
 .tst button{background:#fff;color:#111;border:0;padding:6px 10px;pointer-events:auto}
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
@@ -221,6 +238,7 @@ body.present #exitPresent{display:inline-flex!important}
   <aside id="side">
     <div class="sec">
       <h3>Carros despachados</h3>
+      <div class="wvrow"><span class="wvl">Salida:</span><div class="seg" id="waveSeg" title="Salida a la que pertenecen los carros que vas a agregar"></div></div>
       <div class="addrow"><input id="unitInput" type="text" placeholder="B-21 BX-22 Q-7 RX-6…" autocomplete="off"><button id="btnAdd" class="pri">Agregar</button></div>
       <p class="help">Separa con espacios o comas. También puedes pegar el texto del despacho y se detectan los códigos.</p>
     </div>
@@ -256,10 +274,12 @@ body.present #exitPresent{display:inline-flex!important}
       <button data-mode="mk:pm" title="Puesto de Mando (2)"><svg class="i" viewBox="0 0 24 24"><path d="M6 21V4M6 4h12l-2.5 4L18 12H6"/></svg>PM</button>
       <button data-mode="mk:grifo" title="Grifo (3)"><svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M9 21V9h6v12M8 9h8M10 9V6.5a2 2 0 0 1 4 0V9M6 13h3M15 13h3"/></svg>Grifo</button>
       <button data-mode="mk:piscina" title="Piscina / estanque portátil (4)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 11c1.5-1.3 3-1.3 4.5 0s3 1.3 4.5 0 3-1.3 3 0"/></svg>Piscina</button>
+      <button data-mode="mk:rit" title="Pastilla RIT: equipo de intervención rápida (6)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M8 15v-5h2.2a1.4 1.4 0 0 1 0 2.8H8M10.2 12.8l1.3 2.2M14 10v5M16.5 10h3M18 10v5"/></svg>RIT</button>
       <button data-mode="mk:mayday" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
       <button data-mode="mk:texto" title="Texto libre (T)"><svg class="i" viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>Texto</button>
       <button data-mode="sides" title="Ubicar lados A, B, C, D a mano"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 16l3-8 3 8M10 13.5h4"/></svg>Lados A–D</button>
-      <div class="sep"></div>
+    </nav>
+    <nav id="viewbar">
       <button data-act="orient" title="Girar el mapa para que el lado A quede abajo (A)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 13l4 4 4-4"/></svg>A abajo</button>
       <div class="pair">
         <button data-act="rotl" title="Girar 15° a la izquierda"><svg class="i" viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M5.5 15a8 8 0 1 0 .5-8.5L4 10"/></svg></button>
@@ -306,8 +326,12 @@ const KEY_STATE='croquisPM.state.v1',KEY_SET='croquisPM.settings.v1',KEY_VIEW='c
 const LINE_COLORS=['#2f7bff','#ff2d2d','#ffd60a','#ffffff','#22c55e','#ff8c1a'];
 const STATUS_LABEL={lugar:'Sin función',trabajando:'Trabajando',nocumple:'No puede cumplir',retirandose:'Retirándose',retirado:'Retirado'};
 const XSTAT=['lugar','nocumple'];
+const WAVES=[['D','D','Despacho inicial'],['1','1ª','1ª alarma'],['2','2ª','2ª alarma'],['3','3ª','3ª alarma']];
+const waveOf=w=>WAVES.find(x=>x[0]===w);
+function waveTag(u){const w=waveOf(u.wave);return `<span class="wv w-${w?w[0]:'n'}" data-wave-uid="${u.id}" title="${w?w[2]:'Sin salida asignada'} · clic para cambiar">${w?w[1]:'·'}</span>`;}
+function renderWaveSeg(){const cur=state.addWave||'D';$('#waveSeg').innerHTML=WAVES.map(([v,t,l])=>`<button data-addwave="${v}" class="${v===cur?'on':''}" title="${l}">${v==='D'?'Despacho':t}</button>`).join('');}
 const XSVG='<svg class="xx" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M3 3L97 97M97 3L3 97" stroke="#000" stroke-opacity=".8" stroke-width="5" vector-effect="non-scaling-stroke"/><path d="M3 3L97 97M97 3L3 97" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>';
-const MARK_LABEL={fuego:'Foco de fuego',pm:'Puesto de Mando',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',texto:'Texto',lado:'Lado'};
+const MARK_LABEL={fuego:'Foco de fuego',pm:'Puesto de Mando',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
 const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona de colapso',ataque:'Línea',trazo:'Trazo'};
 const POLY_KINDS=['estructura','fuego','colapso'];
 const DEFAULT_SETTINGS={
@@ -405,7 +429,7 @@ function addUnitsFromText(txt){
   if(!codes.length){toast('No encontré códigos de carros (ej: B-21, BX-22, Q-7)');return;}
   const added=[],dup=[];const now=Date.now();
   codes.forEach((c,i)=>{if(state.units.some(u=>u.code===c)){dup.push(c);return;}
-    state.units.push({id:uid(),code:c,status:'lugar',fn:'',side:'',note:'',pos:null,arrivedAt:null,addedAt:now+i});added.push(c);});
+    state.units.push({id:uid(),code:c,status:'lugar',fn:'',side:'',note:'',pos:null,arrivedAt:null,addedAt:now+i,wave:state.addWave||'D'});added.push(c);});
   if(added.length)commit();
   toast((added.length?'Agregados: '+added.join(', '):'')+(dup.length?(added.length?' · ':'')+'Ya estaban: '+dup.join(', '):''));
 }
@@ -498,7 +522,7 @@ function initMap(){
   }catch(e){showMapError('Este equipo no pudo iniciar el mapa (WebGL desactivado o no disponible). '+e.message);return;}
   map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
   map.addControl(new maplibregl.NavigationControl({visualizePitch:false}),'top-right');
-  map.addControl(new maplibregl.ScaleControl({unit:'metric',maxWidth:140}),'bottom-left');
+  map.addControl(new maplibregl.ScaleControl({unit:'metric',maxWidth:140}),'bottom-right');
   if(map.touchPitch)map.touchPitch.disable();
   map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();initGrifos();});
   map.on('click',onMapClick);
@@ -644,12 +668,13 @@ function markHTML(m){
     case 'grifo':return `<div class="m-grifo">G</div>`;
     case 'piscina':return `<div class="m-pisc"><svg viewBox="0 0 24 14"><path d="M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>`;
     case 'mayday':return `<div class="m-mayday">MAYDAY${m.text?`<span class="t">${esc(m.text)}</span>`:''}</div>`;
+    case 'rit':return `<div class="m-rit">RIT${m.text?`<span class="rt">${esc(m.text)}</span>`:''}</div>`;
     case 'texto':return `<div class="m-text">${esc(m.text||'TEXTO')}</div>`;
     case 'lado':return `<div class="m-side">${esc(m.letter)}</div>`;
   }
   return '<div>?</div>';
 }
-const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,pm:5,mayday:40};
+const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,pm:5,rit:30,mayday:40};
 function draftFromMarker(pos){if(isDrawing()){draft.push(pos);updateDraft();return true;}return false;}
 function makeDraggable(kind,id,el,m){
   m.on('dragstart',()=>{el.classList.add('dragging');el._drag=true;});
@@ -729,6 +754,7 @@ const HINTS={
   'mk:grifo':'Clic en el mapa para ubicar un <b>grifo</b>',
   'mk:piscina':'Clic en el mapa para ubicar una <b>piscina</b> (estanque)',
   'mk:mayday':'Clic en el mapa donde está el <b>MAYDAY</b>',
+  'mk:rit':'Clic en el mapa donde se ubica el <b>RIT</b>',
   'mk:texto':'Clic en el mapa para poner un <b>texto</b>',
   'pickA':'Haz clic en el borde de la estructura que es el <b>FRENTE (lado A)</b>'
 };
@@ -788,7 +814,7 @@ function onMapClick(e){
   if(mode.startsWith('mk:')){const k=mode.slice(3);let pos=ll;
     if(k==='grifo'&&map.getLayer('grifos')){const g=map.queryRenderedFeatures([[e.point.x-14,e.point.y-14],[e.point.x+14,e.point.y+14]],{layers:['grifos']});if(g.length)pos=g[0].geometry.coordinates.slice();}
     const m={id:uid(),kind:k,pos,text:''};state.marks.push(m);selected={type:'mark',id:m.id};setMode('select');commit();
-    if(k==='texto')focusPanel('#pnText');return;}
+    if(k==='texto'||k==='rit')focusPanel('#pnText');return;}
   if(mode==='sides'){const L='ABCD'[sideIdx];state.marks=state.marks.filter(m=>!(m.kind==='lado'&&m.letter===L));
     state.marks.push({id:uid(),kind:'lado',letter:L,pos:ll,shapeId:null});sideIdx++;commit();
     if(sideIdx>3){setMode('select');toast('Lados A–D ubicados',[{label:'Orientar con A abajo',fn:orientA}]);}else renderHint();return;}
@@ -857,7 +883,7 @@ function renderMapOnly(){if(mapReady){syncUnits();syncMarks();pushShapes();syncL
 function chipHTML(u){const t=typeOf(u.code);const x=u.pos&&XSTAT.includes(u.status);return `<span class="chip st-${u.status}" data-drag="${u.id}" style="--c:${t.color};--fg:${fg(t.color)}" title="${esc(t.name)}">${x?XSVG:''}<span class="cd">${esc(u.code)}</span></span>`;}
 function rowHTML(u){
   const extra=[u.fn,u.side?(u.side==='INT'?'Interior':'Lado '+u.side):''].filter(Boolean).join(' · ');
-  return `<div class="u-row${isSel('unit',u.id)?' sel':''}" data-drag="${u.id}">${chipHTML(u)}<div class="ri"><b>${STATUS_LABEL[u.status]||''}</b>${extra?' · '+esc(extra):''}${u.note?`<small>${esc(u.note)}</small>`:''}</div><div class="rt">${u.arrivedAt?hhmm(u.arrivedAt):''}</div></div>`;
+  return `<div class="u-row${isSel('unit',u.id)?' sel':''}" data-drag="${u.id}">${chipHTML(u)}${waveTag(u)}<div class="ri"><b>${STATUS_LABEL[u.status]||''}</b>${extra?' · '+esc(extra):''}${u.note?`<small>${esc(u.note)}</small>`:''}</div><div class="rt">${u.arrivedAt?hhmm(u.arrivedAt):''}</div></div>`;
 }
 function groups(){
   const tray=state.units.filter(u=>!u.pos&&u.status!=='retirado').sort((a,b)=>a.addedAt-b.addedAt);
@@ -868,7 +894,8 @@ function groups(){
 function renderLists(){
   const {tray,scene,out}=groups();
   $('#nTray').textContent=tray.length;$('#nScene').textContent=scene.length;$('#nOut').textContent=out.length;
-  $('#tray').innerHTML=tray.length?tray.map(chipHTML).join(''):'<div class="empty">Sin carros pendientes</div>';
+  $('#tray').innerHTML=tray.length?tray.map(u=>`<span class="trayit">${chipHTML(u)}${waveTag(u)}</span>`).join(''):'<div class="empty">Sin carros pendientes</div>';
+  renderWaveSeg();
   $('#sceneList').innerHTML=scene.length?scene.map(rowHTML).join(''):'<div class="empty">Ningún carro ubicado aún</div>';
   $('#outList').innerHTML=out.length?out.map(rowHTML).join(''):'<div class="empty">—</div>';
 }
@@ -888,6 +915,7 @@ function renderPanel(){
   if(selected.type==='unit'){
     const u=o,t=typeOf(u.code);
     h=`<div class="pn-h"><input id="pnCode" type="text" value="${esc(u.code)}" title="Código del carro"><span class="ttl" style="font-size:15px;color:var(--muted)">${esc(t.name)}</span><button class="x" data-act="close" title="Cerrar (Esc)">✕</button></div><div class="pn-b">
+      <label class="l">Salida</label>${segBtns('wave',WAVES.map(w=>[w[0],w[2]]),u.wave||'')}
       <label class="l">Estado</label>${segBtns('status',[['lugar','✕ Sin función'],['trabajando','Trabajando'],['nocumple','✕ No puede cumplir'],['retirandose','◯ Retirándose'],['retirado','Retirado']],u.status)}
       <label class="l">Función</label>${segBtns('fn',[['','—'],...settings.functions.map(f=>[f,f])],u.fn)}
       <label class="l">Lado</label>${segBtns('side',[['','—'],['A','A'],['B','B'],['C','C'],['D','D'],['INT','Interior']],u.side)}
@@ -900,6 +928,9 @@ function renderPanel(){
     if(m.kind==='texto')h+=`<label class="l">Texto</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: RIT (19) · Calle Altamirano">`;
     if(m.kind==='mayday')h+=`<label class="l">Rótulo bajo la pastilla (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: piso 2 · lado C">`;
     if(m.kind==='pm')h+=`<label class="l">Rótulo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="PM">`;
+    if(m.kind==='rit'){const sc=state.units.filter(u=>u.pos&&u.status!=='retirado').sort((a,b)=>a.code.localeCompare(b.code,'es',{numeric:true}));
+      h+=`<label class="l">Compañía / carro a cargo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: 19ª Cía. · B-19">`+
+        (sc.length?`<div class="seg" style="margin-top:6px">${sc.map(u=>`<button data-act="qtext" data-v="${esc(u.code)}" class="${m.text===u.code?'on':''}">${esc(u.code)}</button>`).join('')}</div>`:'');}
     if(m.kind==='lado')h+=`<label class="l">Letra</label>${segBtns('letter',[['A','A'],['B','B'],['C','C'],['D','D']],m.letter)}`;
     h+=`<div class="meta">Arrastra el marcador para moverlo.</div><div class="acts">${m.kind==='lado'?'<button data-act="orient">Orientar con A abajo</button>':''}<button class="danger" data-act="delete">Eliminar</button></div></div>`;
   }else{
@@ -930,6 +961,8 @@ function onPanelClick(ev){
     case 'placeMode':setMode('place:'+o.id);break;
     case 'delete':deleteSelected();break;
     case 'letter':o.letter=v;o.shapeId=null;commit();break;
+    case 'wave':o.wave=v;commit();break;
+    case 'qtext':o.text=v;commit();break;
     case 'orient':orientA();break;
     case 'quick':o.label=v;commit();break;
     case 'color':o.color=v;lastLineColor=v;commit();break;
@@ -1080,6 +1113,10 @@ async function refineCross(cross,geoms,approx,label){
    ========================================================= */
 let drag=null;
 function onSidePointerDown(ev){
+  const wt=ev.target.closest('[data-wave-uid]');
+  if(wt){ev.preventDefault();const u=getUnit(wt.dataset.waveUid);if(u){const i=WAVES.findIndex(x=>x[0]===u.wave);u.wave=WAVES[(i+1)%WAVES.length][0];commit();}return;}
+  const aw=ev.target.closest('[data-addwave]');
+  if(aw){state.addWave=aw.dataset.addwave;commit();return;}
   const el=ev.target.closest('[data-drag]');if(!el||ev.button!==0)return;
   ev.preventDefault();drag={id:el.dataset.drag,x0:ev.clientX,y0:ev.clientY,ghost:null,moved:false};
 }
@@ -1098,7 +1135,7 @@ function onPointerUp(ev){
     else{select({type:'unit',id:u.id});if(u.pos&&map){const pt=map.project(u.pos);const c=map.getContainer();if(pt.x<60||pt.y<60||pt.x>c.clientWidth-60||pt.y>c.clientHeight-60)map.easeTo({center:u.pos});}}
     return;}
   const over=document.elementFromPoint(ev.clientX,ev.clientY);
-  if(map&&over&&over.closest('#mapwrap')&&!over.closest('#panel,#tools,#mapctl')){
+  if(map&&over&&over.closest('#mapwrap')&&!over.closest('#panel,#tools,#mapctl,#viewbar')){
     const r=$('#map').getBoundingClientRect();const ll=map.unproject([ev.clientX-r.left,ev.clientY-r.top]);
     placeUnit(u.id,[ll.lng,ll.lat]);
   }
@@ -1125,7 +1162,7 @@ function summaryText(){
   const {tray,scene,out}=groups();const L=[];
   L.push('CROQUIS PM — '+(state.title||'Incidente'));if(state.address)L.push(state.address);
   L.push('Generado '+new Date().toLocaleString('es-CL')+' · Inicio '+hhmm(state.startedAt)+' · T+ '+hms(Date.now()-state.startedAt));
-  const line=u=>'  '+u.code.padEnd(7)+(STATUS_LABEL[u.status]||'').padEnd(12)+[u.fn,u.side?(u.side==='INT'?'Interior':'Lado '+u.side):''].filter(Boolean).join(' · ')+(u.note?' — '+u.note:'')+(u.arrivedAt?'  (llegó '+hhmm(u.arrivedAt)+')':'');
+  const line=u=>'  '+u.code.padEnd(7)+((waveOf(u.wave)||['','',''])[1]).padEnd(4)+(STATUS_LABEL[u.status]||'').padEnd(17)+[u.fn,u.side?(u.side==='INT'?'Interior':'Lado '+u.side):''].filter(Boolean).join(' · ')+(u.note?' — '+u.note:'')+(u.arrivedAt?'  (llegó '+hhmm(u.arrivedAt)+')':'');
   L.push('','EN ESCENA ('+scene.length+')',...scene.map(line));
   if(tray.length)L.push('','POR LLEGAR ('+tray.length+')','  '+tray.map(u=>u.code).join(', '));
   if(out.length)L.push('','RETIRADOS ('+out.length+')',...out.map(line));
@@ -1193,6 +1230,8 @@ function openHelp(){
     <li><b>Dibuja la estructura</b> (E): clic en cada esquina y doble clic para cerrar. Luego haz clic en el borde del <b>frente</b> y se ponen los lados A–D. <b>A abajo</b> gira el mapa como en la pizarra.</li>
     <li>Marca el <b>foco</b>, el <b>PM</b> (círculo amarillo, como en SCI), <b>grifos</b>, <b>piscinas</b> de abastecimiento, el <b>área con fuego</b> y, si ocurre, la ubicación de un <b>MAYDAY</b>.</li>
     <li><b>Carros:</b> escribe o pega los despachados en la columna izquierda y arrástralos al mapa cuando lleguen. Clic en un carro para asignar estado, función, lado y nota. Como en la pizarra: <b>✕</b> = sin función o no puede cumplirla, <b>◯</b> = se está retirando.</li>
+    <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª, 2ª o 3ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª, 2ª, 3ª) de un carro para cambiarla.</li>
+    <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo como “en uso”.</li>
     <li><b>Líneas</b> (L): clic en el carro y luego hacia donde va la armada; doble clic para terminar. Puedes rotularlas (1½", 2½").</li>
   </ol>
@@ -1203,7 +1242,7 @@ function openHelp(){
     <tr><td><kbd>V</kbd> / <kbd>Esc</kbd></td><td>Mover / cancelar</td><td><kbd>E</kbd></td><td>Estructura</td></tr>
     <tr><td><kbd>F</kbd></td><td>Área con fuego</td><td><kbd>C</kbd></td><td>Zona de colapso</td></tr>
     <tr><td><kbd>L</kbd></td><td>Línea con flecha</td><td><kbd>K</kbd></td><td>Trazo discontinuo</td></tr>
-    <tr><td><kbd>1</kbd>–<kbd>5</kbd></td><td>Foco · PM · Grifo · Piscina · Mayday</td><td><kbd>T</kbd></td><td>Texto</td></tr>
+    <tr><td><kbd>1</kbd>–<kbd>6</kbd></td><td>Foco · PM · Grifo · Piscina · Mayday · RIT</td><td><kbd>T</kbd></td><td>Texto</td></tr>
     <tr><td><kbd>A</kbd></td><td>Orientar con lado A abajo</td><td><kbd>N</kbd></td><td>Norte arriba</td></tr>
     <tr><td><kbd>Z</kbd></td><td>Encuadrar todo</td><td><kbd>P</kbd></td><td>Modo presentación</td></tr>
     <tr><td><kbd>Supr</kbd></td><td>Eliminar lo seleccionado</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Deshacer</td></tr>
@@ -1234,11 +1273,12 @@ function applySettings(){
    Eventos de interfaz
    ========================================================= */
 function bindUI(){
-  $('#tools').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  const onToolClick=e=>{const b=e.target.closest('button');if(!b)return;
     if(b.dataset.mode){if(b.dataset.mode==='select'){select(null);}setMode(b.dataset.mode===mode&&b.dataset.mode!=='select'?'select':b.dataset.mode);return;}
     const a=b.dataset.act;if(!map&&a!=='undo')return;
     if(a==='orient')orientA();if(a==='rotl')map.easeTo({bearing:map.getBearing()-15});if(a==='rotr')map.easeTo({bearing:map.getBearing()+15});
-    if(a==='north')map.easeTo({bearing:0});if(a==='fit')fitAll();if(a==='undo')undo();});
+    if(a==='north')map.easeTo({bearing:0});if(a==='fit')fitAll();if(a==='undo')undo();};
+  $('#tools').addEventListener('click',onToolClick);$('#viewbar').addEventListener('click',onToolClick);
   $('#btnAdd').onclick=()=>{addUnitsFromText($('#unitInput').value);$('#unitInput').value='';};
   $('#unitInput').addEventListener('keydown',e=>{if(e.key==='Enter'){addUnitsFromText(e.target.value);e.target.value='';}});
   $('#side').addEventListener('pointerdown',onSidePointerDown);
@@ -1292,7 +1332,7 @@ function onKey(e){
   if(e.key==='Backspace'&&isDrawing()){e.preventDefault();draft.pop();updateDraft();return;}
   if((e.key==='Delete'||e.key==='Backspace')&&selected){e.preventDefault();deleteSelected();return;}
   const k=e.key.toLowerCase();
-  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo','1':'mk:fuego','2':'mk:pm','3':'mk:grifo','4':'mk:piscina','5':'mk:mayday',t:'mk:texto'};
+  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo','1':'mk:fuego','2':'mk:pm','3':'mk:grifo','4':'mk:piscina','5':'mk:mayday','6':'mk:rit',t:'mk:texto'};
   if(modes[k]){if(k==='v')select(null);setMode(modes[k]);return;}
   if(k==='a')orientA();
   if(k==='n'&&map)map.easeTo({bearing:0});
