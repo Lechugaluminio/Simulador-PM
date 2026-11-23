@@ -904,7 +904,8 @@ function fitAll(){
   const pts=[...state.units.filter(u=>u.pos).map(u=>u.pos),...state.marks.map(m=>m.pos),...state.shapes.flatMap(s=>s.coords)];
   if(!pts.length){if(state.center)map.flyTo({center:state.center,zoom:18});return;}
   const b=new maplibregl.LngLatBounds(pts[0],pts[0]);pts.forEach(p=>b.extend(p));
-  map.fitBounds(b,{padding:{top:80,bottom:80,left:110,right:selected?380:110},maxZoom:19.3,bearing:map.getBearing(),duration:700});
+  const narrow=map.getContainer().clientWidth<760;
+  map.fitBounds(b,{padding:narrow?{top:70,bottom:80,left:40,right:40}:{top:80,bottom:80,left:110,right:selected?380:110},maxZoom:19.3,bearing:map.getBearing(),duration:700});
 }
 function select(sel){
   selected=sel;if(!sel||sel.type!=='shape'||sel.id!==editingId)editingId=null;
