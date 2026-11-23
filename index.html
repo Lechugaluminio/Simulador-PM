@@ -1253,12 +1253,14 @@ async function renderSnapshot(scale){
   if(canPR&&prev<scale)map.setPixelRatio(prev);
   // encabezado
   const now=new Date();const {tray,scene}=groups();const cnt=st=>scene.filter(u=>u.status===st).length;
-  g.textAlign='left';g.textBaseline='alphabetic';g.fillStyle='#fff';g.font=FONT(800,28);g.fillText((state.title||'Croquis PM').slice(0,70),14,34);
-  g.font='500 13px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText((state.address||'').slice(0,120),14,56);
-  g.textAlign='right';g.fillStyle='#fff';g.font=FONT(700,22);
-  g.fillText(`${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())} · T+ ${hms(now-state.startedAt)}`,W-14,32);
-  g.font=FONT(600,17);g.fillStyle='#e6e6e6';
-  g.fillText(`${scene.length} en escena · ${cnt('trabajando')} trabajando · ${scene.filter(u=>XSTAT.includes(u.status)).length} ✕ sin función · ${cnt('retirandose')} ◯ se retiran · ${tray.length} por llegar`,W-14,56);
+  const fit=(t,maxW)=>{t=String(t||'');if(g.measureText(t).width<=maxW)return t;while(t.length>1&&g.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';};
+  const l1=`${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())} · T+ ${hms(now-state.startedAt)}`;
+  const l2=`${scene.length} en escena · ${cnt('trabajando')} trabajando · ${scene.filter(u=>XSTAT.includes(u.status)).length} ✕ sin función · ${cnt('retirandose')} ◯ se retiran · ${tray.length} por llegar`;
+  g.font=FONT(700,22);const w1=g.measureText(l1).width;g.font=FONT(600,17);const w2=Math.min(g.measureText(l2).width,W*.62);
+  g.textAlign='right';g.textBaseline='alphabetic';g.fillStyle='#fff';g.font=FONT(700,22);g.fillText(l1,W-14,32);
+  g.font=FONT(600,17);g.fillStyle='#e6e6e6';g.fillText(fit(l2,w2),W-14,56);
+  g.textAlign='left';g.fillStyle='#fff';g.font=FONT(800,28);g.fillText(fit(state.title||'Croquis PM',W-w1-48),14,34);
+  g.font='500 13px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText(fit(state.address||'',W-w2-48),14,56);
   g.save();g.translate(0,HEAD);g.beginPath();g.rect(0,0,W,H);g.clip();
   const P=c=>{const p=map.project(c);return [p.x,p.y];};
   const inView=([x,y])=>x>-80&&y>-80&&x<W+80&&y<H+80;
