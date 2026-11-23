@@ -226,7 +226,8 @@ body.present #exitPresent{display:inline-flex!important}
   <div id="summary"></div>
   <div class="clock"><small>Hora</small><b id="clock">--:--:--</b></div>
   <div class="clock" id="elapsedBox" title="Tiempo desde el inicio del incidente (clic para ajustar)"><small>Tiempo</small><b id="elapsed">00:00:00</b></div>
-  <button id="btnStreet" class="tbtn hide-present" title="Abrir Street View en el centro del mapa"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M9 21l1-7-2-1 1-4h6l1 4-2 1 1 7"/></svg>Street View</button>
+  <button id="btnSnap" class="tbtn" title="Exportar imagen del croquis en alta resolución"><svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Imagen</button>
+  <button id="btnStreet" class="tbtn hide-present" title="Abrir Street View (del elemento seleccionado o del centro del mapa)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M9 21l1-7-2-1 1-4h6l1 4-2 1 1 7"/></svg></button>
   <button id="btnPresent" class="tbtn hide-present" title="Modo presentación (P)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg>Presentación</button>
   <button id="exitPresent" class="tbtn" style="display:none" title="Salir del modo presentación (P)">Salir (P)</button>
   <button id="btnFull" class="tbtn" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
@@ -236,6 +237,7 @@ body.present #exitPresent{display:inline-flex!important}
     <button data-menu="export">Exportar croquis (.json)</button>
     <button data-menu="import">Importar croquis…</button>
     <button data-menu="summary">Copiar resumen de carros</button>
+    <button data-menu="snap">Exportar imagen del croquis</button>
     <hr>
     <button data-menu="gmaps">Abrir esta zona en Google Maps</button>
     <button data-menu="grifos">Actualizar grifos desde Aguas Andinas</button>
@@ -536,7 +538,7 @@ function initMap(){
   const zoom=v&&typeof v.zoom==='number'?v.zoom:(state.center?18:13);
   try{
     map=new maplibregl.Map({container:'map',style:makeStyle(),center,zoom,bearing:(v&&v.bearing)||0,maxZoom:21,minZoom:8,
-      pitchWithRotate:false,maxPitch:0,attributionControl:false,boxZoom:false,fadeDuration:0});
+      pitchWithRotate:false,maxPitch:0,attributionControl:false,boxZoom:false,fadeDuration:0,preserveDrawingBuffer:true});
   }catch(e){showMapError('Este equipo no pudo iniciar el mapa (WebGL desactivado o no disponible). '+e.message);return;}
   map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
   map.addControl(new maplibregl.NavigationControl({visualizePitch:false}),'top-right');
@@ -1165,6 +1167,137 @@ function onPointerUp(ev){
   }
 }
 
+
+/* =========================================================
+   Exportar imagen (mapa + piezas) en alta resolución
+   ========================================================= */
+const FONT=(w,px)=>`${w} ${px}px "Barlow Condensed","Arial Narrow",sans-serif`;
+function rr(g,x,y,w,h,r){r=Math.min(r,h/2,w/2);g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function pillBox(g,cx,cy,text,opt){
+  const fs=opt.fs;g.font=FONT(800,fs);const tw=g.measureText(text).width+(opt.extraW||0);
+  const h=opt.h||fs*1.5,w=opt.w||tw+fs*(opt.padX||1.5),x=cx-w/2,y=cy-h/2,r=opt.r==null?h/2:opt.r;
+  if(opt.ring){rr(g,x-opt.ring-1.5,y-opt.ring-1.5,w+2*opt.ring+3,h+2*opt.ring+3,r+opt.ring);g.fillStyle=opt.ringColor||'#fff';g.fill();}
+  rr(g,x-1.5,y-1.5,w+3,h+3,r+1.5);g.fillStyle=opt.outer||'#000';g.fill();
+  rr(g,x,y,w,h,r);g.fillStyle=opt.border||'#fff';g.fill();
+  const b=opt.bw==null?2.5:opt.bw;rr(g,x+b,y+b,w-2*b,h-2*b,Math.max(0,r-b));g.fillStyle=opt.bg;g.fill();
+  return {x,y,w,h};
+}
+function centerText(g,text,cx,cy,font,color,halo){
+  g.font=font;g.textAlign='center';g.textBaseline='middle';
+  if(halo){g.lineJoin='round';g.lineWidth=halo.w;g.strokeStyle=halo.c;g.strokeText(text,cx,cy+1);}
+  g.fillStyle=color;g.fillText(text,cx,cy+1);
+}
+function darkLabel(g,lines,cx,top,fs){
+  g.font=FONT(700,fs);const w=Math.max(...lines.map(t=>g.measureText(t).width))+fs*.9,h=lines.length*fs*1.15+fs*.45;
+  rr(g,cx-w/2,top,w,h,fs*.3);g.fillStyle='rgba(17,17,17,.9)';g.fill();
+  lines.forEach((t,i)=>centerText(g,t,cx,top+fs*.25+fs*1.15*(i+.5),FONT(i?600:700,fs),'#fff'));
+}
+function drawUnitSnap(g,u,x,y){
+  const t=typeOf(u.code),tok=settings.tok,fs=19*tok,ret=u.status==='retirado',pill=u.status==='retirandose';
+  g.font=FONT(800,fs);const tw=g.measureText(u.code).width;
+  const h=fs*1.36,w=tw+fs*(pill?1.2:.84)+fs*.32,x0=x-w/2,y0=y-h/2,r=pill?h/2:fs*.3,b=fs*(u.fn==='RIT'?.22:.16);
+  g.save();if(ret)g.globalAlpha=.75;
+  if(pill){rr(g,x0-fs*.28-3.5,y0-fs*.28-3.5,w+fs*.56+7,h+fs*.56+7,h);g.fillStyle='#000';g.fill();rr(g,x0-fs*.28-2,y0-fs*.28-2,w+fs*.56+4,h+fs*.56+4,h);g.fillStyle='#fff';g.fill();}
+  rr(g,x0-1.5,y0-1.5,w+3,h+3,r+1.5);g.fillStyle='rgba(0,0,0,.85)';g.fill();
+  rr(g,x0,y0,w,h,r);g.fillStyle=u.fn==='RIT'?'#ff9f1c':'#fff';g.fill();
+  const bg=ret?'#a3a7ad':t.color;rr(g,x0+b,y0+b,w-2*b,h-2*b,Math.max(0,r-b));g.fillStyle=bg;g.fill();
+  const xs=XSTAT.includes(u.status);
+  if(xs){g.save();rr(g,x0+b,y0+b,w-2*b,h-2*b,Math.max(0,r-b));g.clip();const ix=x0+1,iy=y0+1,iw=w-2,ih=h-2;
+    for(const [lw,c] of [[5,'rgba(0,0,0,.8)'],[1.6,'#fff']]){g.beginPath();g.moveTo(ix,iy);g.lineTo(ix+iw,iy+ih);g.moveTo(ix+iw,iy);g.lineTo(ix,iy+ih);g.lineWidth=lw;g.strokeStyle=c;g.stroke();}g.restore();}
+  centerText(g,u.code,x,y+fs*.02,FONT(800,fs),ret?'#2b2b2b':fg(t.color),xs?{w:fs*.2,c:bg}:null);
+  g.restore();
+  const side=u.side?(u.side==='INT'?'Interior':'Lado '+u.side):'';
+  const badge=[u.status==='retirandose'?'Se retira':(u.status==='nocumple'?'No cumple':''),u.fn,side].filter(Boolean).join(' · ').toUpperCase();
+  const lines=[badge,u.note||''].filter(Boolean);
+  if(lines.length){if(u.fn==='RIT'&&!u.note&&badge==='RIT'){g.font=FONT(700,fs*.56);const bw=g.measureText('RIT').width+fs*.9;rr(g,x-bw/2,y0+h+fs*.3,bw,fs*.56*1.6,fs*.3);g.fillStyle='#ff9f1c';g.fill();centerText(g,'RIT',x,y0+h+fs*.3+fs*.56*.8,FONT(700,fs*.56),'#111');}
+    else darkLabel(g,lines,x,y0+h+fs*.3,fs*.56);}
+}
+const FLAME_P=['M12 1.8c.9 3.7 5.8 5.9 5.8 11.4A5.8 5.8 0 0 1 12 19a5.8 5.8 0 0 1-5.8-5.8c0-2.7 1.7-4 2-6.1 1.3 1 2 2.5 2 4 1.5-1.7 2.4-5.1 1.8-9.3z','M12 19c-1.9 0-3.1-1.3-3.1-3.1 0-2 1.7-2.7 2.2-4.4 1.5 1.1 4 2.4 4 4.6 0 1.7-1.3 2.9-3.1 2.9z'];
+function drawMarkSnap(g,m,x,y){
+  const tok=settings.tok;
+  switch(m.kind){
+    case 'fuego':{const sz=50*tok;g.save();g.translate(x-sz/2,y-sz/2);g.scale(sz/24,sz/24);g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=4;
+      const a=new Path2D(FLAME_P[0]);g.fillStyle='#ff3b1f';g.fill(a);g.shadowBlur=0;g.lineWidth=1.4;g.strokeStyle='#fff';g.lineJoin='round';g.stroke(a);g.fillStyle='#ffd166';g.fill(new Path2D(FLAME_P[1]));g.restore();break;}
+    case 'pm':{const t=m.text||'PC',fs=22*tok;pillBox(g,x,y,t,{fs,h:fs*1.45,padX:1.25,r:3,bg:'#ff8c00',border:'#111',outer:'#fff',bw:3});centerText(g,t,x,y+fs*.03,FONT(800,fs),'#111');break;}
+    case 'espera':case 'acv':case 'grifo':case 'lado':{
+      const txt=m.kind==='espera'?'E':m.kind==='acv'?'ACV':m.kind==='grifo'?'G':m.letter;
+      const d=(m.kind==='acv'?50:m.kind==='grifo'?30:m.kind==='lado'?38:44)*tok,fs=(m.kind==='acv'?16:m.kind==='grifo'?18:m.kind==='lado'?24:22)*tok;
+      const bgc=m.kind==='lado'?'#fff':'#ffd60a';
+      g.beginPath();g.arc(x,y,d/2+2,0,Math.PI*2);g.fillStyle=m.kind==='lado'?'rgba(0,0,0,.25)':'#fff';g.fill();
+      g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle='#111';g.fill();
+      g.beginPath();g.arc(x,y,d/2-(m.kind==='grifo'?2.5:3),0,Math.PI*2);g.fillStyle=bgc;g.fill();
+      centerText(g,txt,x,y+fs*.04,FONT(800,fs),'#111');break;}
+    case 'piscina':{const w=40*tok,h=26*tok;rr(g,x-w/2-1.5,y-h/2-1.5,w+3,h+3,7);g.fillStyle='#000';g.fill();rr(g,x-w/2,y-h/2,w,h,6);g.fillStyle='#fff';g.fill();rr(g,x-w/2+2.5,y-h/2+2.5,w-5,h-5,4);g.fillStyle='#0b84d8';g.fill();
+      g.save();g.translate(x-w*.4,y-h*.27);g.scale(w*.8/24,w*.8/24);g.strokeStyle='#fff';g.lineWidth=2;g.lineCap='round';g.stroke(new Path2D('M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0'));g.restore();break;}
+    case 'mayday':{const fs=19*tok;const bx=pillBox(g,x,y,'MAYDAY',{fs,h:fs*1.5,padX:1.6,bg:'#e00000',border:'#fff',outer:'#000',extraW:fs*.35});
+      centerText(g,'MAYDAY',x,y+fs*.03,FONT(800,fs),'#fff');if(m.text)darkLabel(g,[m.text],x,bx.y+bx.h+fs*.45,fs*.6);break;}
+    case 'rit':{const fs=19*tok;g.font=FONT(800,fs);const t2=m.text||'';const w2=t2?g.measureText(t2).width+fs*.9:0;
+      const bx=pillBox(g,x,y,'RIT',{fs,h:fs*1.5,padX:1.6,bg:'#66ff1a',border:'#0b0b0b',outer:'#fff',extraW:w2});
+      const rx=bx.x+fs*.8;g.textAlign='left';g.textBaseline='middle';g.fillStyle='#0b0b0b';g.font=FONT(800,fs);g.fillText('RIT',rx,y+fs*.05);
+      if(t2){const sx=rx+g.measureText('RIT').width+fs*.4;g.fillStyle='rgba(0,0,0,.55)';g.fillRect(sx,y-fs*.5,2,fs);g.fillStyle='#0b0b0b';g.fillText(t2,sx+fs*.4,y+fs*.05);}break;}
+    case 'texto':{const fs=20*tok;centerText(g,(m.text||'TEXTO').toUpperCase(),x,y,FONT(800,fs),'#fff',{w:4,c:'#000'});break;}
+  }
+}
+async function renderSnapshot(scale){
+  if(!mapReady)throw new Error('el mapa aún no carga');
+  scale=scale||2;const cont=map.getContainer();const W=cont.clientWidth,H=cont.clientHeight,HEAD=70;
+  try{await document.fonts.load(FONT(800,20));await document.fonts.load(FONT(700,14));}catch(e){}
+  const prev=typeof map.getPixelRatio==='function'?map.getPixelRatio():window.devicePixelRatio||1;
+  const canPR=typeof map.setPixelRatio==='function';
+  if(canPR&&prev<scale)map.setPixelRatio(scale);
+  await new Promise(res=>{let done=false;const fin=()=>{if(!done){done=true;res();}};map.once('idle',fin);map.triggerRepaint&&map.triggerRepaint();setTimeout(fin,6000);});
+  const cv=document.createElement('canvas');cv.width=Math.round(W*scale);cv.height=Math.round((H+HEAD)*scale);
+  const g=cv.getContext('2d');g.scale(scale,scale);
+  g.fillStyle='#111';g.fillRect(0,0,W,HEAD);
+  try{g.drawImage(map.getCanvas(),0,HEAD,W,H);}catch(e){console.warn(e);}
+  if(canPR&&prev<scale)map.setPixelRatio(prev);
+  // encabezado
+  const now=new Date();const {tray,scene}=groups();const cnt=st=>scene.filter(u=>u.status===st).length;
+  g.textAlign='left';g.textBaseline='alphabetic';g.fillStyle='#fff';g.font=FONT(800,28);g.fillText((state.title||'Croquis PM').slice(0,70),14,34);
+  g.font='500 13px Barlow, Arial, sans-serif';g.fillStyle='#bdbdbd';g.fillText((state.address||'').slice(0,120),14,56);
+  g.textAlign='right';g.fillStyle='#fff';g.font=FONT(700,22);
+  g.fillText(`${pad(now.getDate())}-${pad(now.getMonth()+1)}-${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())} · T+ ${hms(now-state.startedAt)}`,W-14,32);
+  g.font=FONT(600,17);g.fillStyle='#e6e6e6';
+  g.fillText(`${scene.length} en escena · ${cnt('trabajando')} trabajando · ${scene.filter(u=>XSTAT.includes(u.status)).length} ✕ sin función · ${cnt('retirandose')} ◯ se retiran · ${tray.length} por llegar`,W-14,56);
+  g.save();g.translate(0,HEAD);g.beginPath();g.rect(0,0,W,H);g.clip();
+  const P=c=>{const p=map.project(c);return [p.x,p.y];};
+  const inView=([x,y])=>x>-80&&y>-80&&x<W+80&&y<H+80;
+  const order=['lado','texto','grifo','piscina','fuego'];
+  for(const k of order)for(const m of state.marks.filter(m=>m.kind===k)){const p=P(m.pos);if(inView(p))drawMarkSnap(g,m,p[0],p[1]);}
+  for(const s of state.shapes){if(!s.label||!s.coords||s.coords.length<2)continue;const pos=POLY_KINDS.includes(s.kind)&&s.coords.length>=3?polyCenter(s.coords):alongLine(s.coords,.5);const p=P(pos);
+    if(inView(p)){const fs=16*settings.tok;g.font=FONT(700,fs);const w=g.measureText(s.label).width+fs*.9,h=fs*1.3;rr(g,p[0]-w/2,p[1]-h/2,w,h,5);g.fillStyle='rgba(15,15,15,.84)';g.fill();centerText(g,s.label,p[0],p[1],FONT(700,fs),'#fff');}}
+  const units=state.units.filter(u=>u.pos&&!(settings.hideRetired&&u.status==='retirado')).sort((a,b)=>(a.status==='retirado')-(b.status==='retirado')||0);
+  for(const u of [...units].reverse()){const p=P(u.pos);if(inView(p))drawUnitSnap(g,u,p[0],p[1]);}
+  for(const k of ['rit','pm','espera','acv','mayday'])for(const m of state.marks.filter(m=>m.kind===k)){const p=P(m.pos);if(inView(p))drawMarkSnap(g,m,p[0],p[1]);}
+  // norte y créditos
+  const br=map.getBearing();g.save();g.translate(W-40,40);g.beginPath();g.arc(0,0,22,0,Math.PI*2);g.fillStyle='rgba(255,255,255,.92)';g.fill();g.lineWidth=1.5;g.strokeStyle='#111';g.stroke();
+  g.rotate(-br*Math.PI/180);g.beginPath();g.moveTo(0,-15);g.lineTo(6,4);g.lineTo(0,1);g.lineTo(-6,4);g.closePath();g.fillStyle='#d62828';g.fill();centerText(g,'N',0,11,FONT(800,11),'#111');g.restore();
+  g.font='500 11px Arial, sans-serif';g.textAlign='right';g.textBaseline='alphabetic';const cred='Imágenes y calles © Esri · Grifos: Aguas Andinas · Croquis PM';
+  const cw=g.measureText(cred).width+12;g.fillStyle='rgba(255,255,255,.8)';g.fillRect(W-cw,H-18,cw,18);g.fillStyle='#222';g.fillText(cred,W-6,H-5);
+  g.restore();
+  return cv;
+}
+let lastSnap=null;
+async function openExport(){
+  if(!mapReady){toast('El mapa todavía no termina de cargar');return;}
+  openModal('Imagen del croquis','<p class="help" style="margin-top:0">Generando imagen en alta resolución…</p>',[{label:'Cerrar'}]);
+  let cv;try{cv=await renderSnapshot(2);}catch(e){$('#mBody').innerHTML='<p>No se pudo generar la imagen: '+esc(e.message)+'</p>';return;}
+  const jpg=await new Promise(r=>cv.toBlob(r,'image/jpeg',.92));
+  const d=new Date();const name=`croquis_${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.jpg`;
+  if(lastSnap&&lastSnap.url)URL.revokeObjectURL(lastSnap.url);
+  lastSnap={cv,jpg,name,url:URL.createObjectURL(jpg)};
+  const kb=Math.round(jpg.size/1024);
+  $('#mBody').innerHTML=`<img src="${lastSnap.url}" alt="Croquis" style="width:100%;border-radius:8px;border:1px solid var(--line)">
+    <p class="help">${cv.width}×${cv.height} px · ${kb>1024?(kb/1024).toFixed(1)+' MB':kb+' KB'}. Para mandarla desde este equipo: <b>Copiar imagen</b> y pégala (Ctrl+V) en WhatsApp Web, Telegram o el correo.</p>`;
+  const f=$('#mFoot');f.innerHTML='';
+  const mk=(label,cls,fn)=>{const b=document.createElement('button');b.textContent=label;if(cls)b.className=cls;b.onclick=fn;f.appendChild(b);return b;};
+  mk('Cerrar','',closeModal);
+  if(navigator.canShare&&navigator.canShare({files:[new File([jpg],name,{type:'image/jpeg'})]}))
+    mk('Compartir…','',async()=>{try{await navigator.share({files:[new File([jpg],name,{type:'image/jpeg'})],title:state.title||'Croquis PM'});}catch(e){}});
+  mk('Descargar .jpg','',()=>{const a=document.createElement('a');a.href=lastSnap.url;a.download=name;document.body.appendChild(a);a.click();a.remove();});
+  mk('Copiar imagen','pri',async()=>{try{const png=await new Promise(r=>cv.toBlob(r,'image/png'));await navigator.clipboard.write([new ClipboardItem({'image/png':png})]);toast('Imagen copiada: pégala con Ctrl+V');}catch(e){toast('Este navegador no permitió copiar la imagen; usa Descargar');}});
+}
+
 /* =========================================================
    Toasts y modales
    ========================================================= */
@@ -1332,10 +1465,11 @@ function bindUI(){
   $('#menu').addEventListener('click',e=>{const b=e.target.closest('[data-menu]');if(!b)return;$('#menu').classList.remove('open');
     const k=b.dataset.menu;
     if(k==='new')newIncident();if(k==='export')exportJSON();if(k==='import')$('#fileImport').click();if(k==='summary')copyText(summaryText());
-    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);
+    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='snap')openExport();
     if(k==='theme'){settings.theme=settings.theme==='light'?'dark':'light';saveSettings();applySettings();}
     if(k==='gmaps'){const c=map?map.getCenter():{lat:-33.44,lng:-70.65};window.open(`https://www.google.com/maps/@?api=1&map_action=map&center=${c.lat.toFixed(6)},${c.lng.toFixed(6)}&zoom=19&basemap=satellite`,'_blank','noopener');}});
   $('#fileImport').addEventListener('change',e=>{const f=e.target.files[0];if(f)importJSON(f);e.target.value='';});
+  $('#btnSnap').onclick=openExport;
   $('#btnStreet').onclick=()=>{const o=getSel();const p=o&&o.pos?{lng:o.pos[0],lat:o.pos[1]}:(map?map.getCenter():null);if(!p)return;
     window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat.toFixed(6)},${p.lng.toFixed(6)}`,'_blank','noopener');};
   const togglePresent=()=>{document.body.classList.toggle('present');setTimeout(()=>map&&map.resize(),60);};
@@ -1382,7 +1516,7 @@ function tick(){$('#clock').textContent=new Date().toLocaleTimeString('es-CL',{h
    ========================================================= */
 bindUI();applySettings();render();tick();setInterval(tick,1000);
 loadMapLib().then(initMap).catch(err=>showMapError('No se pudo cargar el mapa: '+err.message+'. Revisa la conexión a internet y recarga la página.'));
-window.__croquis={get state(){return state;},get map(){return map;},setMode,select,orientA};
+window.__croquis={get state(){return state;},get map(){return map;},setMode,select,orientA,snap:()=>renderSnapshot(2).then(cv=>cv.toDataURL('image/jpeg',.92))};
 })();
 </script>
 </body>
