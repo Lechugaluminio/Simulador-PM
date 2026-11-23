@@ -30,10 +30,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-off
 svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ---------- barra superior ---------- */
-#top{display:flex;align-items:center;gap:10px;padding:7px 12px;background:var(--panel);border-bottom:3px solid var(--ink);position:relative;z-index:30;min-height:58px}
+#top{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--panel);border-bottom:3px solid var(--ink);position:relative;z-index:30;min-height:58px}
 #title{flex:1 1 300px;font-family:var(--fc);font-weight:800;font-size:28px;border-color:transparent;background:transparent;padding:2px 8px}
 #title:hover{border-color:var(--line)}
-#search{position:relative;display:flex;gap:6px;flex:0 1 470px}
+#search{position:relative;display:flex;gap:6px;flex:0 4 470px;min-width:150px}
 #addr{flex:1}
 #results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);max-height:380px;overflow:auto;display:none;z-index:50}
 #results.open{display:block}
@@ -49,6 +49,12 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke
 #summary{font-family:var(--fc);font-size:18px;font-weight:600;white-space:nowrap;padding:0 10px;border-left:2px solid var(--line);border-right:2px solid var(--line);line-height:1.15}
 #summary b{font-weight:800;font-size:22px}
 .tbtn{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ddmenu{position:absolute;top:calc(100% + 6px);left:0;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);min-width:290px;padding:6px;display:none;z-index:60}
+.ddmenu.open{display:block}
+.ddmenu button{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;padding:10px 12px;border-radius:6px}
+.ddmenu button span{display:flex;flex-direction:column;line-height:1.2}
+.ddmenu button small{font-weight:500;color:var(--muted);font-size:12.5px}
+#btnShare .chev{font-size:11px;opacity:.7}
 #menu{position:absolute;right:12px;top:calc(100% + 4px);background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);min-width:250px;padding:6px;display:none;z-index:60}
 #menu.open{display:block}
 #menu button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;padding:10px 12px;border-radius:6px;font-weight:600}
@@ -213,14 +219,32 @@ body.sun .m-side,body.sun .m-pc,body.sun .m-circ{border-width:4px}
 body.sun #hint{background:#000;border:3px solid #ffd60a;font-size:17px}
 body.sun .tst{background:#000;border:2px solid #ffd60a;font-size:16px}
 body.sun #btnSun{background:#ffd60a;border-color:#000;color:#000}
-body.sun #btnPhone,body.sun #btnSnap,body.sun #btnPresent{font-size:0;gap:0;padding:7px 10px}
+
 #btnSun svg{fill:none}
+@media (max-width:1700px){
+  #summary{font-size:16px}#summary b{font-size:19px}
+  .clock b{font-size:23px}
+  #search{flex:0 4 340px}
+  body.sun .clock b{font-size:25px}body.sun #summary{font-size:16px}body.sun #summary b{font-size:20px}body.sun #title{font-size:25px;min-width:200px}
+}
+@media (max-width:1450px){
+  #btnStreet{display:none}
+  #title{font-size:24px}
+  body.sun .clock b{font-size:23px}body.sun #summary{font-size:15px}body.sun #summary b{font-size:19px}body.sun #title{font-size:24px;min-width:170px}
+}
+@media (max-width:1350px){
+  #btnFull{display:none}
+  #summary{font-size:14px;padding:0 6px}#summary b{font-size:17px}
+  .clock b{font-size:20px}
+  #title{min-width:140px}
+  body.sun .clock b{font-size:22px}body.sun #summary{font-size:14px}body.sun #summary b{font-size:18px}body.sun #title{min-width:150px}
+}
 /* ---------- copia de terreno (fork en el celular) ---------- */
 #forkInfo{display:none;flex-direction:column;align-items:flex-start;line-height:1.05;background:#7c3aed;color:#fff;border-radius:8px;padding:4px 9px;font-family:var(--fc)}
 #forkInfo small{font-family:var(--fb);font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
 #forkInfo b{font-size:18px;font-weight:800}
 body.fork #top{border-bottom-color:#7c3aed}
-body.fork #btnPhone,body.fork #search,body.fork #btnPresent,body.fork .master-only{display:none!important}
+body.fork #shareWrap,body.fork #search,body.fork .master-only{display:none!important}
 body.fork #forkInfo,body.fork #btnChanges,body.fork #btnShareView,body.fork .fork-only{display:inline-flex!important}
 #btnChanges b{background:#7c3aed;color:#fff;border-radius:10px;padding:0 7px;font-size:13px}
 .ghost-lbl{font-family:var(--fc);font-weight:700;font-size:calc(13px * var(--tok));color:#111;background:rgba(255,255,255,.8);border:1.5px dashed #111;border-radius:4px;padding:1px 5px;pointer-events:none;white-space:nowrap}
@@ -238,7 +262,9 @@ body.fork #forkInfo,body.fork #btnChanges,body.fork #btnShareView,body.fork .for
   .clock,#forkInfo{order:3}
   #btnChanges,#btnShareView{order:4}
   #search{order:5;flex:1 1 100%}
-  #summary,#btnSnap,#btnPhone,#btnStreet,#btnPresent,#btnFull{display:none}
+  #summary,#btnStreet,#btnFull{display:none}
+  #shareWrap{order:2}#btnShare .lb,#btnShare .chev{display:none}
+  .ddmenu{right:0;left:auto}
   #btnSun{order:2;padding:7px 9px}
   #btnSun .lb{display:none}
   .menu-compact{display:flex!important}
@@ -306,10 +332,8 @@ body.present #exitPresent{display:inline-flex!important}
   <span id="forkInfo" title="Copia de terreno: los cambios quedan solo en este celular"><small>Copia de terreno</small><b>tomada <span id="forkAt">--:--</span></b></span>
   <button id="btnChanges" class="tbtn" style="display:none" title="Ver qué cambió respecto del croquis del puesto de comando">Cambios <b id="nChanges">0</b></button>
   <button id="btnShareView" class="tbtn pri" style="display:none"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>Compartir imagen</button>
-  <button id="btnPhone" class="tbtn" title="Abrir este croquis en un celular escaneando un código QR"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Celular</button>
-  <button id="btnSnap" class="tbtn" title="Exportar imagen del croquis en alta resolución"><svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Imagen</button>
+  <div id="shareWrap" style="position:relative;display:flex"><button id="btnShare" class="tbtn" title="Compartir: copia para celular o imagen del croquis"><svg class="i" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg><span class="lb">Compartir</span><span class="chev">▾</span></button><div id="shareMenu" class="ddmenu"><button data-share="phone" class="master-only"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span><b>Copia para celular</b><small>Código QR para llevar el croquis a terreno</small></span></button><button data-share="snap"><svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span><b>Imagen del croquis</b><small>Alta resolución: copiar o descargar</small></span></button></div></div>
   <button id="btnStreet" class="tbtn hide-present" title="Abrir Street View (del elemento seleccionado o del centro del mapa)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M9 21l1-7-2-1 1-4h6l1 4-2 1 1 7"/></svg></button>
-  <button id="btnPresent" class="tbtn hide-present" title="Modo presentación (P)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg>Presentación</button>
   <button id="exitPresent" class="tbtn" style="display:none" title="Salir del modo presentación (P)">Salir (P)</button>
   <button id="btnSun" class="tbtn" title="Modo sol: alto contraste para usar al exterior (S)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg><span class="lb">Sol</span></button>
   <button id="btnFull" class="tbtn" title="Pantalla completa"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
@@ -318,10 +342,9 @@ body.present #exitPresent{display:inline-flex!important}
     <button data-menu="new" class="master-only">Nuevo incidente…</button>
     <button data-menu="export" class="master-only">Exportar croquis (.json)</button>
     <button data-menu="import" class="master-only">Importar croquis…</button>
-    <button data-menu="snap">Exportar imagen del croquis</button>
-    <button data-menu="phone" class="master-only menu-compact">Código QR para celular</button>
-    <button data-menu="street" class="menu-compact">Street View</button>
-    <button data-menu="full" class="menu-compact">Pantalla completa</button>
+    <button data-menu="present" class="master-only">Modo presentación (P)</button>
+    <button data-menu="street">Street View</button>
+    <button data-menu="full">Pantalla completa</button>
     <button data-menu="discard" class="fork-only" style="display:none">Descartar esta copia…</button>
     <hr>
     <button data-menu="gmaps">Abrir esta zona en Google Maps</button>
@@ -1751,26 +1774,26 @@ function bindUI(){
   $('#btnSearch').onclick=doSearch;
   $('#addr').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();if(e.key==='Escape')hideResults();});
   $('#results').addEventListener('click',e=>{const it=e.target.closest('.it');if(!it)return;const r=lastResults[+it.dataset.i];hideResults();if(r)goTo([+r.lon,+r.lat],r.display_name);});
-  document.addEventListener('click',e=>{if(!e.target.closest('#search'))hideResults();if(!e.target.closest('#flyInst,#btnInst'))$('#flyInst').classList.remove('open');if(!e.target.closest('#menu,#btnMenu'))$('#menu').classList.remove('open');});
+  document.addEventListener('click',e=>{if(!e.target.closest('#search'))hideResults();if(!e.target.closest('#flyInst,#btnInst'))$('#flyInst').classList.remove('open');if(!e.target.closest('#menu,#btnMenu'))$('#menu').classList.remove('open');if(!e.target.closest('#shareWrap'))$('#shareMenu').classList.remove('open');});
   $('#btnMenu').onclick=()=>$('#menu').classList.toggle('open');
   $('#menu').addEventListener('click',e=>{const b=e.target.closest('[data-menu]');if(!b)return;$('#menu').classList.remove('open');
     const k=b.dataset.menu;
     if(k==='new')newIncident();if(k==='export')exportJSON();if(k==='import')$('#fileImport').click();
-    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='snap')openExport();if(k==='phone')openPhoneQR();if(k==='street')$('#btnStreet').click();if(k==='full')$('#btnFull').click();if(k==='discard')discardFork();
+    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='present')togglePresent();if(k==='street')$('#btnStreet').click();if(k==='full')$('#btnFull').click();if(k==='discard')discardFork();
     if(k==='theme'){settings.theme=settings.theme==='light'?'dark':'light';saveSettings();applySettings();}
     if(k==='sun')toggleSun();
     if(k==='gmaps'){const c=map?map.getCenter():{lat:-33.44,lng:-70.65};window.open(`https://www.google.com/maps/@?api=1&map_action=map&center=${c.lat.toFixed(6)},${c.lng.toFixed(6)}&zoom=19&basemap=satellite`,'_blank','noopener');}});
   $('#fileImport').addEventListener('change',e=>{const f=e.target.files[0];if(f)importJSON(f);e.target.value='';});
-  $('#btnSnap').onclick=openExport;
+  const shareMenu=$('#shareMenu');
+  $('#btnShare').onclick=e=>{e.stopPropagation();$('#menu').classList.remove('open');shareMenu.classList.toggle('open');};
+  shareMenu.addEventListener('click',e=>{const b=e.target.closest('[data-share]');if(!b)return;shareMenu.classList.remove('open');if(b.dataset.share==='phone')openPhoneQR();else openExport();});
   $('#btnSun').onclick=toggleSun;
-  $('#btnPhone').onclick=openPhoneQR;
   $('#btnShareView').onclick=shareFromViewer;
   $('#btnChanges').onclick=openChanges;
   $('#scrim').onclick=()=>document.body.classList.remove('drawer');
   $('#btnStreet').onclick=()=>{const o=getSel();const p=o&&o.pos?{lng:o.pos[0],lat:o.pos[1]}:(map?map.getCenter():null);if(!p)return;
     window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat.toFixed(6)},${p.lng.toFixed(6)}`,'_blank','noopener');};
-  const togglePresent=()=>{document.body.classList.toggle('present');setTimeout(()=>map&&map.resize(),60);};
-  $('#btnPresent').onclick=togglePresent;$('#exitPresent').onclick=togglePresent;
+  $('#exitPresent').onclick=togglePresent;
   $('#btnSide').onclick=()=>{if(isCompact()){document.body.classList.toggle('drawer');return;}document.body.classList.toggle('sb-hidden');setTimeout(()=>map&&map.resize(),60);};
   $('#btnFull').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){}};
   $('#elapsedBox').onclick=editStart;
@@ -1782,6 +1805,7 @@ function bindUI(){
   document.addEventListener('keydown',onKey);
   window.addEventListener('storage',e=>{if(e.key===KEY_STATE&&e.newValue&&e.newValue!==lastSaved){try{state=JSON.parse(e.newValue);lastSaved=e.newValue;render();}catch(_){}}});
 }
+function togglePresent(){document.body.classList.toggle('present');setTimeout(()=>map&&map.resize(),60);}
 function onKey(e){
   const tag=(e.target.tagName||'').toLowerCase();const typing=tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
   if(e.key==='Escape'){
@@ -1803,7 +1827,7 @@ function onKey(e){
   if(k==='s')toggleSun();
   if(k==='n'&&map)map.easeTo({bearing:0});
   if(k==='z')fitAll();
-  if(k==='p'){document.body.classList.toggle('present');setTimeout(()=>map&&map.resize(),60);}
+  if(k==='p')togglePresent();
   if(k==='?'||k==='h')openHelp();
 }
 
