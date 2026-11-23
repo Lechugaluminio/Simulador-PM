@@ -19,7 +19,8 @@ Tablero de mapa para el **puesto de mando** de bomberos: reemplaza el croquis de
 - Mismas convenciones que la pizarra: **✕** = carro sin función o que no puede cumplirla, **◯** = carro retirándose.
 - **Grifos automáticos:** se cargan desde el mapa público *Ubicación de grifos* de Aguas Andinas (Aguas Andinas, Aguas Cordillera y Aguas Manquehue) y se guardan en el navegador; se actualizan solos cada semana o desde *Menú → Actualizar grifos*.
 - **Imagen** del croquis en alta resolución (doble de la pantalla) con encabezado de incidente, hora y resumen: se copia para pegar en WhatsApp Web / correo, o se descarga en .jpg.
-- Modo presentación para la pantalla grande, contador de tiempo del incidente, resumen copiable para la bitácora, Street View.
+- **Celular:** un código QR abre una vista liviana del mismo croquis en el celular, con botón para compartir la imagen. Los datos del incidente viajan dentro del QR (en la parte `#` del enlace, que el navegador no envía a ningún servidor) y quedan solo en el celular.
+- Modo presentación para la pantalla grande, contador de tiempo del incidente, Street View.
 - Se usa con mouse; el teclado es opcional (atajos en *Menú → Ayuda*).
 
 ## Datos
