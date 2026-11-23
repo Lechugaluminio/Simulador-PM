@@ -7,7 +7,7 @@ Tablero de mapa para el **puesto de mando** de bomberos: reemplaza el croquis de
 ## Qué hace
 
 - Busca la dirección o el cruce del despacho (ej: `Las Enredaderas & Avenida Fermín Vivaceta, Independencia`) y centra el mapa.
-- Satélite (Esri) con nombres de calles y numeración, o mapa de calles (OpenStreetMap / CARTO). Se puede atenuar para que las piezas resalten.
+- Satélite (Esri) con nombres de calles y numeración, o mapa de calles (Esri). Se puede atenuar para que las piezas resalten.
 - Croquis: estructura con lados A–D automáticos (y botón **A abajo** para orientar como la pizarra), área con fuego achurada, zona de colapso, líneas con flecha, trazos, foco, PM (círculo amarillo, estándar SCI), grifos, piscinas, pastilla de MAYDAY y textos.
 - Carros: se pegan los códigos despachados, se arrastran al mapa al llegar (queda la hora) y se les asigna estado, función, lado y nota. Color por tipo (B, BX, BM, BT, Q, M, R, RX, H, Z, K, K-3, X, S), editable en *Ajustes*.
 - Cada carro indica a qué salida pertenece: **despacho inicial, 1ª, 2ª o 3ª alarma**.
@@ -25,4 +25,4 @@ Necesita internet para el mapa y la búsqueda (Nominatim / Overpass de OpenStree
 
 ## Créditos
 
-Imágenes y nombres de calles © Esri · Calles © OpenStreetMap / CARTO · Grifos: Aguas Andinas · Mapa: MapLibre GL JS.
+Imágenes y nombres de calles © Esri · Grifos: Aguas Andinas · Mapa: MapLibre GL JS.

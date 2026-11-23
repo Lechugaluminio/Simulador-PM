@@ -491,11 +491,10 @@ function applyFront(s,idx){
    Mapa
    ========================================================= */
 function makeStyle(){
-  const carto=n=>['a','b','c','d'].map(s=>`https://${s}.basemaps.cartocdn.com/rastertiles/${n}/{z}/{x}/{y}@2x.png`);
   return {version:8,
     sources:{
       sat:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19,attribution:'Imágenes © Esri, Maxar, Earthstar Geographics'},
-      streets:{type:'raster',tiles:carto('voyager'),tileSize:512,maxzoom:20,attribution:'© OpenStreetMap · © CARTO'},
+      streets:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'],tileSize:512,maxzoom:19,attribution:'Calles © Esri, HERE, Garmin, OpenStreetMap'},
       labels:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}'],tileSize:512,maxzoom:19,attribution:'Nombres © Esri'}
     },
     layers:[
@@ -1248,7 +1247,7 @@ function openHelp(){
     <tr><td><kbd>Supr</kbd></td><td>Eliminar lo seleccionado</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Deshacer</td></tr>
     <tr><td><kbd>Enter</kbd></td><td>Terminar dibujo</td><td><kbd>Retroceso</kbd></td><td>Borrar último punto</td></tr>
   </table>
-  <p class="help">Girar el mapa: clic derecho y arrastrar, o los botones ⟲ ⟳. Mapa base: imágenes y nombres © Esri; calles © OpenStreetMap / CARTO; búsqueda: Nominatim y Overpass (OpenStreetMap); grifos: mapa público de Aguas Andinas.</p>`);
+  <p class="help">Girar el mapa: clic derecho y arrastrar, o los botones ⟲ ⟳. Mapa base: imágenes, nombres y calles © Esri; búsqueda: Nominatim y Overpass (OpenStreetMap); grifos: mapa público de Aguas Andinas.</p>`);
 }
 
 /* =========================================================
