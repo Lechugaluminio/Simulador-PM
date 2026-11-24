@@ -1,0 +1,20 @@
+CROQUIS PM · VERSIÓN SIN CONEXIÓN (Windows)
+
+1. Descomprime esta carpeta en un lugar fijo (por ejemplo Documentos\CroquisPM o un pendrive).
+2. Abre CroquisPM.exe. Se abre la app en su propia ventana.
+   Si Windows muestra "Windows protegió su PC": Más información > Ejecutar de todas formas.
+3. La primera vez necesita internet: descarga la app, los grifos y el mapa local (unos minutos).
+   Puedes ver el avance en Menú > Actualizar mapa y grifos sin conexión.
+4. Para tenerlo a mano: clic derecho en CroquisPM.exe > Enviar a > Escritorio (crear acceso directo).
+
+Con internet se usa el satélite como siempre. Sin internet la app cambia sola al mapa local
+(botón "Sin conexión"), con calles, numeración, edificios, grifos y buscador de direcciones y cruces.
+Mapa y grifos se actualizan solos cada 7 días cuando hay conexión.
+
+Los datos quedan en la carpeta "datos" junto al programa. Para copiarlo a otro computador,
+copia la carpeta completa (con "datos") y no tendrá que descargar nada.
+
+Si ya tienes Python 3.9 o más nuevo, también puedes abrirlo con "Iniciar con Python.bat".
+
+Mapa local: (c) colaboradores de OpenStreetMap (ODbL). Grifos: Aguas Andinas.
+La imagen satelital (Esri) no se guarda: sus términos no permiten descargarla.

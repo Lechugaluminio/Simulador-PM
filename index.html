@@ -57,6 +57,8 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke
 #btnShare .chev{font-size:11px;opacity:.7}
 #menu{position:absolute;right:12px;top:calc(100% + 4px);background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);min-width:250px;padding:6px;display:none;z-index:60}
 #menu.open{display:block}
+#menu button small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+#menu button[data-menu="localupd"]{display:block}
 #menu button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;padding:10px 12px;border-radius:6px;font-weight:600}
 #menu hr{border:0;border-top:1px solid var(--line);margin:4px 0}
 
@@ -351,6 +353,8 @@ body.present #exitPresent{display:inline-flex!important}
     <hr>
     <button data-menu="gmaps">Abrir esta zona en Google Maps</button>
     <button data-menu="grifos">Actualizar grifos desde Aguas Andinas</button>
+    <button data-menu="localupd" style="display:none">Actualizar mapa y grifos sin conexión</button>
+    <button data-menu="offline">Descargar versión sin conexión (Windows)…</button>
     <button data-menu="sun">Modo sol (alto contraste) sí / no</button>
     <button data-menu="theme">Cambiar tema claro / oscuro</button>
     <button data-menu="settings">Ajustes…</button>
@@ -423,7 +427,7 @@ body.present #exitPresent{display:inline-flex!important}
     </nav>
 
     <div id="mapctl">
-      <div class="seg" id="baseSeg"><button data-base="sat">Satélite</button><button data-base="streets">Calles</button></div>
+      <div class="seg" id="baseSeg"><button data-base="sat">Satélite</button><button data-base="streets">Calles</button><button data-base="local" style="display:none" title="Mapa guardado en este computador (funciona sin internet)">Sin conexión</button></div>
       <label title="Nombres de calles sobre el satélite"><input type="checkbox" id="chkLabels"> Nombres</label>
       <label id="grifosLbl" title="Grifos publicados por Aguas Andinas (visibles al acercar el mapa)"><input type="checkbox" id="chkGrifos"> Grifos <span id="grifosInfo" style="color:var(--muted);font-weight:500"></span></label>
       <label title="Oscurecer el mapa para que las piezas resalten">Atenuar <input type="range" id="rngDim" min="0" max="0.7" step="0.05"></label>
@@ -513,6 +517,11 @@ let pendingFront=null;      // id de estructura que espera elegir lado A
 let sideIdx=0;
 let editingId=null;         // estructura en edición de vértices
 let map=null,mapReady=false,lastTileErr=0;
+/* ---- versión local (programa croquis_pm.py / CroquisPM.exe en http://127.0.0.1:8765) ---- */
+const LOCAL=/^(127\.0\.0\.1|localhost)$/.test(location.hostname)&&location.port==='8765';
+const OFFLINE_DL='https://github.com/Lechugaluminio/Simulador-PM/releases/download/sin-conexion/CroquisPM-Windows.zip';
+const LOC_FONT='Open Sans Semibold';
+let localInfo=null,localTimer=null,autoLocal=false,tileErrs=[];
 let lastLineColor=LINE_COLORS[0];
 let lastResults=[];
 
@@ -643,9 +652,61 @@ function makeStyle(){
       {id:'labels',type:'raster',source:'labels'}
     ]};
 }
+/* capas del mapa local (OpenStreetMap guardado en el computador): se agregan solo en la versión local */
+function localStyle(st){
+  if(!LOCAL||!localInfo||!localInfo.mapa)return st;
+  const glyphs=!!localInfo.glyphs;if(glyphs)st.glyphs='/vendor/glyphs/{fontstack}/{range}.pbf';
+  for(const k of ['roads','blds','addr'])st.sources['loc-'+k]={type:'geojson',data:EMPTY,attribution:'Mapa local © colaboradores de OpenStreetMap'};
+  const hid={visibility:'none'};const W=(a,b,c,d)=>['interpolate',['exponential',1.6],['zoom'],12,['match',['get','r'],1,a,2,a*.8,3,a*.6,a*.45],18,['match',['get','r'],1,b,2,b*.85,3,b*.7,4,b*.55,b*.35]];
+  const L=[
+    {id:'loc-bg',type:'background',layout:hid,paint:{'background-color':'#ece9e2'}},
+    {id:'loc-bld',type:'fill',source:'loc-blds',layout:hid,paint:{'fill-color':'#d8d1c6','fill-outline-color':'#b9b0a3'}},
+    {id:'loc-road-case',type:'line',source:'loc-roads',layout:{...hid,'line-join':'round','line-cap':'round'},paint:{'line-color':'#a59d91','line-width':W(3,26)}},
+    {id:'loc-road',type:'line',source:'loc-roads',layout:{...hid,'line-join':'round','line-cap':'round'},paint:{'line-color':['match',['get','r'],1,'#f6c35b',2,'#fde39b','#ffffff'],'line-width':W(2,22)}}];
+  if(glyphs)L.push(
+    {id:'loc-name',type:'symbol',source:'loc-roads',minzoom:14,filter:['!=',['get','n'],''],layout:{...hid,'symbol-placement':'line','text-field':['get','n'],'text-font':[LOC_FONT],'text-size':['interpolate',['linear'],['zoom'],14,10,18,14],'text-max-angle':35,'symbol-spacing':300},paint:{'text-color':'#2b2b2b','text-halo-color':'#fff','text-halo-width':1.6}},
+    {id:'loc-addr',type:'symbol',source:'loc-addr',minzoom:17.5,layout:{...hid,'text-field':['get','h'],'text-font':[LOC_FONT],'text-size':11,'text-allow-overlap':false},paint:{'text-color':'#6a5f52','text-halo-color':'#f4f1ea','text-halo-width':1.2}});
+  const i=st.layers.findIndex(l=>l.id==='labels');st.layers.splice(i,0,...L);
+  return st;
+}
+const LOC_LAYERS=['loc-bg','loc-bld','loc-road-case','loc-road','loc-name','loc-addr'];
+let locReq=0;
+async function loadLocalFeatures(){
+  if(!mapReady||settings.base!=='local'||!localInfo||!localInfo.mapa)return;
+  const b=map.getBounds(),z=map.getZoom(),id=++locReq;
+  const pad=(v,d)=>v.toFixed(5);
+  try{const r=await fetch(`/local/features?bbox=${[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].map(v=>v.toFixed(5)).join(',')}&z=${z.toFixed(2)}`);
+    const j=await r.json();if(id!==locReq)return;
+    map.getSource('loc-roads')?.setData({type:'FeatureCollection',features:j.roads||[]});
+    map.getSource('loc-blds')?.setData({type:'FeatureCollection',features:j.blds||[]});
+    map.getSource('loc-addr')?.setData({type:'FeatureCollection',features:j.addr||[]});
+  }catch(e){console.warn('mapa local',e);}
+}
+function useLocalMap(on,why){
+  if(!LOCAL||!localInfo||!localInfo.mapa)return;
+  if(on&&settings.base!=='local'){settings.prevBase=settings.base;settings.base='local';autoLocal=!!why;saveSettings();applySettings();
+    if(why)toast(why+' Usando el mapa local del '+fmtDate(localInfo.mapa_fecha)+' (sin satélite).',null,9000);}
+  else if(!on&&settings.base==='local'){settings.base=settings.prevBase&&settings.prevBase!=='local'?settings.prevBase:'sat';autoLocal=false;saveSettings();applySettings();}
+}
+const fmtDate=d=>{if(!d)return '—';const m=String(d).match(/(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}-${m[2]}-${m[1]}`:String(d);};
+async function refreshLocalInfo(){try{localInfo=await (await fetch('/local/status',{cache:'no-store'})).json();}catch(e){}renderLocalMenu();return localInfo;}
+function renderLocalMenu(){
+  const b=$('[data-menu="localupd"]');if(!b)return;
+  if(!LOCAL){b.style.display='none';return;}
+  b.style.display='';const i=localInfo||{};
+  b.innerHTML=i.updating?`Actualizando mapa y grifos… ${Math.round((i.progress||0)*100)}%<small>${esc(i.step||'')}</small>`:
+    `Actualizar mapa y grifos sin conexión<small>Mapa local: ${i.mapa?fmtDate(i.mapa_fecha):'sin descargar'}${i.error?' · '+esc(i.error):''}</small>`;
+}
+function watchLocalUpdate(){
+  clearInterval(localTimer);
+  localTimer=setInterval(async()=>{const was=localInfo&&localInfo.updating;const i=await refreshLocalInfo();if(!i)return;
+    if(was&&!i.updating){clearInterval(localTimer);localTimer=null;
+      if(i.error&&!i.mapa)toast('No se pudo actualizar: '+i.error);
+      else toast('Mapa y grifos sin conexión actualizados ('+fmtDate(i.mapa_fecha)+'). Recarga para usar todo lo nuevo.',[{label:'Recargar',fn:()=>location.reload()}],12000);}},2500);
+}
 function loadMapLib(){
   if(window.maplibregl)return Promise.resolve();
-  const urls=['https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js'];
+  const urls=[...(LOCAL?['/vendor/maplibre-gl.js']:[]),'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js'];
   return new Promise((res,rej)=>{let i=0;const next=()=>{if(i>=urls.length)return rej(new Error('no se pudo descargar la librería del mapa'));
     const s=document.createElement('script');s.src=urls[i++];s.onload=()=>window.maplibregl?res():next();s.onerror=()=>{s.remove();next();};document.head.appendChild(s);};next();});
 }
@@ -656,7 +717,7 @@ function initMap(){
   const center=(v&&v.center)||state.center||[-70.6506,-33.4372];
   const zoom=v&&typeof v.zoom==='number'?v.zoom:(state.center?18:13);
   try{
-    map=new maplibregl.Map({container:'map',style:makeStyle(),center,zoom,bearing:(v&&v.bearing)||0,maxZoom:21,minZoom:8,
+    map=new maplibregl.Map({container:'map',style:localStyle(makeStyle()),center,zoom,bearing:(v&&v.bearing)||0,maxZoom:21,minZoom:8,
       pitchWithRotate:false,maxPitch:0,attributionControl:false,boxZoom:false,fadeDuration:0,preserveDrawingBuffer:true});
   }catch(e){showMapError('Este equipo no pudo iniciar el mapa (WebGL desactivado o no disponible). '+e.message);return;}
   map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
@@ -667,8 +728,8 @@ function initMap(){
   map.on('click',onMapClick);
   map.on('mousemove',onMapMove);
   map.on('dblclick',onMapDbl);
-  map.on('moveend',()=>{const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
-  map.on('error',e=>{const now=Date.now();if(e&&e.sourceId&&now-lastTileErr>30000){lastTileErr=now;toast('Algunas imágenes del mapa no cargan. Revisa la conexión o cambia a “Calles”.');}});
+  map.on('moveend',()=>{loadLocalFeatures();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
+  map.on('error',e=>{const now=Date.now();if(e&&e.sourceId&&LOCAL&&settings.base!=='local'&&/^(sat|streets|labels)$/.test(e.sourceId)){tileErrs=tileErrs.filter(t=>now-t<20000);tileErrs.push(now);if(!navigator.onLine||tileErrs.length>=6){tileErrs=[];useLocalMap(true,'El mapa satelital no carga (¿sin internet?).');return;}}if(e&&e.sourceId&&now-lastTileErr>30000){lastTileErr=now;toast('Algunas imágenes del mapa no cargan. Revisa la conexión o cambia a “Calles”.');}});
 }
 function addImages(){
   const c=document.createElement('canvas');c.width=c.height=20;const x=c.getContext('2d');
@@ -1197,6 +1258,7 @@ async function doSearch(){
   if(co){let a=+co[1],b=+co[2];let lat=a,lng=b;if(Math.abs(a)>Math.abs(b)){lat=b;lng=a;}hideResults();goTo([lng,lat],q);return;}
   searching=true;$('#btnSearch').disabled=true;
   try{
+    if(LOCAL&&localInfo&&localInfo.mapa&&(!navigator.onLine||settings.base==='local')){await localSearch(q);return;}
     const cross=parseCross(q);
     if(cross){
       showResults('<div class="msg">Buscando el cruce de <b>'+esc(cross.a)+'</b> con <b>'+esc(cross.b)+'</b>…</div>');
@@ -1210,10 +1272,22 @@ async function doSearch(){
     let res=[];
     try{res=await nomSearch(q,false);}catch(e){console.warn(e);}
     if(!res.length){try{res=await photonSearch(q);}catch(e){console.warn(e);}}
+    if(!res.length&&LOCAL&&localInfo&&localInfo.mapa){if(await localSearch(q))return;}
     if(!res.length){showResults(`<div class="msg">Sin resultados${cross?' (tampoco pude calcular el cruce)':''}. Prueba con número de calle u otra escritura, o navega el mapa y usa la herramienta <b>Foco</b> directamente.</div>`);return;}
     lastResults=res;
     showResults(res.map((r,i)=>`<div class="it" data-i="${i}">${esc(shortName(r.display_name))}<small>${esc(r.display_name)}</small></div>`).join(''));
   }finally{searching=false;$('#btnSearch').disabled=false;}
+}
+/* búsqueda en el mapa local (versión sin conexión) */
+async function localSearch(q){
+  showResults('<div class="msg">Buscando en el mapa local…</div>');
+  let j=null;try{j=await (await fetch('/local/search?q='+encodeURIComponent(q))).json();}catch(e){}
+  const rs=(j&&j.results)||[];
+  if(!rs.length){showResults(`<div class="msg">${esc((j&&j.msg)||'Sin resultados en el mapa local.')} Prueba con otra escritura, el cruce de dos calles (<i>Calle A &amp; Calle B</i>) o navega el mapa.</div>`);return false;}
+  if(rs.length===1&&rs[0].cross){hideResults();goTo([rs[0].lon,rs[0].lat],q,'Cruce encontrado en el mapa local');return true;}
+  lastResults=rs.map(r=>({lat:r.lat,lon:r.lon,display_name:r.label+(r.detail?', '+r.detail:'')}));
+  showResults('<div class="msg" style="padding-bottom:2px">Resultados del mapa local (sin conexión):</div>'+lastResults.map((r,i)=>`<div class="it" data-i="${i}">${esc(shortName(r.display_name))}<small>${esc(r.display_name)}</small></div>`).join(''));
+  return true;
 }
 function pulse(pos){if(!map)return;const el=document.createElement('div');el.innerHTML='<div class="ring"></div>';el.style.pointerEvents='none';const m=new maplibregl.Marker({element:el}).setLngLat(pos).addTo(map);setTimeout(()=>m.remove(),5600);}
 function addFire(pos){state.marks.push({id:uid(),kind:'fuego',pos,text:''});commit();}
@@ -1577,7 +1651,7 @@ async function shareFromViewer(){
 }
 function loadQRLib(){
   if(window.qrcode)return Promise.resolve();
-  const urls=['https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js','https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'];
+  const urls=[...(LOCAL?['/vendor/qrcode.min.js']:[]),'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js','https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'];
   return new Promise((res,rej)=>{let i=0;const next=()=>{if(i>=urls.length)return rej(new Error('no se pudo cargar el generador de QR'));
     const s=document.createElement('script');s.src=urls[i++];s.onload=()=>window.qrcode?res():next();s.onerror=()=>{s.remove();next();};document.head.appendChild(s);};next();});
 }
@@ -1692,6 +1766,22 @@ function openSettings(){
   $('#sAddType').onclick=()=>{$('#sTypes').insertAdjacentHTML('beforeend','<tr><td><input class="tp" type="text" maxlength="6" style="width:72px;text-transform:uppercase"></td><td><input class="tn" type="text" style="width:100%"></td><td><input class="tc" type="color" value="#6b7280"></td><td><button class="tdel">✕</button></td></tr>');};
   $('#sReset').onclick=()=>{settings=Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),{base:settings.base,labels:settings.labels,dim:settings.dim,theme:settings.theme});saveSettings();applySettings();closeModal();render();toast('Ajustes restaurados');};
 }
+function openOffline(){
+  const i=localInfo||{};
+  openModal('Versión sin conexión (Windows)',`
+  <p style="margin-top:0">Programa para el computador del puesto de mando o del K-3. Abre esta misma app en su propia ventana y guarda en el computador:</p>
+  <ul style="padding-left:20px">
+    <li>la app y sus librerías (abre sin internet),</li>
+    <li>los <b>grifos</b> de Aguas Andinas,</li>
+    <li>un <b>mapa de calles, numeración y edificios</b> (OpenStreetMap) de las comunas del CBS: Santiago, Estación Central, Independencia, Recoleta, Renca, Providencia, Las Condes, Vitacura y Lo Barnechea, con ~1 km extra para despachos limítrofes,</li>
+    <li>un <b>buscador sin conexión</b> de direcciones y cruces.</li>
+  </ul>
+  <p>Con internet usa el satélite como siempre. Sin internet cambia solo al mapa local (botón <b>Sin conexión</b>). Mapa y grifos se actualizan solos cada 7 días cuando hay conexión, o desde <b>Menú → Actualizar mapa y grifos sin conexión</b>.</p>
+  <p><b>Cómo instalar:</b> descarga el .zip, descomprímelo en una carpeta fija (por ejemplo <code>Documentos\\CroquisPM</code> o un pendrive) y abre <b>CroquisPM.exe</b>. La primera vez descarga el mapa (unos minutos). Para tenerlo a mano: clic derecho en CroquisPM.exe → <i>Enviar a → Escritorio (crear acceso directo)</i>.</p>
+  <p class="help">La imagen satelital no se guarda: sus términos de uso no permiten descargarla. Los croquis de la versión local se guardan aparte de los de esta página; para pasar uno, usa <b>Exportar / Importar croquis</b>.</p>
+  ${LOCAL?`<p><b>Estás usando la versión local.</b> Mapa local: ${i.mapa?fmtDate(i.mapa_fecha):'sin descargar'}.</p>`:''}`,
+  [{label:'Descargar para Windows (.zip)',cls:'pri',fn:()=>{window.open(OFFLINE_DL,'_blank','noopener');}},{label:'Cerrar'}]);
+}
 function openHelp(){
   openModal('Cómo usar Croquis PM',`
   <ol style="padding-left:20px;margin-top:0">
@@ -1733,11 +1823,14 @@ function applySettings(){
   document.documentElement.style.setProperty('--tok',settings.tok*(sun?1.25:1));
   $$('#baseSeg button').forEach(b=>b.classList.toggle('on',b.dataset.base===settings.base));
   $('#chkLabels').checked=!!settings.labels;$('#chkLabels').disabled=settings.base!=='sat';
+  const lb=$('#baseSeg [data-base="local"]');if(lb)lb.style.display=LOCAL&&localInfo&&localInfo.mapa?'':'none';
   $('#rngDim').value=settings.dim;$('#chkGrifos').checked=!!settings.grifos;
   if(mapReady){
     map.setLayoutProperty('sat','visibility',settings.base==='sat'?'visible':'none');
     map.setLayoutProperty('streets','visibility',settings.base==='streets'?'visible':'none');
     map.setLayoutProperty('labels','visibility',settings.base==='sat'&&settings.labels?'visible':'none');
+    for(const id of LOC_LAYERS)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',settings.base==='local'?'visible':'none');
+    if(settings.base==='local')loadLocalFeatures();
     if(map.getLayer('grifos'))map.setLayoutProperty('grifos','visibility',settings.grifos?'visible':'none');
     for(const id of ['sat','streets']){map.setPaintProperty(id,'raster-brightness-max',1-settings.dim);map.setPaintProperty(id,'raster-saturation',sun?Math.max(-1,.15-settings.dim*1.2):-Math.min(1,settings.dim*1.2));map.setPaintProperty(id,'raster-contrast',sun?.22:0);}
     map.setPaintProperty('labels','raster-contrast',sun?.35:0);
@@ -1792,7 +1885,7 @@ function bindUI(){
   $('#menu').addEventListener('click',e=>{const b=e.target.closest('[data-menu]');if(!b)return;$('#menu').classList.remove('open');
     const k=b.dataset.menu;
     if(k==='new')newIncident();if(k==='export')exportJSON();if(k==='import')$('#fileImport').click();
-    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='present')togglePresent();if(k==='street')$('#btnStreet').click();if(k==='full')$('#btnFull').click();if(k==='discard')discardFork();
+    if(k==='settings')openSettings();if(k==='help')openHelp();if(k==='grifos'&&mapReady)initGrifos(true);if(k==='offline')openOffline();if(k==='localupd'){if(localInfo&&localInfo.updating)return;fetch('/local/update',{method:'POST'}).then(()=>{toast('Actualizando mapa y grifos en segundo plano. Puedes seguir trabajando.');refreshLocalInfo().then(watchLocalUpdate);}).catch(()=>toast('El programa local no responde.'));}if(k==='present')togglePresent();if(k==='street')$('#btnStreet').click();if(k==='full')$('#btnFull').click();if(k==='discard')discardFork();
     if(k==='theme'){settings.theme=settings.theme==='light'?'dark':'light';saveSettings();applySettings();}
     if(k==='sun')toggleSun();
     if(k==='gmaps'){const c=map?map.getCenter():{lat:-33.44,lng:-70.65};window.open(`https://www.google.com/maps/@?api=1&map_action=map&center=${c.lat.toFixed(6)},${c.lng.toFixed(6)}&zoom=19&basemap=satellite`,'_blank','noopener');}});
@@ -1856,7 +1949,13 @@ function tick(){$('#clock').textContent=new Date().toLocaleTimeString('es-CL',{h
   }
   bindUI();applySettings();render();tick();setInterval(tick,1000);
   if(fork){$('#forkAt').textContent=hhmm(forkAt);if(!forkResumed)setTimeout(()=>toast('Copia de terreno creada: tus cambios quedan solo en este celular.'),600);}
-  loadMapLib().then(initMap).catch(err=>showMapError('No se pudo cargar el mapa: '+err.message+'. Revisa la conexión a internet y recarga la página.'));
+  (LOCAL?refreshLocalInfo():Promise.resolve(null)).then(()=>{
+    if(LOCAL){if(settings.base==='local'&&!(localInfo&&localInfo.mapa))settings.base='sat';if(!navigator.onLine&&localInfo&&localInfo.mapa)settings.base='local';
+      if(localInfo&&localInfo.updating)watchLocalUpdate();setInterval(()=>fetch('/local/ping').catch(()=>{}),60000);
+      window.addEventListener('offline',()=>useLocalMap(true,'Se perdió la conexión a internet.'));
+      window.addEventListener('online',()=>{if(autoLocal)toast('Volvió la conexión.',[{label:'Volver al satélite',fn:()=>useLocalMap(false)}],12000);});
+      applySettings();}
+    return loadMapLib();}).then(initMap).catch(err=>showMapError('No se pudo cargar el mapa: '+err.message+'. Revisa la conexión a internet y recarga la página.'));
 })();
 window.__croquis={commit:()=>commit(),changes:()=>computeChanges(),get state(){return state;},get map(){return map;},setMode,select,orientA,snap:()=>renderSnapshot(2).then(cv=>cv.toDataURL('image/jpeg',.92)),pack:()=>packState()};
 })();

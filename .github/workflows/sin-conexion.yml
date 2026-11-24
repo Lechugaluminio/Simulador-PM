@@ -1,0 +1,64 @@
+name: Versión sin conexión
+
+# Arma el programa para Windows (CroquisPM.exe) y el mapa local de las comunas del CBS,
+# y los publica en la release "sin-conexion". El mapa se rehace cada lunes.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['local/**', 'index.html', '.github/workflows/sin-conexion.yml']
+  schedule:
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  mapa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Descargar calles, numeración y edificios (OpenStreetMap)
+        run: python local/croquis_pm.py --construir-datos salida
+      - uses: actions/upload-artifact@v4
+        with: {name: mapa, path: salida/mapa-cbs.zip}
+
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Crear CroquisPM.exe
+        shell: pwsh
+        run: |
+          pip install pyinstaller
+          pyinstaller --onefile --noconsole --name CroquisPM --add-data "index.html;." local/croquis_pm.py
+          New-Item -ItemType Directory -Force paquete | Out-Null
+          Copy-Item dist/CroquisPM.exe paquete/
+          Copy-Item local/LEEME.txt paquete/
+          Copy-Item local/croquis_pm.py paquete/
+          Copy-Item index.html paquete/
+          Copy-Item "local/Iniciar con Python.bat" paquete/
+          Compress-Archive -Path paquete/* -DestinationPath CroquisPM-Windows.zip
+      - uses: actions/upload-artifact@v4
+        with: {name: windows, path: CroquisPM-Windows.zip}
+
+  publicar:
+    needs: [mapa, windows]
+    if: always() && (needs.mapa.result == 'success' || needs.windows.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {path: art}
+      - name: Publicar en la release "sin-conexion"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release view sin-conexion >/dev/null 2>&1 || gh release create sin-conexion --title "Croquis PM · versión sin conexión" --notes "Programa para Windows y mapa local de las comunas del CBS. Se actualiza automáticamente."
+          for f in art/*/*.zip; do gh release upload sin-conexion "$f" --clobber; done

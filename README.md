@@ -139,7 +139,7 @@ En celulares y tablets verticales, la lista de carros se abre como panel desliza
 | Motor de mapa | [MapLibre GL JS](https://maplibre.org/) 4.7.1 | Licencia BSD-3-Clause |
 | Códigos QR | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4, Kazuhiko Arase | Licencia MIT |
 | Imagen satelital, mapa de calles y nombres | © Esri y sus proveedores | Servicios de teselas de ArcGIS Online, con atribución en el mapa |
-| Búsqueda de direcciones y cruces | © colaboradores de [OpenStreetMap](https://www.openstreetmap.org/copyright) (Nominatim, Overpass) | Datos ODbL |
+| Búsqueda de direcciones y cruces, mapa sin conexión | © colaboradores de [OpenStreetMap](https://www.openstreetmap.org/copyright) (Nominatim, Overpass) | Datos ODbL |
 | Grifos | Aguas Andinas · [Ubicación de grifos](https://www.aguasandinas.cl/web/aguasandinas/ubicacion-de-grifos) | Mapa público de la empresa |
 | Íconos y símbolos (piezas, llama, PC, E, ACV, PAP, PAS, RIT, MAYDAY) | Dibujados con código (SVG y canvas) | Símbolos según el estándar SCI |
 
@@ -187,6 +187,7 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 
 ```
 index.html   ← la aplicación completa (lo que publica GitHub Pages)
+local/       ← versión sin conexión para Windows (servidor local, mapa y buscador)
 docs/        ← capturas y video de este README
 .nojekyll    ← GitHub Pages sirve los archivos tal cual
 ```
@@ -194,6 +195,23 @@ docs/        ← capturas y video de este README
 **GitHub Pages:** *Settings → Pages → Deploy from a branch*, rama `main`, carpeta `/ (root)`.
 
 ---
+
+### Versión sin conexión (Windows)
+
+Para el computador del puesto de mando o del K-3: **Menú ⋯ → Descargar versión sin conexión (Windows)…** o directamente [CroquisPM-Windows.zip](https://github.com/Lechugaluminio/Simulador-PM/releases/download/sin-conexion/CroquisPM-Windows.zip).
+
+| Qué guarda en el computador | Detalle |
+|---|---|
+| La app y sus librerías | Abre sin internet, en su propia ventana (`CroquisPM.exe`) |
+| Grifos | Copia del mapa público de Aguas Andinas |
+| Mapa local | Calles, nombres, numeración y edificios de OpenStreetMap de Santiago, Estación Central, Independencia, Recoleta, Renca, Providencia, Las Condes, Vitacura y Lo Barnechea, con ~1 km extra para despachos limítrofes |
+| Buscador sin conexión | Direcciones (`Calle 1234`), cruces (`Calle A & Calle B`) y nombres de calles |
+
+- Con internet usa el satélite como siempre; **sin internet cambia solo al mapa local** (botón *Sin conexión*).
+- Mapa y grifos se **actualizan solos cada 7 días** con conexión, o desde *Menú → Actualizar mapa y grifos sin conexión*. GitHub rehace el mapa cada lunes (`.github/workflows/sin-conexion.yml`).
+- Todo queda en la carpeta `datos/` junto al programa: para pasarlo a otro computador se copia la carpeta completa.
+- La imagen satelital **no** se guarda: los términos de Esri no permiten descargarla para uso sin conexión.
+- Código: `local/croquis_pm.py` (solo librería estándar de Python; también se puede abrir con *Iniciar con Python.bat*).
 
 ## Datos y privacidad
 
