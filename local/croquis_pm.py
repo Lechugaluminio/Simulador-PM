@@ -533,8 +533,8 @@ def features(bbox, z):
     if not con:
         return out
     try:
-        maxrank = 2 if z < 13 else 3 if z < 14.5 else 4 if z < 16 else 5
-        lim = 6000
+        maxrank = 2 if z < 13.5 else 3 if z < 15 else 4 if z < 16 else 5
+        lim = 20000
         for name, kind, rank, g in con.execute(
                 'select r.name,r.kind,r.rank,r.geom from roads_ix i join roads r on r.id=i.id '
                 'where i.maxx>=? and i.minx<=? and i.maxy>=? and i.miny<=? and r.rank<=? limit ?',
@@ -602,7 +602,7 @@ def search(q):
                 d, p = closest_between(ga, gb)
                 if p and d < 150:
                     res.append({'lon': p[0], 'lat': p[1], 'label': f'{m[0]} con {m[1]}',
-                                'detail': (comuna_of(con, *p) or 'Cruce') + ('' if d < 25 else f' · aprox. ±{round(d)} m'), 'cross': True})
+                                'detail': (comuna_of(con, *p) or 'Fuera de las comunas del CBS') + ('' if d < 25 else f' · aprox. ±{round(d)} m'), 'cross': True})
             if not res:
                 return {'ok': True, 'msg': 'No encontré ese cruce en el mapa local.', 'results': []}
             return {'ok': True, 'results': res}
