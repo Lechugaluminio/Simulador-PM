@@ -154,6 +154,7 @@ body.present #viewbar{display:flex!important}
 .m-fire svg{width:calc(50px * var(--tok));height:calc(50px * var(--tok));filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));display:block}
 .m-pc{font-family:var(--fc);font-weight:800;font-size:calc(22px * var(--tok));line-height:1;background:#ff8c00;color:#111;border:3px solid #111;padding:.22em .6em .16em;border-radius:3px;box-shadow:0 0 0 2px #fff,0 3px 8px rgba(0,0,0,.45);white-space:nowrap;letter-spacing:.04em}
 .m-circ{font-family:var(--fc);font-weight:800;font-size:calc(22px * var(--tok));line-height:1;background:#ffd60a;color:#111;border:3px solid #111;width:calc(44px * var(--tok));height:calc(44px * var(--tok));border-radius:50%;display:grid;place-items:center;padding-top:.08em;box-shadow:0 0 0 2px #fff,0 3px 8px rgba(0,0,0,.45);white-space:nowrap}
+.m-grifo.seco{background:#a3a7ad;position:relative}.m-grifo.seco::after{content:"";position:absolute;left:18%;right:18%;top:50%;height:calc(3.5px * var(--tok));min-height:3px;background:#e00000;border-radius:3px;transform:rotate(-45deg)}
 .m-circ.acv{font-size:calc(16px * var(--tok));width:calc(50px * var(--tok));height:calc(50px * var(--tok))}
 #flyInst{position:absolute;z-index:8;display:none;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;gap:4px;flex-direction:column;min-width:250px}
 #flyInst.open{display:flex}
@@ -193,6 +194,7 @@ body.present #viewbar{display:flex!important}
 .ring{width:76px;height:76px;border-radius:50%;border:4px solid var(--sel);animation:pulse 1.1s ease-out 5 forwards;pointer-events:none}
 .ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.08);opacity:.92}
 body.dragging-unit,body.dragging-unit *{cursor:grabbing!important}
+body.dragging-unit :is(#tools,#flyInst,#viewbar,#mapctl,#panel,#menu) button:hover,body.dragging-mark :is(#tools,#flyInst,#viewbar,#mapctl,#panel,#menu) button:hover{background:inherit}
 
 
 /* ---------- modo sol: alto contraste para exterior ---------- */
@@ -394,8 +396,7 @@ body.present #exitPresent{display:inline-flex!important}
       <button data-mode="line:trazo" title="Trazo discontinuo libre (K)"><svg class="i" viewBox="0 0 24 24"><path d="M3 17L21 7" stroke-dasharray="3.5 3"/></svg>Trazo</button>
       <div class="sep"></div>
       <button data-mode="mk:fuego" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
-      <button class="grp" id="btnInst" title="Instalaciones: Puesto de Comando, Zona de espera, ACV"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
-      <button data-mode="mk:grifo" title="Grifo (3)"><svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M9 21V9h6v12M8 9h8M10 9V6.5a2 2 0 0 1 4 0V9M6 13h3M15 13h3"/></svg>Grifo</button>
+      <button class="grp" id="btnInst" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
       <button data-mode="mk:piscina" title="Piscina / estanque portátil (4)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 11c1.5-1.3 3-1.3 4.5 0s3 1.3 4.5 0 3-1.3 3 0"/></svg>Piscina</button>
       <button data-mode="mk:rit" title="Pastilla RIT: equipo de intervención rápida (6)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M8 15v-5h2.2a1.4 1.4 0 0 1 0 2.8H8M10.2 12.8l1.3 2.2M14 10v5M16.5 10h3M18 10v5"/></svg>RIT</button>
       <button data-mode="mk:mayday" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
@@ -407,6 +408,8 @@ body.present #exitPresent{display:inline-flex!important}
       <button data-mode="mk:pm" title="Puesto de Comando (2)"><span class="ic"><span class="m-pc">PC</span></span>Puesto de Comando</button>
       <button data-mode="mk:espera" title="Zona de espera (7)"><span class="ic"><span class="m-circ">E</span></span>Zona de espera</button>
       <button data-mode="mk:acv" title="Área de concentración de víctimas (8)"><span class="ic"><span class="m-circ acv">ACV</span></span>Área de concentración de víctimas</button>
+      <button data-mode="mk:pap" title="Puesto de abastecimiento primario (9)"><span class="ic"><span class="m-circ acv">PAP</span></span>Puesto de abastecimiento primario</button>
+      <button data-mode="mk:pas" title="Puesto de abastecimiento secundario (0)"><span class="ic"><span class="m-circ acv">PAS</span></span>Puesto de abastecimiento secundario</button>
     </div>
     <nav id="viewbar">
       <button data-act="orient" title="Girar el mapa para que el lado A quede abajo (A)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 13l4 4 4-4"/></svg>A abajo</button>
@@ -461,7 +464,7 @@ const waveOf=w=>WAVES.find(x=>x[0]===w);
 function waveTag(u){const w=waveOf(u.wave);return `<span class="wv w-${w?w[0]:'n'}" data-wave-uid="${u.id}" title="${w?w[2]:'Sin salida asignada'} · clic para cambiar">${w?w[1]:'·'}</span>`;}
 function renderWaveSeg(){const cur=state.addWave||'D';$('#waveSeg').innerHTML=WAVES.map(([v,t,l])=>`<button data-addwave="${v}" class="${v===cur?'on':''}" title="${l}">${v==='D'?'Despacho':t}</button>`).join('');}
 const XSVG='<svg class="xx" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M3 3L97 97M97 3L3 97" stroke="#000" stroke-opacity=".8" stroke-width="5" vector-effect="non-scaling-stroke"/><path d="M3 3L97 97M97 3L3 97" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>';
-const MARK_LABEL={fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
+const MARK_LABEL={fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',pap:'Puesto de abastecimiento primario (PAP)',pas:'Puesto de abastecimiento secundario (PAS)',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
 const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona de colapso',ataque:'Línea',trazo:'Trazo'};
 const POLY_KINDS=['estructura','fuego','colapso'];
 const DEFAULT_SETTINGS={
@@ -806,7 +809,9 @@ function markHTML(m){
     case 'pm':return `<div class="m-pc">${esc(m.text||'PC')}</div>`;
     case 'espera':return `<div class="m-circ">E</div>`;
     case 'acv':return `<div class="m-circ acv">ACV</div>`;
-    case 'grifo':return `<div class="m-grifo">G</div>`;
+    case 'pap':return `<div class="m-circ acv">PAP</div>`;
+    case 'pas':return `<div class="m-circ acv">PAS</div>`;
+    case 'grifo':return `<div class="m-grifo${m.seco?' seco':''}" title="${m.seco?'Grifo sin agua':'Grifo en uso'}">G</div>`;
     case 'piscina':return `<div class="m-pisc"><svg viewBox="0 0 24 14"><path d="M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>`;
     case 'mayday':return `<div class="m-mayday">MAYDAY${m.text?`<span class="t">${esc(m.text)}</span>`:''}</div>`;
     case 'rit':return `<div class="m-rit">RIT${m.text?`<span class="rt">${esc(m.text)}</span>`:''}</div>`;
@@ -815,11 +820,11 @@ function markHTML(m){
   }
   return '<div>?</div>';
 }
-const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,rit:30,pm:50,espera:50,acv:50,mayday:60};
+const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,rit:30,pm:50,espera:50,acv:50,pap:50,pas:50,mayday:60};
 function draftFromMarker(pos){if(isDrawing()){draft.push(pos);updateDraft();return true;}return false;}
 function makeDraggable(kind,id,el,m){
-  m.on('dragstart',()=>{el.classList.add('dragging');el._drag=true;});
-  m.on('dragend',()=>{el.classList.remove('dragging');el._drag=false;el._dragEnd=Date.now();const ll=m.getLngLat();
+  m.on('dragstart',()=>{el.classList.add('dragging');el._drag=true;document.body.classList.add('dragging-mark');$('#flyInst').classList.remove('open');});
+  m.on('dragend',()=>{el.classList.remove('dragging');el._drag=false;document.body.classList.remove('dragging-mark');el._dragEnd=Date.now();const ll=m.getLngLat();
     const o=kind==='unit'?getUnit(id):getMark(id);if(o){o.pos=[ll.lng,ll.lat];commit();}});
   el.addEventListener('click',ev=>{
     ev.stopPropagation();
@@ -882,7 +887,7 @@ function syncHandles(){
 /* =========================================================
    Modos e interacción con el mapa
    ========================================================= */
-const INST_MODES=['mk:pm','mk:espera','mk:acv'];
+const INST_MODES=['mk:pm','mk:espera','mk:acv','mk:pap','mk:pas'];
 const isDrawing=()=>mode.startsWith('poly:')||mode.startsWith('line:');
 const sideHint=()=>'Clic en el mapa para ubicar el lado <b>'+'ABCD'[sideIdx]+'</b>';
 const HINTS={
@@ -895,6 +900,8 @@ const HINTS={
   'mk:pm':'Clic en el mapa para ubicar el <b>Puesto de Comando (PC)</b>',
   'mk:espera':'Clic en el mapa para ubicar la <b>Zona de espera</b>',
   'mk:acv':'Clic en el mapa para ubicar el <b>Área de concentración de víctimas</b>',
+  'mk:pap':'Clic en el mapa para ubicar el <b>Puesto de abastecimiento primario (PAP)</b>',
+  'mk:pas':'Clic en el mapa para ubicar el <b>Puesto de abastecimiento secundario (PAS)</b>',
   'mk:grifo':'Clic en el mapa para ubicar un <b>grifo</b>',
   'mk:piscina':'Clic en el mapa para ubicar una <b>piscina</b> (estanque)',
   'mk:mayday':'Clic en el mapa donde está el <b>MAYDAY</b>',
@@ -969,7 +976,7 @@ function onMapClick(e){
   const fs=map.queryRenderedFeatures(b,{layers:PICK_LAYERS.filter(l=>map.getLayer(l))});
   if(!fs.length&&map.getLayer('grifos')){const g=map.queryRenderedFeatures([[e.point.x-10,e.point.y-10],[e.point.x+10,e.point.y+10]],{layers:['grifos']});
     if(g.length){const pos=g[0].geometry.coordinates.slice();const emp=['','Aguas Andinas','Aguas Cordillera','Aguas Manquehue'][g[0].properties.e]||'';
-      select(null);toast('Grifo '+emp,[{label:'Marcar como grifo en uso',fn:()=>{const m={id:uid(),kind:'grifo',pos,text:''};state.marks.push(m);commit();}},{label:'Street View',fn:()=>window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pos[1].toFixed(6)},${pos[0].toFixed(6)}`,'_blank','noopener')}],8000);return;}}
+      select(null);toast('Grifo '+emp,[{label:'Marcar en uso',fn:()=>{const m={id:uid(),kind:'grifo',pos,text:''};state.marks.push(m);commit();}},{label:'Marcar sin agua',fn:()=>{const m={id:uid(),kind:'grifo',pos,text:'',seco:true};state.marks.push(m);commit();}},{label:'Street View',fn:()=>window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pos[1].toFixed(6)},${pos[0].toFixed(6)}`,'_blank','noopener')}],8000);return;}}
   select(fs.length?{type:'shape',id:fs[0].properties.id}:null);
 }
 function onMapMove(e){if(isDrawing()&&draft.length)updateDraft([e.lngLat.lng,e.lngLat.lat]);}
@@ -1069,7 +1076,7 @@ function renderPanel(){
       <div class="acts">${u.pos?'<button data-act="unplace">Quitar del mapa</button>':`<button class="pri" data-act="placeMode">Ubicar en el mapa</button>`}<button class="danger" data-act="delete">Eliminar carro</button></div></div>`;
   }else if(selected.type==='mark'){
     const m=o;
-    h=`<div class="pn-h"><span class="ttl">${esc(m.kind==='lado'?'Lado '+m.letter:MARK_LABEL[m.kind])}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">`;
+    h=`<div class="pn-h"><span class="ttl">${esc(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):MARK_LABEL[m.kind])}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">`;
     if(m.kind==='texto')h+=`<label class="l">Texto</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: RIT (19) · Calle Altamirano">`;
     if(m.kind==='mayday')h+=`<label class="l">Rótulo bajo la pastilla (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: piso 2 · lado C">`;
     if(m.kind==='pm')h+=`<label class="l">Rótulo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="PC">`;
@@ -1077,7 +1084,8 @@ function renderPanel(){
       h+=`<label class="l">Compañía / carro a cargo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: 19ª Cía. · B-19">`+
         (sc.length?`<div class="seg" style="margin-top:6px">${sc.map(u=>`<button data-act="qtext" data-v="${esc(u.code)}" class="${m.text===u.code?'on':''}">${esc(u.code)}</button>`).join('')}</div>`:'');}
     if(m.kind==='lado')h+=`<label class="l">Letra</label>${segBtns('letter',[['A','A'],['B','B'],['C','C'],['D','D']],m.letter)}`;
-    h+=`<div class="meta">Arrastra el marcador para moverlo.</div><div class="acts">${m.kind==='lado'?'<button data-act="orient">Orientar con A abajo</button>':''}<button class="danger" data-act="delete">Eliminar</button></div></div>`;
+    if(m.kind==='grifo')h+=`<label class="l">Estado</label>${segBtns('gstate',[['uso','En uso'],['seco','✕ Sin agua']],m.seco?'seco':'uso')}`;
+    h+=`<div class="meta">Arrastra el marcador para moverlo.</div><div class="acts">${m.kind==='lado'?'<button data-act="orient">Orientar con A abajo</button>':''}<button class="danger" data-act="delete">${m.kind==='grifo'?'Desmarcar grifo':'Eliminar'}</button></div></div>`;
   }else{
     const s=o;const poly=POLY_KINDS.includes(s.kind);
     h=`<div class="pn-h"><span class="ttl">${esc(SHAPE_LABEL[s.kind]||'Forma')}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">
@@ -1105,6 +1113,7 @@ function onPanelClick(ev){
     case 'placeMode':setMode('place:'+o.id);break;
     case 'delete':deleteSelected();break;
     case 'letter':o.letter=v;o.shapeId=null;commit();break;
+    case 'gstate':o.seco=v==='seco';commit();break;
     case 'wave':o.wave=v;commit();break;
     case 'qtext':o.text=v;commit();break;
     case 'orient':orientA();break;
@@ -1338,14 +1347,17 @@ function drawMarkSnap(g,m,x,y){
     case 'fuego':{const sz=50*tok;g.save();g.translate(x-sz/2,y-sz/2);g.scale(sz/24,sz/24);g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=4;
       const a=new Path2D(FLAME_P[0]);g.fillStyle='#ff3b1f';g.fill(a);g.shadowBlur=0;g.lineWidth=1.4;g.strokeStyle='#fff';g.lineJoin='round';g.stroke(a);g.fillStyle='#ffd166';g.fill(new Path2D(FLAME_P[1]));g.restore();break;}
     case 'pm':{const t=m.text||'PC',fs=22*tok;pillBox(g,x,y,t,{fs,h:fs*1.45,padX:1.25,r:3,bg:'#ff8c00',border:'#111',outer:'#fff',bw:3});centerText(g,t,x,y+fs*.03,FONT(800,fs),'#111');break;}
-    case 'espera':case 'acv':case 'grifo':case 'lado':{
-      const txt=m.kind==='espera'?'E':m.kind==='acv'?'ACV':m.kind==='grifo'?'G':m.letter;
-      const d=(m.kind==='acv'?50:m.kind==='grifo'?30:m.kind==='lado'?38:44)*tok,fs=(m.kind==='acv'?16:m.kind==='grifo'?18:m.kind==='lado'?24:22)*tok;
-      const bgc=m.kind==='lado'?'#fff':'#ffd60a';
+    case 'espera':case 'acv':case 'pap':case 'pas':case 'grifo':case 'lado':{
+      const big=m.kind==='acv'||m.kind==='pap'||m.kind==='pas';
+      const txt=m.kind==='espera'?'E':big?m.kind.toUpperCase():m.kind==='grifo'?'G':m.letter;
+      const d=(big?50:m.kind==='grifo'?30:m.kind==='lado'?38:44)*tok,fs=(big?16:m.kind==='grifo'?18:m.kind==='lado'?24:22)*tok;
+      const bgc=m.kind==='lado'?'#fff':(m.kind==='grifo'&&m.seco)?'#a3a7ad':'#ffd60a';
       g.beginPath();g.arc(x,y,d/2+2,0,Math.PI*2);g.fillStyle=m.kind==='lado'?'rgba(0,0,0,.25)':'#fff';g.fill();
       g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle='#111';g.fill();
       g.beginPath();g.arc(x,y,d/2-(m.kind==='grifo'?2.5:3),0,Math.PI*2);g.fillStyle=bgc;g.fill();
-      centerText(g,txt,x,y+fs*.04,FONT(800,fs),'#111');break;}
+      centerText(g,txt,x,y+fs*.04,FONT(800,fs),'#111');
+      if(m.kind==='grifo'&&m.seco){g.save();g.strokeStyle='#e00000';g.lineWidth=3.5*tok;g.lineCap='round';const q=d*.36;g.beginPath();g.moveTo(x-q,y+q);g.lineTo(x+q,y-q);g.stroke();g.restore();}
+      break;}
     case 'piscina':{const w=40*tok,h=26*tok;rr(g,x-w/2-1.5,y-h/2-1.5,w+3,h+3,7);g.fillStyle='#000';g.fill();rr(g,x-w/2,y-h/2,w,h,6);g.fillStyle='#fff';g.fill();rr(g,x-w/2+2.5,y-h/2+2.5,w-5,h-5,4);g.fillStyle='#0b84d8';g.fill();
       g.save();g.translate(x-w*.4,y-h*.27);g.scale(w*.8/24,w*.8/24);g.strokeStyle='#fff';g.lineWidth=2;g.lineCap='round';g.stroke(new Path2D('M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0'));g.restore();break;}
     case 'mayday':{const fs=19*tok;const bx=pillBox(g,x,y,'MAYDAY',{fs,h:fs*1.5,padX:1.6,bg:'#e00000',border:'#fff',outer:'#000',extraW:fs*.35});
@@ -1481,7 +1493,7 @@ function moveDesc(from,to){
   const dir=st?'hacia el lado '+'ABCD'[Math.round(((az-st.azA)+360)%360/90)%4]:'hacia el '+['norte','noreste','este','sureste','sur','suroeste','oeste','noroeste'][Math.round(az/45)%8];
   return {dist,dir};
 }
-const markName=m=>(m.kind==='lado'?'Lado '+m.letter:(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
+const markName=m=>(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
 function computeChanges(){
   if(!fork||!forkBase)return [];
   const out=[],MIN=3;const sameC=(a,b)=>a&&b&&moveDesc(a,b).dist<MIN;
@@ -1690,7 +1702,7 @@ function openHelp(){
     <li><b>Carros:</b> escribe o pega los despachados en la columna izquierda y arrástralos al mapa cuando lleguen. Clic en un carro para asignar estado, función, lado y nota. Como en la pizarra: <b>✕</b> = sin función o no puede cumplirla, <b>◯</b> = se está retirando.</li>
     <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª, 2ª o 3ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª, 2ª, 3ª) de un carro para cambiarla.</li>
     <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
-    <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo como “en uso”.</li>
+    <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
     <li><b>Líneas</b> (L): clic en el carro y luego hacia donde va la armada; doble clic para terminar. Puedes rotularlas (1½", 2½").</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
@@ -1700,7 +1712,7 @@ function openHelp(){
     <tr><td><kbd>V</kbd> / <kbd>Esc</kbd></td><td>Mover / cancelar</td><td><kbd>E</kbd></td><td>Estructura</td></tr>
     <tr><td><kbd>F</kbd></td><td>Área con fuego</td><td><kbd>C</kbd></td><td>Zona de colapso</td></tr>
     <tr><td><kbd>L</kbd></td><td>Línea con flecha</td><td><kbd>K</kbd></td><td>Trazo discontinuo</td></tr>
-    <tr><td><kbd>1</kbd>–<kbd>8</kbd></td><td>Foco · PC · Grifo · Piscina · Mayday · RIT · Zona de espera · ACV</td><td><kbd>T</kbd></td><td>Texto</td></tr>
+    <tr><td><kbd>1</kbd>–<kbd>0</kbd></td><td>1 Foco · 2 PC · 4 Piscina · 5 Mayday · 6 RIT · 7 Zona de espera · 8 ACV · 9 PAP · 0 PAS</td><td><kbd>T</kbd></td><td>Texto</td></tr>
     <tr><td><kbd>A</kbd></td><td>Orientar con lado A abajo</td><td><kbd>N</kbd></td><td>Norte arriba</td></tr>
     <tr><td><kbd>S</kbd></td><td>Modo sol (alto contraste)</td><td></td><td></td></tr>
     <tr><td><kbd>Z</kbd></td><td>Encuadrar todo</td><td><kbd>P</kbd></td><td>Modo presentación</td></tr>
@@ -1756,7 +1768,8 @@ function bindUI(){
     if(isCompact()){fly.style.left=Math.max(6,Math.min(r.left-w.left,w.width-fly.offsetWidth-6))+'px';fly.style.top=Math.max(6,r.top-w.top-fly.offsetHeight-8)+'px';}
     else{fly.style.left=(t.right-w.left+6)+'px';fly.style.top=Math.max(6,r.top-w.top-4)+'px';}};
   const closeFly=()=>{clearTimeout(flyT);flyT=setTimeout(()=>fly.classList.remove('open'),250);};
-  bi.addEventListener('mouseenter',openFly);bi.addEventListener('mouseleave',closeFly);
+  const busyDrag=e=>(e&&(e.buttons&1))||document.body.classList.contains('dragging-unit')||document.body.classList.contains('dragging-mark');
+  bi.addEventListener('mouseenter',e=>{if(busyDrag(e))return;openFly();});bi.addEventListener('mouseleave',closeFly);
   fly.addEventListener('mouseenter',()=>clearTimeout(flyT));fly.addEventListener('mouseleave',closeFly);
   bi.addEventListener('click',e=>{e.stopPropagation();if(fly.classList.contains('open')&&Date.now()-flyAt>450)fly.classList.remove('open');else openFly();});
   fly.addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;fly.classList.remove('open');select(null);setMode(b.dataset.mode===mode?'select':b.dataset.mode);});
@@ -1821,7 +1834,7 @@ function onKey(e){
   if(e.key==='Backspace'&&isDrawing()){e.preventDefault();draft.pop();updateDraft();return;}
   if((e.key==='Delete'||e.key==='Backspace')&&selected){e.preventDefault();deleteSelected();return;}
   const k=e.key.toLowerCase();
-  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo','1':'mk:fuego','2':'mk:pm','3':'mk:grifo','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv',t:'mk:texto'};
+  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo','1':'mk:fuego','2':'mk:pm','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
   if(modes[k]){if(k==='v')select(null);setMode(modes[k]);return;}
   if(k==='a')orientA();
   if(k==='s')toggleSun();
