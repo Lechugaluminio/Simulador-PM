@@ -269,10 +269,10 @@ def chunks():
             y += CHUNK
 
 
-def overpass(q, timeout=240):
+def overpass(q, timeout=240, tries=6):
     data = urllib.parse.urlencode({'data': q}).encode()
     last = None
-    for attempt in range(6):
+    for attempt in range(tries):
         url = OVERPASS[attempt % len(OVERPASS)]
         try:
             raw = http_get(url, timeout=timeout, data=data, retries=0)
@@ -282,6 +282,26 @@ def overpass(q, timeout=240):
             log(f'  Overpass falló ({url.split("/")[2]}): {e}; reintento…')
             time.sleep(10 + 10 * attempt)
     raise RuntimeError(f'Overpass no respondió: {last}')
+
+
+def fetch_box(s, w, n, e, hw_skip, depth=0):
+    """Descarga una zona; si Overpass no da abasto, la divide en 4 y reintenta."""
+    bb = f'{s:.5f},{w:.5f},{n:.5f},{e:.5f}'
+    q = (f'[out:json][timeout:200];('
+         f'way["highway"]["highway"!~"^({hw_skip})$"]({bb});'
+         f'way["building"]({bb});'
+         f'node["addr:housenumber"]["addr:street"]({bb});'
+         f');out tags geom;')
+    try:
+        return overpass(q, tries=3 if depth < 2 else 6).get('elements', [])
+    except Exception:
+        if depth >= 2:
+            raise
+        ms, mw = (s + n) / 2, (w + e) / 2
+        out = []
+        for sub in ((s, w, ms, mw), (s, mw, ms, e), (ms, w, n, mw), (ms, mw, n, e)):
+            out += fetch_box(*sub, hw_skip, depth + 1)
+        return out
 
 
 def build_map(dest_db, progress=lambda f, s: None):
@@ -312,15 +332,9 @@ def build_map(dest_db, progress=lambda f, s: None):
     hw_skip = 'footway|path|steps|cycleway|track|bridleway|corridor|elevator|platform|proposed|construction|bus_stop|raceway|abandoned|razed|via_ferrata'
     for i, (s, w, n, e) in enumerate(cl):
         progress(0.03 + 0.95 * i / len(cl), f'Mapa: zona {i + 1} de {len(cl)}')
-        bb = f'{s:.5f},{w:.5f},{n:.5f},{e:.5f}'
-        q = (f'[out:json][timeout:200];('
-             f'way["highway"]["highway"!~"^({hw_skip})$"]({bb});'
-             f'way["building"]({bb});'
-             f'node["addr:housenumber"]["addr:street"]({bb});'
-             f');out tags geom;')
-        j = overpass(q)
+        els = fetch_box(s, w, n, e, hw_skip)
         rows_r, rows_b, rows_a = [], [], []
-        for el in j.get('elements', []):
+        for el in els:
             t = el.get('tags', {})
             if el['type'] == 'node':
                 if el['id'] in seen_n:

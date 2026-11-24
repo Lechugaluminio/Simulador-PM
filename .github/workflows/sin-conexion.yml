@@ -16,13 +16,23 @@ permissions:
 jobs:
   mapa:
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - name: Descargar calles, numeración y edificios (OpenStreetMap)
-        run: python local/croquis_pm.py --construir-datos salida
+      - name: Descargar OpenStreetMap de Chile (Geofabrik) y recortar las comunas del CBS
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
+          curl -sSL -o chile.osm.pbf https://download.geofabrik.de/south-america/chile-latest.osm.pbf
+          BBOX=$(cd local && python -c "import croquis_pm as C;b=C.COMUNAS.values();B=C.BUFFER;print(f'{min(x[1] for x in b)-B},{min(x[0] for x in b)-B},{max(x[3] for x in b)+B},{max(x[2] for x in b)+B}')")
+          echo "bbox $BBOX"
+          osmium extract -b "$BBOX" --strategy complete_ways chile.osm.pbf -o cbs.osm.pbf
+          ls -la *.pbf
+      - name: Armar el mapa local (calles, numeración, edificios)
+        run: |
+          pip install osmium
+          cd local && python mapa_desde_pbf.py ../cbs.osm.pbf ../salida
       - uses: actions/upload-artifact@v4
         with: {name: mapa, path: salida/mapa-cbs.zip}
 
@@ -42,6 +52,7 @@ jobs:
           Copy-Item dist/CroquisPM.exe paquete/
           Copy-Item local/LEEME.txt paquete/
           Copy-Item local/croquis_pm.py paquete/
+          if (Test-Path paquete/mapa_desde_pbf.py) { Remove-Item paquete/mapa_desde_pbf.py }
           Copy-Item index.html paquete/
           Copy-Item "local/Iniciar con Python.bat" paquete/
           Compress-Archive -Path paquete/* -DestinationPath CroquisPM-Windows.zip
