@@ -4,7 +4,7 @@
 
 - **Aplicación publicada:** https://lechugaluminio.github.io/Simulador-PM/
 - **Video (60 s):** [docs/video.mp4](docs/video.mp4)
-- Proyecto personal de Daniel Victoriano · Diseño Industrial UDP. Pensado para el puesto de mando de bomberos (K-3, puesto de mando móvil).
+- Proyecto personal de [Lechugaluminio](https://github.com/Lechugaluminio). Pensado para el puesto de mando de bomberos (K-3, puesto de mando móvil).
 
 ![Croquis PM en uso: estructura con lados A–D, área con fuego, líneas, carros con sus estados, RIT, PC, zona de espera, ACV y MAYDAY](docs/demo.jpg)
 
@@ -131,8 +131,8 @@ En celulares y tablets verticales, la lista de carros se abre como panel desliza
 
 | Elemento | Autor | Licencia / nota |
 |---|---|---|
-| Concepto, convenciones de la pizarra y decisiones de diseño | Daniel Victoriano | Proyecto propio, basado en su práctica en el puesto de mando |
-| Código de la aplicación | Daniel Victoriano con asistencia de [Claude](https://anthropic.com) (Anthropic) | HTML, CSS y JavaScript en un solo archivo |
+| Concepto, convenciones de la pizarra y decisiones de diseño | [Lechugaluminio](https://github.com/Lechugaluminio) | Proyecto propio, basado en su práctica en el puesto de mando |
+| Código de la aplicación | [Lechugaluminio](https://github.com/Lechugaluminio) con asistencia de [Claude](https://anthropic.com) (Anthropic) | HTML, CSS y JavaScript en un solo archivo |
 | Motor de mapa | [MapLibre GL JS](https://maplibre.org/) 4.7.1 | Licencia BSD-3-Clause |
 | Códigos QR | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4, Kazuhiko Arase | Licencia MIT |
 | Imagen satelital, mapa de calles y nombres | © Esri y sus proveedores | Servicios de teselas de ArcGIS Online, con atribución en el mapa |
