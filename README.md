@@ -3,12 +3,16 @@
 **La pizarra queda libre para lo que solo cabe en la pizarra.** Croquis PM reemplaza el croquis dibujado a mano en el puesto de mando de bomberos por un mapa satelital. Los carros despachados se mueven como piezas de un juego de mesa, con su estado, función y lado. La pantalla grande del PM muestra la escena completa, y la pizarra física queda para el PAR y los detalles de un mayday.
 
 - **Aplicación publicada:** https://lechugaluminio.github.io/Simulador-PM/
-- **Video (30–60 s):** *(completar con el enlace)*
+- **Video (60 s):** [docs/video.mp4](docs/video.mp4)
 - Proyecto personal de Daniel Victoriano · Diseño Industrial UDP. Pensado para el puesto de mando de bomberos (K-3, puesto de mando móvil).
 
 ![Croquis PM en uso: estructura con lados A–D, área con fuego, líneas, carros con sus estados, RIT, PC, zona de espera, ACV y MAYDAY](docs/demo.jpg)
 
 *Prueba de funcionamiento: incidente en Las Enredaderas con Av. Fermín Vivaceta, Independencia.*
+
+[![Video de demostración (60 s): clic para verlo](docs/video-portada.jpg)](docs/video.mp4)
+
+*Video de demostración (60 s). Clic en la imagen para verlo.*
 
 ---
 
@@ -140,28 +144,11 @@ En celulares y tablets verticales, la lista de carros se abre como panel desliza
 
 ## 5. Reflexión
 
-> **Borrador para reescribir con tus palabras y tu experiencia en el puesto de mando.** Está pensado como punto de partida, no como texto final.
+Este proyecto busca mejorar la visión de la escena desde el puesto de mando, la claridad de la información y su transmisión mediante funciones cooperativas.
 
-**Qué aprendimos al pasar la pizarra a la pantalla.**
+No pretende ser un sistema panóptico. Se limita a las funciones que hoy se llevan a mano en la pizarra y las traslada al soporte digital, integrando la información de mapas y grifos.
 
-- **Las convenciones valen más que las funciones.** La herramienta se entiende sin explicación porque usa los mismos signos que la pizarra: la X, el círculo, el PC naranja, los lados A–D. Inventar símbolos nuevos habría obligado a traducir en plena emergencia.
-- **Mover una pieza es más rápido que redibujar.** Un carro que cambia de función o de lado se arrastra o se toca, y el resumen de la barra superior se actualiza solo.
-- **El mapa real cambia las decisiones.** Ver los grifos, los accesos y los edificios vecinos sobre el satélite muestra cosas que el croquis a mano simplifica: un grifo más cercano, un acceso por el lado C.
-- **La privacidad es parte del diseño.** El incidente no pasa por servidores ajenos ni por WhatsApp. La copia de terreno viaja dentro del QR y nunca toca el croquis principal.
-
-**Qué queda fuera del sistema.**
-
-- **El PAR y los detalles de un mayday siguen en la pizarra.** El mapa solo marca dónde está el mayday; la contabilidad de personal necesita la pizarra física.
-- **Depende de internet** para el mapa y la búsqueda. Sin señal, el croquis guardado se ve, pero el mapa no carga zonas nuevas.
-- **La imagen satelital no es del día.** Construcciones nuevas o demolidas pueden no aparecer.
-- **Un solo equipo manda.** La copia de terreno se revisa y se traspasa a mano; no hay edición simultánea.
-
-**Mejoras concretas.**
-
-1. **Mapa sin conexión** de la comuna de la compañía, descargado de antemano.
-2. **Línea de tiempo del incidente:** registro automático de llegadas, cambios de estado y alarmas para el informe posterior.
-3. **Integración con el despacho:** recibir los códigos de los carros directamente, sin copiar y pegar.
-4. **Plantillas de edificios frecuentes:** estructuras ya dibujadas para lugares con incidentes recurrentes.
+Al ser de código abierto y funcionar en el navegador, busca evitar barreras de entrada y ser lo más accesible posible.
 
 ---
 
@@ -197,7 +184,7 @@ En celulares y tablets verticales, la lista de carros se abre como panel desliza
 
 ```
 index.html   ← la aplicación completa (lo que publica GitHub Pages)
-docs/        ← capturas de este README
+docs/        ← capturas y video de este README
 .nojekyll    ← GitHub Pages sirve los archivos tal cual
 ```
 
