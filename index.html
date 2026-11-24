@@ -231,13 +231,15 @@ body.sun #btnSun{background:#ffd60a;border-color:#000;color:#000}
   #search{flex:0 4 340px}
   body.sun .clock b{font-size:25px}body.sun #summary{font-size:16px}body.sun #summary b{font-size:20px}body.sun #title{font-size:25px;min-width:200px}
 }
+/* Street View y Pantalla completa: en la barra si caben, si no en el menú */
+#menu [data-menu="street"],#menu [data-menu="full"]{display:none}
 @media (max-width:1450px){
-  #btnStreet{display:none}
+  #btnStreet{display:none}#menu [data-menu="street"]{display:flex}
   #title{font-size:24px}
   body.sun .clock b{font-size:23px}body.sun #summary{font-size:15px}body.sun #summary b{font-size:19px}body.sun #title{font-size:24px;min-width:170px}
 }
 @media (max-width:1350px){
-  #btnFull{display:none}
+  #btnFull{display:none}#menu [data-menu="full"]{display:flex}
   #summary{font-size:14px;padding:0 6px}#summary b{font-size:17px}
   .clock b{font-size:20px}
   #title{min-width:140px}
@@ -692,7 +694,7 @@ async function refreshLocalInfo(){try{localInfo=await (await fetch('/local/statu
 function renderLocalMenu(){
   const b=$('[data-menu="localupd"]');if(!b)return;
   if(!LOCAL){b.style.display='none';return;}
-  b.style.display='';const i=localInfo||{};
+  b.style.display='';const gb=$('[data-menu="grifos"]');if(gb)gb.style.display='none';const i=localInfo||{};
   b.innerHTML=i.updating?`Actualizando mapa y grifos… ${Math.round((i.progress||0)*100)}%<small>${esc(i.step||'')}</small>`:
     `Actualizar mapa y grifos sin conexión<small>Mapa local: ${i.mapa?fmtDate(i.mapa_fecha):'sin descargar'}${i.error?' · '+esc(i.error):''}</small>`;
 }
