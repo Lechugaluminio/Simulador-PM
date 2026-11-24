@@ -38,7 +38,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 3. **Marcar el fuego.** *Área fuego* (achurada), *Colapso*, *Foco*.
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª, 2ª o 3ª alarma), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
-6. **Instalaciones y avisos.** PC, zona de espera (E), ACV, RIT con la compañía a cargo y MAYDAY.
+6. **Instalaciones y avisos.** PC, zona de espera (E), ACV, PAP, PAS, RIT con la compañía a cargo y MAYDAY. Los grifos se marcan en uso o sin agua con un clic.
 7. **Mostrar.** *Presentación* para la pantalla grande del PM, o *Imagen* para copiar o descargar el croquis.
 8. **Llevar a terreno.** Un ayudante escanea el QR y se lleva una copia editable al celular. Al volver, *Cambios* muestra qué se modificó.
 
@@ -91,12 +91,13 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 | Trazo | `K` | Trazo punteado libre |
 | Foco | `1` | Llama en el punto de origen |
 | Puesto de Comando | `2` | Rectángulo naranja con **PC** (estándar SCI) |
-| Grifo | `3` | Grifo manual (además de los automáticos) |
 | Piscina | `4` | Piscina de abastecimiento |
 | MAYDAY | `5` | Pastilla roja de MAYDAY en el lugar del bombero |
 | RIT | `6` | Pastilla verde con la compañía a cargo |
 | Zona de espera | `7` | Círculo amarillo con **E** |
 | ACV | `8` | Círculo amarillo: área de concentración de víctimas |
+| PAP | `9` | Círculo amarillo: puesto de abastecimiento primario |
+| PAS | `0` | Círculo amarillo: puesto de abastecimiento secundario |
 | Texto | `T` | Rótulo libre |
 
 ### 3.4 Mapa y datos externos
@@ -109,6 +110,8 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 | Nominatim (OpenStreetMap) | Búsqueda de direcciones | Al pulsar *Buscar* |
 | Overpass (OpenStreetMap) | Ubicación exacta de un **cruce** de calles | Al buscar un cruce `Calle A & Calle B` |
 | Aguas Andinas · *Ubicación de grifos* | Grifos de Aguas Andinas, Aguas Cordillera y Aguas Manquehue | Una vez por semana o desde *Menú → Actualizar grifos*; quedan guardados en el navegador |
+
+Clic en un grifo de Aguas Andinas para marcarlo **en uso** o **sin agua** (gris con una raya roja). Clic en un grifo marcado para cambiar su estado o desmarcarlo.
 
 El control *Atenuar* oscurece el mapa para que las piezas resalten.
 
@@ -138,7 +141,7 @@ En celulares y tablets verticales, la lista de carros se abre como panel desliza
 | Imagen satelital, mapa de calles y nombres | © Esri y sus proveedores | Servicios de teselas de ArcGIS Online, con atribución en el mapa |
 | Búsqueda de direcciones y cruces | © colaboradores de [OpenStreetMap](https://www.openstreetmap.org/copyright) (Nominatim, Overpass) | Datos ODbL |
 | Grifos | Aguas Andinas · [Ubicación de grifos](https://www.aguasandinas.cl/web/aguasandinas/ubicacion-de-grifos) | Mapa público de la empresa |
-| Íconos y símbolos (piezas, llama, PC, E, ACV, RIT, MAYDAY) | Dibujados con código (SVG y canvas) | Símbolos según el estándar SCI |
+| Íconos y símbolos (piezas, llama, PC, E, ACV, PAP, PAS, RIT, MAYDAY) | Dibujados con código (SVG y canvas) | Símbolos según el estándar SCI |
 
 ---
 
@@ -167,7 +170,7 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 | `V` | Mover / seleccionar |
 | `E` `F` `C` | Estructura / Área fuego / Colapso |
 | `L` `K` | Línea de ataque / Trazo |
-| `1` … `8` | Foco, PC, Grifo, Piscina, MAYDAY, RIT, Zona de espera, ACV |
+| `1` `2` `4`…`0` | Foco, PC, Piscina, MAYDAY, RIT, Zona de espera, ACV, PAP, PAS |
 | `T` | Texto |
 | `A` | Orientar con el lado A abajo |
 | `N` | Norte arriba |
