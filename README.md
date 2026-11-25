@@ -38,7 +38,8 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 2. **Dibujar la estructura.** Herramienta *Estructura*: clic en las esquinas. Los lados **A–D** se ponen solos; el botón **A abajo** orienta el mapa como en la pizarra.
 3. **Marcar el fuego.** *Área fuego* (achurada), *Colapso*, *Foco*.
    En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo* y *Víctima* (cantidad; al marcarla rescatada queda como un punto verde chico).
-   *Línea de ataque*: del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). Se ve en las dos vistas.
+   *Línea de ataque*: del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). En Territorio se ve solo el recorrido, sin rótulo.
+   *Pisos*: en el panel de la estructura se indican pisos y subterráneos; aparece la columna de pisos junto al edificio (ver 3.4).
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª, 2ª o 3ª alarma), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
 6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z o piscina → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
@@ -91,7 +92,20 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 | Lo de la otra vista | Oculto; cada estructura muestra un **resumen** (víctimas, humo) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
 | Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
-Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, **líneas de ataque**, trazo, texto y lados A–D están en ambas: alejando el mapa se sigue viendo qué carro armó cada línea y cuántas hay.
+Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, **líneas de ataque**, trazo, texto y lados A–D están en ambas. En Territorio las líneas de ataque se ven sin rótulo ni tipo de pitón: alejando el mapa se sigue viendo dónde hay líneas y cuántas.
+
+#### Edificios de varios pisos
+
+El mapa muestra la planta (el techo), así que los pisos se resuelven como en la pizarra:
+
+| Pieza | Cómo funciona |
+|---|---|
+| Pisos de la estructura | En su panel: pisos (1–99) y subterráneos |
+| Piso de cada elemento | Víctimas, foco, MAYDAY, RIT, texto, fuego, humo, colapso, muro y líneas de ataque tienen botones de *Piso* (S1… P1, P2… Techo). En el mapa llevan la etiqueta `P2`, `S1` o `Techo` |
+| Columna de pisos | Junto al edificio, en la vista Estructura: una fila por piso con lo que pasa en él (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se muestran solo los pisos con algo, el P1 y el techo |
+| Ver un piso | Clic en una fila: lo de los otros pisos se atenúa y lo que se agregue dentro del edificio queda en ese piso. *Ver todos* vuelve a mostrar todo |
+
+La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen los pisos.
 
 ### 3.4 Herramientas del croquis
 

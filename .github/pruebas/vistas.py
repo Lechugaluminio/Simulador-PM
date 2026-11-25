@@ -11,22 +11,22 @@ state = {'v': 1, 'title': 'Prueba vistas', 'address': 'Las Enredaderas & Fermín
     {'id': 'u2', 'code': 'Z-3', 'status': 'trabajando', 'fn': 'Abastecimiento', 'side': '', 'note': '', 'wave': 'D', 'pos': off(-90, -60), 'arrivedAt': 1, 'addedAt': 2},
     {'id': 'u3', 'code': 'Q-7', 'status': 'lugar', 'fn': '', 'side': '', 'note': '', 'wave': '1', 'pos': off(45, -40), 'arrivedAt': 1, 'addedAt': 3}],
   'shapes': [
-    {'id': 's1', 'kind': 'estructura', 'coords': sq, 'label': 'Casa 2 pisos'},
-    {'id': 's2', 'kind': 'fuego', 'coords': [off(-25, -5), off(0, -5), off(0, 15), off(-25, 15)], 'label': ''},
-    {'id': 's3', 'kind': 'humo', 'coords': [off(0, -15), off(25, -15), off(25, 15), off(0, 15)], 'label': 'humo denso'},
+    {'id': 's1', 'kind': 'estructura', 'coords': sq, 'label': 'Casa 2 pisos', 'pisos': 2},
+    {'id': 's2', 'kind': 'fuego', 'coords': [off(-25, -5), off(0, -5), off(0, 15), off(-25, 15)], 'label': '', 'piso': '1'},
+    {'id': 's3', 'kind': 'humo', 'coords': [off(0, -15), off(25, -15), off(25, 15), off(0, 15)], 'label': 'humo denso', 'piso': '2'},
     {'id': 's4', 'kind': 'muro', 'coords': [off(-30, 20), off(30, 20)], 'label': ''},
-    {'id': 's5', 'kind': 'ataque', 'coords': [off(-10, -45), off(-10, -25), off(-15, -5)], 'label': '1½"', 'color': '#2f7bff'},
+    {'id': 's5', 'kind': 'ataque', 'coords': [off(-10, -45), off(-10, -25), off(-15, -5)], 'label': '1½"', 'color': '#2f7bff', 'piso': '1'},
     {'id': 's6', 'kind': 'abast', 'coords': [off(-130, -60), off(-90, -60), off(-10, -45)], 'label': 'grifo → Z-3 → B-1'},
     {'id': 's7', 'kind': 'corte', 'coords': [off(-60, -110), off(-60, -80)], 'label': 'cortada'}],
   'marks': [
-    {'id': 'm1', 'kind': 'fuego', 'pos': off(-15, 5), 'text': ''},
+    {'id': 'm1', 'kind': 'fuego', 'pos': off(-15, 5), 'text': '', 'piso': '1'},
     {'id': 'm2', 'kind': 'piton', 'pos': off(-12, -20), 'text': 'B-1', 'ptype': '1½"', 'rot': 0},
-    {'id': 'm3', 'kind': 'victima', 'pos': off(15, 5), 'text': 'piso 2', 'n': 2, 'vstate': 'confirmada'},
+    {'id': 'm3', 'kind': 'victima', 'pos': off(15, 5), 'text': 'dormitorio', 'n': 2, 'vstate': 'confirmada', 'piso': '2'},
     {'id': 'm4', 'kind': 'pm', 'pos': off(-80, -100), 'text': ''},
     {'id': 'm5', 'kind': 'grifo', 'pos': off(-130, -60), 'text': ''},
     {'id': 'm6', 'kind': 'pap', 'pos': off(-110, -30), 'text': ''},
     {'id': 'm8', 'kind': 'victima', 'pos': off(-22, 12), 'text': 'piso 1', 'n': 1, 'vstate': 'rescatada'},
-    {'id': 'm7', 'kind': 'mayday', 'pos': off(20, -10), 'text': 'piso 2'}]}
+    {'id': 'm7', 'kind': 'mayday', 'pos': off(20, -10), 'text': '', 'piso': '2'}]}
 errs = []
 with sync_playwright() as p:
     b = p.chromium.launch(args=['--use-gl=swiftshader', '--enable-unsafe-swiftshader'])
@@ -40,6 +40,9 @@ with sync_playwright() as p:
     pg.screenshot(path=f'{OUT}/1_territorio.png')
     pg.keyboard.press('Tab'); pg.wait_for_timeout(4000)
     pg.screenshot(path=f'{OUT}/2_estructura.png')
+    pg.click('.fcol .fr[data-f="2"]'); pg.wait_for_timeout(800)
+    pg.screenshot(path=f'{OUT}/2b_solo_piso2.png')
+    pg.click('.fcol .fh button'); pg.wait_for_timeout(500)
     # dibujar una línea de ataque nueva (la punta es el pitón) y elegir monitor
     pg.keyboard.press('l'); pg.mouse.click(700, 660); pg.wait_for_timeout(300); pg.mouse.dblclick(760, 470); pg.wait_for_timeout(1200)
     pg.click('#panel [data-act="lpt"][data-v="monitor"]'); pg.wait_for_timeout(800)
