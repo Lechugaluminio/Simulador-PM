@@ -52,6 +52,20 @@ with sync_playwright() as p:
     pg.screenshot(path=f'{OUT}/2c_columna_movida.png')
     b2 = pg.locator('.fcol').bounding_box()
     errs.append('info: columna movida a %d,%d; tras volver a Estructura %d,%d' % (b1['x'], b1['y'], b2['x'], b2['y']))
+    # arrastrar el foco ya puesto, y arrastrar el botón Humo de la barra al mapa
+    st0 = pg.evaluate("JSON.parse(localStorage.getItem('croquisPM.state.v1'))")
+    fb = pg.locator('.m-fire').first.bounding_box()
+    fx, fy = fb['x'] + fb['width'] / 2, fb['y'] + fb['height'] / 2
+    pg.mouse.move(fx, fy); pg.mouse.down(); pg.mouse.move(fx + 20, fy + 20, steps=4); pg.mouse.move(fx + 70, fy + 50, steps=6); pg.mouse.up(); pg.wait_for_timeout(500)
+    hb2 = pg.locator('#tools [data-mode="mk:humo"]').bounding_box()
+    pg.mouse.move(hb2['x'] + hb2['width'] / 2, hb2['y'] + hb2['height'] / 2); pg.mouse.down()
+    pg.mouse.move(hb2['x'] + 80, hb2['y'] + 40, steps=5); pg.mouse.move(1300, 300, steps=8); pg.mouse.up(); pg.wait_for_timeout(600)
+    st1 = pg.evaluate("JSON.parse(localStorage.getItem('croquisPM.state.v1'))")
+    f0 = [m for m in st0['marks'] if m['kind'] == 'fuego'][0]['pos']; f1 = [m for m in st1['marks'] if m['kind'] == 'fuego'][0]['pos']
+    errs.append('info: foco movido %s -> %s; humos antes %d, después %d; zonas de humo que quedan %d' % (
+        [round(v, 6) for v in f0], [round(v, 6) for v in f1], sum(m['kind'] == 'humo' for m in st0['marks']), sum(m['kind'] == 'humo' for m in st1['marks']),
+        sum(x['kind'] == 'humo' for x in st1['shapes'])))
+    pg.screenshot(path=f'{OUT}/2d_foco_y_humo.png')
     # dibujar una línea de ataque nueva (la punta es el pitón) y elegir monitor
     pg.keyboard.press('l'); pg.mouse.click(700, 660); pg.wait_for_timeout(300); pg.mouse.dblclick(760, 470); pg.wait_for_timeout(1200)
     pg.click('#panel [data-act="lpt"][data-v="monitor"]'); pg.wait_for_timeout(800)
@@ -95,6 +109,8 @@ with sync_playwright() as p:
     pg.click('.fcol [data-x]'); pg.wait_for_timeout(800)
     pg.screenshot(path=f'{OUT}/8_torre_completa.png')
     pg.click('.fcol [data-x]'); pg.wait_for_timeout(300)
+    pg.click('.fcol [data-c]'); pg.wait_for_timeout(600)
+    pg.screenshot(path=f'{OUT}/8b_torre_solo_con_algo.png')
     pg.click('#btnShare'); pg.wait_for_timeout(400); pg.click('[data-share="snap"]'); pg.wait_for_timeout(8000)
     pg.screenshot(path=f'{OUT}/9_torre_imagen.png')
     b.close()

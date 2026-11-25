@@ -102,7 +102,7 @@ El mapa muestra la planta (el techo), así que los pisos se resuelven como en la
 |---|---|
 | Pisos de la estructura | En su panel: pisos (1–99) y subterráneos |
 | Piso de cada elemento | Víctimas, foco, MAYDAY, RIT, texto, fuego, humo, colapso, muro y líneas de ataque tienen botones de *Piso* (S1… P1, P2… Techo). En el mapa llevan la etiqueta `P2`, `S1` o `Techo` |
-| Columna de pisos | Junto al edificio, en la vista Estructura: una fila por piso con **íconos** de lo que pasa en él: llama (fuego), nube (humo), víctima con su cantidad, línea con flecha (líneas trabajando, con cantidad), triángulo (riesgo de colapso) y pastilla MAYDAY. En edificios altos la lista se desplaza con la rueda del mouse y el botón ⤢ la abre completa; al abrirse muestra el piso con fuego |
+| Columna de pisos | Junto al edificio, en la vista Estructura: una fila por piso con **íconos** de lo que pasa en él: llama (fuego), nube (humo), víctima con su cantidad, línea con flecha (líneas trabajando, con cantidad), triángulo (riesgo de colapso), pastilla RIT, víctimas rescatadas en verde, nota y pastilla MAYDAY. En edificios altos la lista se desplaza con la rueda del mouse y el botón ⤢ la abre completa; al abrirse muestra el piso con fuego. El botón del embudo deja solo los pisos con algo (los demás se resumen como `⋮ 5 pisos`) |
 | Mover la columna | Se arrastra desde su encabezado negro y queda en ese lugar respecto del edificio, aunque se cambie de vista o de zoom; doble clic en el encabezado la devuelve a su lugar |
 | Ver un piso | Clic en una fila: lo de los otros pisos se atenúa y lo que se agregue dentro del edificio queda en ese piso. *Ver todos* vuelve a mostrar todo |
 
@@ -116,7 +116,7 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
 | Área fuego | `F` | Estructura | Zona con fuego, achurada en rojo |
 | Colapso | `C` | Estructura | Zona de colapso |
-| Humo | `U` | Estructura | Zona con humo, gris translúcida |
+| Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco) |
 | Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
 | Línea de ataque | `L` | ambas | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | Estructura | Llama en el punto de origen |
@@ -134,7 +134,9 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Trazo | `K` | ambas | Trazo punteado libre |
 | Texto | `T` | ambas | Rótulo libre |
 
-Las medidas de mangueras y pitones van en milímetros, como en las guías de la Academia Nacional de Bomberos. Los croquis antiguos guardados en pulgadas se convierten solos al abrirlos (1½" → 38 mm, 2" → 52 mm, 2½" → 70 mm), y los pitones sueltos de versiones anteriores pasan a ser la punta de una línea corta.
+Los marcadores (foco, humo, víctima, MAYDAY, RIT, texto, piscina e instalaciones) se ponen con clic en el botón y clic en el mapa, o **arrastrando el botón al mapa**, como los carros. Una vez puestos se mueven arrastrándolos.
+
+Las medidas de mangueras y pitones van en milímetros, como en las guías de la Academia Nacional de Bomberos. Los croquis antiguos guardados en pulgadas se convierten solos al abrirlos (1½" → 38 mm, 2" → 52 mm, 2½" → 70 mm), y los pitones sueltos de versiones anteriores pasan a ser la punta de una línea corta. Las zonas de humo dibujadas como polígono pasan a ser un marcador de humo en su centro.
 
 ### 3.5 Mapa y datos externos
 
