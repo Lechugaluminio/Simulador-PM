@@ -25,7 +25,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 - **El mapa es real.** Se busca la dirección del despacho y aparecen la imagen satelital, los nombres de calles, la numeración y los **grifos** publicados por Aguas Andinas.
 - **Los carros son piezas.** Se pegan los códigos del despacho y se arrastran al mapa cuando llegan. Cada pieza lleva su color por tipo, su estado, su función y la salida a la que pertenece.
 - **Las convenciones son las de siempre.** ✕ = carro sin función o que no puede cumplirla; ◯ = carro retirándose; símbolos SCI para el Puesto de Comando, la zona de espera y el ACV. No hay que aprender un lenguaje nuevo.
-- **Dos escalas, sin mezclar.** Como en dos pizarras: la vista **Territorio** muestra el despliegue urbano (carros, líneas de abastecimiento, zona de espera, PAP, PAS, ACV, calles cortadas) y la vista **Estructura** lo que pasa dentro del edificio (pitones, humo, fuego, víctimas confirmadas, muros con riesgo de colapso). Cada vista muestra solo sus herramientas y atenúa lo de la otra, para que el croquis no se vuelva una ensalada de información.
+- **Dos escalas, sin mezclar.** Como en dos pizarras: la vista **Territorio** muestra el despliegue urbano (carros, líneas de abastecimiento, zona de espera, PAP, PAS, ACV, calles cortadas) y la vista **Estructura** lo que pasa dentro del edificio (humo, fuego, víctimas confirmadas, muros con riesgo de colapso). Las líneas de ataque, con el pitón en la punta, se ven en las dos. Cada vista muestra solo sus herramientas y atenúa lo de la otra, para que el croquis no se vuelva una ensalada de información.
 - **La información no sale del equipo.** Todo vive en el navegador del computador del PM. No pasa por servidores ajenos ni por grupos de mensajería durante la emergencia.
 
 **Qué queremos lograr:** que todos en el puesto de mando lean de un vistazo dónde está cada recurso y qué está haciendo, y que el oficial deje de redibujar para dedicarse a decidir.
@@ -37,7 +37,8 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 1. **Buscar el lugar.** Escribir la dirección o el cruce del despacho (por ejemplo `Las Enredaderas & Avenida Fermín Vivaceta, Independencia`) y pulsar *Buscar*.
 2. **Dibujar la estructura.** Herramienta *Estructura*: clic en las esquinas. Los lados **A–D** se ponen solos; el botón **A abajo** orienta el mapa como en la pizarra.
 3. **Marcar el fuego.** *Área fuego* (achurada), *Colapso*, *Foco*.
-   En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo*, *Pitón* (tipo y dirección del chorro) y *Víctima* (cantidad; se marca rescatada cuando sale).
+   En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo* y *Víctima* (cantidad; al marcarla rescatada queda como un punto verde chico).
+   *Línea de ataque*: del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). Se ve en las dos vistas.
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª, 2ª o 3ª alarma), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
 6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z o piscina → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
@@ -86,11 +87,11 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 | | Territorio (escala urbana) | Estructura (escala del edificio) |
 |---|---|---|
 | Para qué | Despliegue en la manzana: dónde está cada carro y cómo llega el agua | Qué pasa dentro del edificio afectado |
-| Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), piscina, línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, línea de ataque, foco, pitón, víctima, RIT, MAYDAY |
-| Lo de la otra vista | Oculto; cada estructura muestra un **resumen** (víctimas, pitones, humo) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
+| Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), piscina, línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
+| Lo de la otra vista | Oculto; cada estructura muestra un **resumen** (víctimas, humo) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
 | Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
-Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, trazo, texto y lados A–D están en ambas.
+Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, **líneas de ataque**, trazo, texto y lados A–D están en ambas: alejando el mapa se sigue viendo qué carro armó cada línea y cuántas hay.
 
 ### 3.4 Herramientas del croquis
 
@@ -102,10 +103,9 @@ Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indic
 | Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Zona con humo, gris translúcida |
 | Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
-| Línea | `L` | Estructura | Línea de ataque con flecha; diámetro de 38, 45, 52 o 70 mm y color a elegir |
+| Línea de ataque | `L` | ambas | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | Estructura | Llama en el punto de origen |
-| Pitón | `I` | Estructura | Pitón con tipo (38, 45, 52 o 70 mm, monitor o espuma) y flecha de dirección; apunta solo al fuego más cercano |
-| Víctima | `X` | Estructura | Víctima confirmada con cantidad; se marca *rescatada* |
+| Víctima | `X` | Estructura | Víctima confirmada con cantidad; al marcarla *rescatada* queda como un punto verde chico |
 | MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero |
 | RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
 | Puesto de Comando | `2` | Territorio | Rectángulo naranja con **PC** (estándar SCI) |
@@ -114,12 +114,12 @@ Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indic
 | ACV | `8` | Territorio | Círculo amarillo: área de concentración de víctimas |
 | PAP | `9` | Territorio | Círculo amarillo: puesto de abastecimiento primario |
 | PAS | `0` | Territorio | Círculo amarillo: puesto de abastecimiento secundario |
-| Línea de abastecimiento | `B` | Territorio | Línea azul gruesa con flechas: grifo → Z o piscina → bomba; diámetro de 75 o 110 mm |
+| Línea de abastecimiento | `B` | Territorio | Línea azul oscuro gruesa con flecha: grifo → Z o piscina → bomba; diámetro de 75 o 110 mm |
 | Calle cortada | `Q` | Territorio | Franja roja y blanca sobre la calle |
 | Trazo | `K` | ambas | Trazo punteado libre |
 | Texto | `T` | ambas | Rótulo libre |
 
-Las medidas de mangueras y pitones van en milímetros, como en las guías de la Academia Nacional de Bomberos. Los croquis antiguos guardados en pulgadas se convierten solos al abrirlos (1½" → 38 mm, 2" → 52 mm, 2½" → 70 mm).
+Las medidas de mangueras y pitones van en milímetros, como en las guías de la Academia Nacional de Bomberos. Los croquis antiguos guardados en pulgadas se convierten solos al abrirlos (1½" → 38 mm, 2" → 52 mm, 2½" → 70 mm), y los pitones sueltos de versiones anteriores pasan a ser la punta de una línea corta.
 
 ### 3.5 Mapa y datos externos
 
@@ -192,7 +192,7 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 | `V` | Mover / seleccionar |
 | `E` `F` `C` | Estructura / Área fuego / Colapso |
 | `U` `M` | Humo / Muro con riesgo |
-| `I` `X` | Pitón / Víctima |
+| `X` | Víctima |
 | `B` `Q` | Línea de abastecimiento / Calle cortada |
 | `L` `K` | Línea de ataque / Trazo |
 | `1` `2` `4`…`0` | Foco, PC, Piscina, MAYDAY, RIT, Zona de espera, ACV, PAP, PAS |

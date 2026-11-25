@@ -25,6 +25,7 @@ state = {'v': 1, 'title': 'Prueba vistas', 'address': 'Las Enredaderas & Fermín
     {'id': 'm4', 'kind': 'pm', 'pos': off(-80, -100), 'text': ''},
     {'id': 'm5', 'kind': 'grifo', 'pos': off(-130, -60), 'text': ''},
     {'id': 'm6', 'kind': 'pap', 'pos': off(-110, -30), 'text': ''},
+    {'id': 'm8', 'kind': 'victima', 'pos': off(-22, 12), 'text': 'piso 1', 'n': 1, 'vstate': 'rescatada'},
     {'id': 'm7', 'kind': 'mayday', 'pos': off(20, -10), 'text': 'piso 2'}]}
 errs = []
 with sync_playwright() as p:
@@ -39,9 +40,10 @@ with sync_playwright() as p:
     pg.screenshot(path=f'{OUT}/1_territorio.png')
     pg.keyboard.press('Tab'); pg.wait_for_timeout(4000)
     pg.screenshot(path=f'{OUT}/2_estructura.png')
-    # crear un pitón nuevo con la herramienta
-    pg.keyboard.press('i'); pg.mouse.click(760, 520); pg.wait_for_timeout(1500)
-    pg.screenshot(path=f'{OUT}/3_piton_panel.png')
+    # dibujar una línea de ataque nueva (la punta es el pitón) y elegir monitor
+    pg.keyboard.press('l'); pg.mouse.click(700, 660); pg.wait_for_timeout(300); pg.mouse.dblclick(760, 470); pg.wait_for_timeout(1200)
+    pg.click('#panel [data-act="lpt"][data-v="monitor"]'); pg.wait_for_timeout(800)
+    pg.screenshot(path=f'{OUT}/3_linea_monitor.png')
     pg.keyboard.press('Escape'); pg.keyboard.press('Escape')
     # panel de la línea de ataque (diámetros en mm)
     pg.mouse.click(824, 572); pg.wait_for_timeout(1000)

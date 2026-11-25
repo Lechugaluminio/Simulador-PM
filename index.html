@@ -190,7 +190,9 @@ body:not(.view-terr) .sumb{display:none}
 .m-piton .pt,.m-vic .pt{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);font-family:var(--fc);font-weight:800;font-size:calc(13px * var(--tok));line-height:1;background:rgba(17,17,17,.9);color:#fff;padding:.2em .4em;border-radius:4px;white-space:nowrap}
 .m-vic{position:relative;width:calc(34px * var(--tok));height:calc(34px * var(--tok));border-radius:50%;background:#fff;border:3px solid #e00000;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.45);display:grid;place-items:center}
 .m-vic svg{width:70%;height:70%}
-.m-vic.ok{border-color:#16a34a}
+.m-vic.ok{border-color:#16a34a;border-width:2px;width:calc(20px * var(--tok));height:calc(20px * var(--tok));box-shadow:0 0 0 1px #000,0 1px 3px rgba(0,0,0,.4);opacity:.9}
+.m-vic.ok .n{min-width:calc(14px * var(--tok));height:calc(14px * var(--tok));font-size:calc(10px * var(--tok));right:-7px;top:-7px;border-width:1.5px}
+.m-vic.ok .pt{display:none}.sel .m-vic.ok .pt{display:block}
 .m-vic .n{position:absolute;right:-9px;top:-9px;min-width:calc(19px * var(--tok));height:calc(19px * var(--tok));border-radius:999px;background:#e00000;color:#fff;border:2px solid #fff;font-family:var(--fc);font-weight:800;font-size:calc(13px * var(--tok));display:grid;place-items:center;padding:0 3px}
 .m-vic.ok .n{background:#16a34a}
 .dirs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px}
@@ -433,11 +435,10 @@ body.present #exitPresent{display:inline-flex!important}
       <button data-mode="poly:colapso" data-sc="estr" title="Zona de colapso / peligro (C)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 2.5"/><path d="M12 9v4M12 16v.5"/></svg>Colapso</button>
       <button data-mode="poly:humo" data-sc="estr" title="Zona con humo (U)"><svg class="i" viewBox="0 0 24 24"><path d="M5 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15.6 8 3.5 3.5 0 0 1 19 14.5"/><path d="M4 20h15M7 13.5h9"/></svg>Humo</button>
       <button data-mode="line:muro" data-sc="estr" title="Muro con riesgo de colapso: dibújalo sobre el muro (M)"><svg class="i" viewBox="0 0 24 24"><path d="M3 19h18M4 19V9l4-2 4 2v10M12 19v-6l4-2 4 2v6"/><path d="M8 11v3M16 14v2"/></svg>Muro riesgo</button>
-      <button data-mode="line:ataque" data-sc="estr" title="Línea / armada con flecha (L)"><svg class="i" viewBox="0 0 24 24"><path d="M4 20c3-7 7-11 14-13"/><path d="M13 5l5.5 2-3 5"/></svg>Línea</button>
+      <button data-mode="line:ataque" title="Línea de ataque: la punta es el pitón (L)"><svg class="i" viewBox="0 0 24 24"><path d="M4 20c3-7 7-11 14-13"/><path d="M13 5l5.5 2-3 5"/></svg>Línea</button>
       <button data-mode="line:trazo" title="Trazo discontinuo libre (K)"><svg class="i" viewBox="0 0 24 24"><path d="M3 17L21 7" stroke-dasharray="3.5 3"/></svg>Trazo</button>
       <div class="sep"></div>
       <button data-mode="mk:fuego" data-sc="estr" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
-      <button data-mode="mk:piton" data-sc="estr" title="Pitón: ubicación, tipo y dirección (I)"><svg class="i" viewBox="0 0 24 24"><path d="M3 15l8-3v4l-8 3z"/><path d="M11 12l4-1.5v3L11 16"/><path d="M17 9l4-2M17 12h4M17 15l4 2"/></svg>Pitón</button>
       <button data-mode="mk:victima" data-sc="estr" title="Víctima confirmada (X)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><path d="M12 9.5v6M8 12h8M9 21l3-5.5 3 5.5"/></svg>Víctima</button>
       <button class="grp" id="btnInst" data-sc="terr" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
       <button data-mode="mk:piscina" data-sc="terr" title="Piscina / estanque portátil (4)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 11c1.5-1.3 3-1.3 4.5 0s3 1.3 4.5 0 3-1.3 3 0"/></svg>Piscina</button>
@@ -518,7 +519,7 @@ const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona
 const POLY_KINDS=['estructura','fuego','colapso','humo'];
 /* escala de cada elemento: 'terr' (urbana), 'estr' (edificio) o ambas */
 const SC_TERR=new Set(['pm','espera','acv','pap','pas','piscina','grifo','abast','corte']);
-const SC_ESTR=new Set(['piton','victima','humo','ataque','muro']);
+const SC_ESTR=new Set(['piton','victima','humo','muro']);
 const scaleOf=k=>SC_TERR.has(k)?'terr':SC_ESTR.has(k)?'estr':'both';
 const PITON_TYPES=['38 mm','45 mm','52 mm','70 mm','Monitor','Espuma'];
 const ATAQUE_MM=['38 mm','45 mm','52 mm','70 mm'],ABAST_MM=['75 mm','110 mm'];
@@ -526,13 +527,18 @@ const ATAQUE_MM=['38 mm','45 mm','52 mm','70 mm'],ABAST_MM=['75 mm','110 mm'];
 const INCH_RE=/(^|[^\d])(1\s?½|1\s1\/2|1\s?¾|1\s3\/4|2\s?½|2\s1\/2|1|2|3|4)\s?(?:"|”|''|pulg(?:adas?|\.)?)|(^|[^\d])(1\s?½|1\s?¾|2\s?½)(?!\d)/g;
 const INCH_MM={'1':'25','1½':'38','11/2':'38','1¾':'45','13/4':'45','2':'52','2½':'70','21/2':'70','3':'75','4':'110'};
 function toMM(t){if(typeof t!=='string')return t;return t.replace(INCH_RE,(all,p1,a,p2,b)=>{const k=(a||b).replace(/\s/g,'');const mm=INCH_MM[k];return mm?(p1!=null?p1:p2||'')+mm+' mm':all;});}
-function normState(st){if(!st)return st;for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
+function normState(st){if(!st)return st;
+  if(Array.isArray(st.marks)&&st.marks.some(m=>m.kind==='piton')){st.shapes=st.shapes||[];
+    st.marks=st.marks.filter(m=>{if(m.kind!=='piton')return true;const r=(+m.rot||0)*Math.PI/180,P=localProj(m.pos);
+      const t=m.ptype||'',pt=/monitor/i.test(t)?'monitor':/espuma/i.test(t)?'espuma':'';
+      const x={id:'s_'+m.id,kind:'ataque',coords:[P.from([-Math.sin(r)*8,-Math.cos(r)*8]),m.pos],label:[pt?'':t,m.text||''].filter(Boolean).join(' · '),color:LINE_COLORS[0]};
+      if(pt)x.pt=pt;st.shapes.push(x);return false;});}for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
   for(const x of st.shapes||[])if(x.label&&['ataque','abast','trazo'].includes(x.kind))x.label=toMM(x.label);
   for(const u of st.units||[])if(u.note)u.note=toMM(u.note);return st;}
 /* Botón rápido de diámetro: cambia la medida del rótulo y deja el resto (ej: "52 mm · B-1" → "70 mm · B-1") */
 function withMM(label,v){label=(label||'').trim();const re=/\b\d{2,3}\s?mm\b/;if(re.test(label))return label.replace(re,v);return label?v+' · '+label:v;}
 const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
-const ABAST_COLOR='#0b84d8';
+const ABAST_COLOR='#0a3a8c';   // azul oscuro: se distingue del azul de las líneas de ataque
 const DEFAULT_SETTINGS={
   theme:'light',base:'sat',view:'terr',labels:true,grifos:true,dim:0,tok:1.15,hideRetired:true,legend:true,typesV:4,
   types:[
@@ -800,11 +806,15 @@ function addImages(){
   x.strokeStyle='rgba(255,35,35,.95)';x.lineWidth=3;
   for(const o of [-20,0,20]){x.beginPath();x.moveTo(o,20);x.lineTo(o+20,0);x.stroke();}
   if(!map.hasImage('hatch'))map.addImage('hatch',x.getImageData(0,0,20,20));
-  for(const col of [...LINE_COLORS,ABAST_COLOR]){const id='arrow-'+col.slice(1);if(map.hasImage(id))continue;
-    const s=64,cv=document.createElement('canvas');cv.width=cv.height=s;const g=cv.getContext('2d');
-    g.beginPath();g.moveTo(s/2,4);g.lineTo(s-8,s-8);g.lineTo(s/2,s-20);g.lineTo(8,s-8);g.closePath();
-    g.lineJoin='round';g.lineWidth=5;g.strokeStyle=col==='#ffffff'?'#111':'#fff';g.stroke();g.fillStyle=col;g.fill();
-    map.addImage(id,g.getImageData(0,0,s,s),{pixelRatio:2});}
+  /* La punta de la línea de ataque es el pitón: chorro (flecha llena), monitor (flecha doble) o espuma (flecha hueca) */
+  const head=(g,y0,y1,yn,fill,stroke,lw)=>{const s=64;g.beginPath();g.moveTo(s/2,y0);g.lineTo(s-8,y1);g.lineTo(s/2,yn);g.lineTo(8,y1);g.closePath();g.lineJoin='round';g.lineWidth=lw;g.strokeStyle=stroke;g.stroke();g.fillStyle=fill;g.fill();};
+  for(const col of [...LINE_COLORS,ABAST_COLOR])for(const [pre,draw] of [
+    ['arrow',(g,ed)=>head(g,4,56,44,col,ed,5)],
+    ['mon',(g,ed)=>{head(g,22,62,52,col,ed,5);head(g,2,42,32,col,ed,5);}],
+    ['esp',(g,ed)=>{head(g,4,56,44,ed,ed,5);head(g,13,50,40,'#fff','#fff',1);g.fillStyle=col==='#ffffff'?'#111':col;g.beginPath();g.arc(32,36,4.5,0,Math.PI*2);g.fill();}]]){
+    const id=pre+'-'+col.slice(1);if(map.hasImage(id))continue;
+    const cv=document.createElement('canvas');cv.width=cv.height=64;const g=cv.getContext('2d');draw(g,col==='#ffffff'?'#111':pre==='esp'?col:'#fff');
+    map.addImage(id,g.getImageData(0,0,64,64),{pixelRatio:2});}
 }
 const EMPTY={type:'FeatureCollection',features:[]};
 const PICK_LAYERS=['arrows','ataque-line','trazo-line','abast-line','corte-line','muro-line','fuego-line','colapso-line','humo-line','estructura-line','fuego-tint','humo-fill','estructura-fill','colapso-fill'];
@@ -852,10 +862,10 @@ function shapesGeo(){
     geometry:POLY_KINDS.includes(s.kind)&&s.coords.length>=3?{type:'Polygon',coordinates:[[...s.coords,s.coords[0]]]}:{type:'LineString',coordinates:s.coords}}))};
 }
 function arrowsGeo(){
-  const v=settings.view==='estr'?'estr':'terr';
-  return {type:'FeatureCollection',features:state.shapes.filter(s=>(s.kind==='ataque'&&v==='estr'||s.kind==='abast')&&s.coords.length>=2).map(s=>{
-    const n=s.coords.length;const a=s.coords[n-2],b=s.coords[n-1];const col=s.kind==='abast'?ABAST_COLOR:(s.color||LINE_COLORS[0]);
-    return {type:'Feature',properties:{id:s.id,kind:'ataque',bearing:azimuth(a,b),icon:'arrow-'+(s.kind==='abast'?ABAST_COLOR:LINE_COLORS.includes(col)?col:LINE_COLORS[0]).slice(1)},geometry:{type:'Point',coordinates:b}};})};
+  return {type:'FeatureCollection',features:state.shapes.filter(s=>(s.kind==='ataque'||s.kind==='abast')&&s.coords.length>=2).map(s=>{
+    const n=s.coords.length;const a=s.coords[n-2],b=s.coords[n-1];const col=s.kind==='abast'?ABAST_COLOR:(LINE_COLORS.includes(s.color)?s.color:LINE_COLORS[0]);
+    const pre=s.kind==='ataque'&&s.pt==='monitor'?'mon':s.kind==='ataque'&&s.pt==='espuma'?'esp':'arrow';
+    return {type:'Feature',properties:{id:s.id,kind:'ataque',bearing:azimuth(a,b),icon:pre+'-'+col.slice(1)},geometry:{type:'Point',coordinates:b}};})};
 }
 function pushShapes(){
   if(!mapReady)return;
@@ -1035,11 +1045,11 @@ function structSummaries(){
   const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),coords:x.coords,v:0,p:0,h:0}));
   const loose={id:'_',c:null,v:0,p:0,h:0,pts:[]};
   const near=pos=>{let best=null,bd=250;for(const t of sts){const d=distM(pos,t.c);if(d<bd){bd=d;best=t;}}return best;};
-  for(const m of state.marks){if(m.kind!=='victima'&&m.kind!=='piton')continue;const t=near(m.pos)||loose;if(t===loose)loose.pts.push(m.pos);
-    if(m.kind==='victima'&&m.vstate!=='rescatada')t.v+=(m.n||1);if(m.kind==='piton')t.p++;}
+  for(const m of state.marks){if(m.kind!=='victima')continue;const t=near(m.pos)||loose;if(t===loose)loose.pts.push(m.pos);
+    if(m.kind==='victima'&&m.vstate!=='rescatada')t.v+=(m.n||1);}
   for(const x of state.shapes){if(x.kind!=='humo'||!x.coords||x.coords.length<3)continue;const t=near(polyCenter(x.coords));if(t)t.h++;}
   if(loose.pts.length){loose.c=[loose.pts.reduce((a,p)=>a+p[0],0)/loose.pts.length,loose.pts.reduce((a,p)=>a+p[1],0)/loose.pts.length];sts.push(loose);}
-  return sts.filter(t=>t.v||t.p||t.h).map(t=>({...t,txt:[t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.p?`${t.p} pitón${t.p>1?'es':''}`:'',t.h?'humo':''].filter(Boolean).join(' · ')}));
+  return sts.filter(t=>t.v||t.h).map(t=>({...t,txt:[t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.h?'humo':''].filter(Boolean).join(' · ')}));
 }
 function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[b.x1,(b.y0+b.y1)/2],a:'l'};}
 function distM(a,b){const P=localProj(a);const q=P.to(b);return Math.hypot(q[0],q[1]);}
@@ -1054,7 +1064,7 @@ function syncSummaries(){
   for(const [id,r] of mkSum)if(!seen.has(id)){r.m.remove();mkSum.delete(id);}
 }
 function updatePitonRot(){for(const k of state.marks){if(k.kind!=='piton')continue;const r=mkMarks.get(k.id);const d=r&&r.el.querySelector('.m-piton');if(d)d.style.setProperty('--r',pitonRot(k)+'deg');}}
-const ESTR_LAYERS=['humo-fill','humo-line','ataque-casing','ataque-line','muro-casing','muro-line','muro-dash'];
+const ESTR_LAYERS=['humo-fill','humo-line','muro-casing','muro-line','muro-dash'];
 const TERR_LAYERS=[['abast-casing','line-opacity',.9],['abast-line','line-opacity',1],['corte-casing','line-opacity',.6],['corte-line','line-opacity',1],['corte-dash','line-opacity',1]];
 /* La barra de herramientas se compacta sola si no cabe en la pantalla (primero más apretada, luego solo íconos) */
 function fitTools(){const t=$('#tools');if(!t)return;t.classList.remove('cmp','tight');
@@ -1111,7 +1121,7 @@ const HINTS={
   'line:corte':'<b>Calle cortada:</b> clic de un lado a otro de la calle (o a lo largo del tramo cortado) · doble clic para terminar',
   'mk:piton':'Clic donde está el <b>pitón</b> (después eliges tipo y dirección)',
   'mk:victima':'Clic donde está la <b>víctima</b>',
-  'line:ataque':'<b>Línea:</b> clic en el carro o punto de origen y luego en cada quiebre · doble clic para terminar',
+  'line:ataque':'<b>Línea de ataque:</b> clic en el carro y luego en cada quiebre · doble clic donde está el <b>pitón</b> (la punta)',
   'line:trazo':'<b>Trazo:</b> clic en cada punto · doble clic para terminar',
   'mk:fuego':'Clic en el mapa para ubicar el <b>foco del fuego</b>',
   'mk:pm':'Clic en el mapa para ubicar el <b>Puesto de Comando (PC)</b>',
@@ -1322,10 +1332,11 @@ function renderPanel(){
   }else{
     const s=o;const poly=POLY_KINDS.includes(s.kind);
     h=`<div class="pn-h"><span class="ttl">${esc(SHAPE_LABEL[s.kind]||'Forma')}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">
-      <label class="l">Rótulo</label><input id="pnLabel" type="text" value="${esc(s.label||'')}" placeholder="${({ataque:'ej: 52 mm · B-1',abast:'ej: 75 mm · grifo → Z-3 → B-1',corte:'ej: cortada por Carabineros',muro:'ej: muro lado C · 2 pisos',humo:'ej: humo denso piso 2'})[s.kind]||'ej: Casa 2 pisos · bodega'}">`;
+      <label class="l">Rótulo</label><input id="pnLabel" type="text" value="${esc(s.label||'')}" placeholder="${({ataque:'ej: 52 mm · B-1 (carro o compañía)',abast:'ej: 75 mm · grifo → Z-3 → B-1',corte:'ej: cortada por Carabineros',muro:'ej: muro lado C · 2 pisos',humo:'ej: humo denso piso 2'})[s.kind]||'ej: Casa 2 pisos · bodega'}">`;
     if(s.kind==='ataque'||s.kind==='abast'){const cur=((s.label||'').match(/\b\d{2,3}\s?mm\b/)||[''])[0].replace(/\s?mm/,' mm');
       h+=`<label class="l">Diámetro</label><div class="seg">${(s.kind==='abast'?ABAST_MM:ATAQUE_MM).map(q=>`<button data-act="quick" data-v="${esc(q)}" class="${q===cur?'on':''}">${esc(q)}</button>`).join('')}</div>`;}
     if(s.kind==='ataque'){
+      h+=`<label class="l">Pitón (punta de la línea)</label>${segBtns('lpt',[['','Chorro'],['monitor','Monitor'],['espuma','Espuma']],s.pt||'')}`;
       h+=`<label class="l">Color</label><div class="colors">${LINE_COLORS.map(c=>`<button data-act="color" data-v="${c}" class="${c===(s.color||LINE_COLORS[0])?'on':''}" style="--c:${c}" title="${c}"></button>`).join('')}</div>`;
     }
     h+=`<div class="meta">${poly?'Superficie aprox.: <b>'+Math.round(areaM2(s.coords)).toLocaleString('es-CL')+' m²</b>':'Largo aprox.: <b>'+Math.round(lengthM(s.coords))+' m</b>'}</div><div class="acts">
@@ -1352,6 +1363,7 @@ function onPanelClick(ev){
     case 'prot':o.rot=+v;commit();break;
     case 'vn':o.n=Math.max(1,(o.n||1)+(+v));commit();break;
     case 'vstate':o.vstate=v;commit();break;
+    case 'lpt':if(v)o.pt=v;else delete o.pt;commit();break;
     case 'wave':o.wave=v;commit();break;
     case 'qtext':o.text=v;commit();break;
     case 'orient':orientA();break;
@@ -1598,10 +1610,10 @@ function drawMarkSnap(g,m,x,y){
     case 'piton':{const d=34*tok;g.beginPath();g.arc(x,y,d/2+1.5,0,Math.PI*2);g.fillStyle='#000';g.fill();g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(x,y,d/2-2.5,0,Math.PI*2);g.fillStyle='#1d6fe8';g.fill();
       g.save();g.translate(x,y);g.rotate(pitonRot(m)*Math.PI/180);const k=d*.76/24;g.scale(k,k);g.translate(-12,-12);const pa=new Path2D('M12 2.5l5 7.5h-3.2v11.5h-3.6V10H7z');g.fillStyle='#fff';g.fill(pa);g.lineWidth=1;g.strokeStyle='#0a2a66';g.stroke(pa);g.restore();
       darkLabel(g,[(m.ptype||'Pitón')+(m.text?' · '+m.text:'')],x,y+d/2+4,13*tok);break;}
-    case 'victima':{const d=34*tok,ok=m.vstate==='rescatada';g.beginPath();g.arc(x,y,d/2+1.5,0,Math.PI*2);g.fillStyle='#000';g.fill();g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle=ok?'#16a34a':'#e00000';g.fill();g.beginPath();g.arc(x,y,d/2-3,0,Math.PI*2);g.fillStyle='#fff';g.fill();
+    case 'victima':{const ok=m.vstate==='rescatada',d=(ok?20:34)*tok;g.beginPath();g.arc(x,y,d/2+1.5,0,Math.PI*2);g.fillStyle='#000';g.fill();g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle=ok?'#16a34a':'#e00000';g.fill();g.beginPath();g.arc(x,y,d/2-3,0,Math.PI*2);g.fillStyle='#fff';g.fill();
       g.save();g.translate(x-d*.35,y-d*.35);g.scale(d*.7/24,d*.7/24);g.fillStyle='#111';g.beginPath();g.arc(12,5.5,3,0,Math.PI*2);g.fill();g.strokeStyle='#111';g.lineWidth=2.6;g.lineCap='round';g.lineJoin='round';g.stroke(new Path2D('M12 9.5v6.5M7 12.5h10M8.5 22l3.5-6 3.5 6'));g.restore();
-      if((m.n||1)>1){const r=10*tok;g.beginPath();g.arc(x+d/2-2,y-d/2+2,r,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(x+d/2-2,y-d/2+2,r-2,0,Math.PI*2);g.fillStyle=ok?'#16a34a':'#e00000';g.fill();centerText(g,String(m.n),x+d/2-2,y-d/2+2,FONT(800,13*tok),'#fff');}
-      if(m.text)darkLabel(g,[m.text],x,y+d/2+4,13*tok);break;}
+      if((m.n||1)>1){const r=(ok?7:10)*tok;g.beginPath();g.arc(x+d/2-2,y-d/2+2,r,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(x+d/2-2,y-d/2+2,r-2,0,Math.PI*2);g.fillStyle=ok?'#16a34a':'#e00000';g.fill();centerText(g,String(m.n),x+d/2-2,y-d/2+2,FONT(800,(ok?10:13)*tok),'#fff');}
+      if(m.text&&!ok)darkLabel(g,[m.text],x,y+d/2+4,13*tok);break;}
     case 'fuego':{const sz=50*tok;g.save();g.translate(x-sz/2,y-sz/2);g.scale(sz/24,sz/24);g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=4;
       const a=new Path2D(FLAME_P[0]);g.fillStyle='#ff3b1f';g.fill(a);g.shadowBlur=0;g.lineWidth=1.4;g.strokeStyle='#fff';g.lineJoin='round';g.stroke(a);g.fillStyle='#ffd166';g.fill(new Path2D(FLAME_P[1]));g.restore();break;}
     case 'pm':{const t=m.text||'PC',fs=22*tok;pillBox(g,x,y,t,{fs,h:fs*1.45,padX:1.25,r:3,bg:'#ff8c00',border:'#111',outer:'#fff',bw:3});centerText(g,t,x,y+fs*.03,FONT(800,fs),'#111');break;}
@@ -1726,7 +1738,7 @@ async function packState(){
   const o={v:1,t:state.title||'',a:state.address||'',s:state.startedAt,x:Date.now(),r:r0,b:map?Math.round(map.getBearing()):0,
     u:state.units.filter(u=>u.status!=='retirado').map(u=>{const a=[u.code,ST_KEYS.indexOf(u.status),u.fn||'',u.side||'',u.note||'',u.wave||''];if(u.pos)a.push(...P(u.pos));return a;}),
     m:state.marks.map(m=>{const a=[m.kind,...P(m.pos),m.kind==='lado'?m.letter:(m.text||'')];const x={};if(m.seco)x.s=1;if(m.ptype)x.t=m.ptype;if(m.rot)x.r=m.rot;if(m.n>1)x.n=m.n;if(m.vstate==='rescatada')x.v=1;if(Object.keys(x).length)a.push(x);return a;}),
-    g:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map(s=>[SH_KEYS.indexOf(s.kind),s.kind==='ataque'?Math.max(0,LINE_COLORS.indexOf(s.color||LINE_COLORS[0])):(s.kind==='estructura'&&s.front!=null?s.front+1:0),s.label||'',...flat(s.coords)]),
+    g:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map(s=>[SH_KEYS.indexOf(s.kind),s.kind==='ataque'?Math.max(0,LINE_COLORS.indexOf(s.color||LINE_COLORS[0]))+10*(s.pt==='monitor'?1:s.pt==='espuma'?2:0):(s.kind==='estructura'&&s.front!=null?s.front+1:0),s.label||'',...flat(s.coords)]),
     y:settings.types.map(t=>[t.prefix,t.color.replace('#','')])};
   return b64u.enc(await zip(new TextEncoder().encode(JSON.stringify(o)),'c'));
 }
@@ -1738,7 +1750,7 @@ async function unpackState(txt){
   st.marks=o.m.map((a,i)=>{const m={id:'m'+i,kind:a[0],pos:L(a[1],a[2]),text:''};if(a[0]==='lado')m.letter=a[3];else m.text=a[3];
     const x=a[4]||{};if(x.s)m.seco=true;if(x.t)m.ptype=x.t;if(x.r)m.rot=x.r;if(m.kind==='victima'){m.n=x.n||1;m.vstate=x.v?'rescatada':'confirmada';}return m;});
   st.shapes=o.g.map((a,i)=>{const cs=[];let x=0,y=0;for(let k=3;k<a.length;k+=2){x+=a[k];y+=a[k+1];cs.push(L(x,y));}
-    const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque')s.color=LINE_COLORS[a[1]]||LINE_COLORS[0];
+    const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque'){s.color=LINE_COLORS[a[1]%10]||LINE_COLORS[0];const q=Math.floor(a[1]/10);if(q===1)s.pt='monitor';if(q===2)s.pt='espuma';}
     if(s.kind==='estructura'&&a[1]>0&&a[1]-1<cs.length){s.front=a[1]-1;s.azA=computeSides(cs,s.front).azA;}return s;});
   normState(st);
   return {st,at:o.x,bearing:o.b||0,types:(o.y||[]).map(([p,c])=>({prefix:p,name:p,color:'#'+c}))};
@@ -1747,7 +1759,7 @@ function fnv(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCode
 async function setupFork(data){
   forkFid=fnv(data);let saved=null;try{saved=JSON.parse(LS.get(KEY_FORK)||'null');}catch(e){}
   if(saved&&saved.fid===forkFid&&saved.state&&saved.base){
-    state=saved.state;forkBase=saved.base;forkAt=saved.at;forkView=saved.view||null;if(saved.types)settings.types=saved.types;forkResumed=true;
+    state=normState(saved.state);forkBase=normState(saved.base);forkAt=saved.at;forkView=saved.view||null;if(saved.types)settings.types=saved.types;forkResumed=true;
   }else{
     const v=await unpackState(data);state=v.st;forkBase=JSON.parse(JSON.stringify(v.st));forkAt=v.at;
     forkView={center:v.st.center,zoom:17,bearing:v.bearing};
@@ -1800,6 +1812,7 @@ function computeChanges(){
     if(!b){out.push({id:x.id,t:'shape',who:nm,txt:'dibujado en la copia',pos:x.coords[0]});continue;}
     const p=[];if(b.coords.length!==x.coords.length||b.coords.some((c,i)=>!sameC(c,x.coords[i])))p.push('forma modificada');
     if((b.label||'')!==(x.label||''))p.push(`rótulo: “${x.label||''}”`);
+    if((b.pt||'')!==(x.pt||''))p.push('pitón: '+(x.pt||'chorro'));
     if(p.length)out.push({id:x.id,t:'shape',who:nm,txt:p.join(' · '),pos:x.coords[0]});
   }
   for(const b of forkBase.shapes)if(!cS.has(b.id))out.push({id:b.id,t:'shape',who:SHAPE_LABEL[b.kind],txt:'borrado en la copia',pos:b.coords[0],gone:true});
@@ -1996,9 +2009,9 @@ function openHelp(){
     <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª, 2ª o 3ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª, 2ª, 3ª) de un carro para cambiarla.</li>
     <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
-    <li><b>Líneas</b> (L): clic en el carro y luego hacia donde va la armada; doble clic para terminar. Puedes rotularlas y elegir el diámetro (38, 45, 52 o 70 mm).</li>
-    <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
-    <li><b>Estructura:</b> el <b>pitón</b> (I) se pone donde está y apunta solo al fuego más cercano; en su panel eliges tipo (38, 45, 52 o 70 mm, monitor o espuma) y dirección. La <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale. <b>Humo</b> (U) es una zona como el área con fuego; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
+    <li><b>Líneas de ataque</b> (L): clic en el carro, luego en cada quiebre y doble clic donde está el pitón. <b>La punta de la línea es el pitón</b> y apunta hacia donde va el chorro. En su panel eliges el diámetro (38, 45, 52 o 70 mm), el pitón (chorro, monitor o espuma) y el color. Se ven en las dos vistas, así de un vistazo se sabe qué carro armó cada línea y cuántas hay.</li>
+    <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
+    <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). <b>Humo</b> (U) es una zona como el área con fuego; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
   <p>Todo se guarda solo en este navegador. Al terminar, usa <b>Menú → Exportar</b> para respaldar el croquis.</p>
@@ -2009,7 +2022,7 @@ function openHelp(){
     <tr><td><kbd>Tab</kbd></td><td>Cambiar vista Territorio / Estructura</td><td><kbd>U</kbd></td><td>Zona con humo</td></tr>
     <tr><td><kbd>L</kbd></td><td>Línea con flecha</td><td><kbd>K</kbd></td><td>Trazo discontinuo</td></tr>
     <tr><td><kbd>B</kbd></td><td>Línea de abastecimiento</td><td><kbd>Q</kbd></td><td>Calle cortada</td></tr>
-    <tr><td><kbd>I</kbd></td><td>Pitón</td><td><kbd>X</kbd></td><td>Víctima confirmada</td></tr>
+    <tr><td><kbd>X</kbd></td><td>Víctima confirmada</td><td></td><td></td></tr>
     <tr><td><kbd>M</kbd></td><td>Muro con riesgo de colapso</td><td></td><td></td></tr>
     <tr><td><kbd>1</kbd>–<kbd>0</kbd></td><td>1 Foco · 2 PC · 4 Piscina · 5 Mayday · 6 RIT · 7 Zona de espera · 8 ACV · 9 PAP · 0 PAS</td><td><kbd>T</kbd></td><td>Texto</td></tr>
     <tr><td><kbd>A</kbd></td><td>Orientar con lado A abajo</td><td><kbd>N</kbd></td><td>Norte arriba</td></tr>
@@ -2139,7 +2152,7 @@ function onKey(e){
   if((e.key==='Delete'||e.key==='Backspace')&&selected){e.preventDefault();deleteSelected();return;}
   const k=e.key.toLowerCase();
   if(e.key==='Tab'&&!isDrawing()){e.preventDefault();setView(settings.view==='estr'?'terr':'estr',true);return;}
-  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo',u:'poly:humo',m:'line:muro',i:'mk:piton',x:'mk:victima',b:'line:abast',q:'line:corte','1':'mk:fuego','2':'mk:pm','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
+  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo',u:'poly:humo',m:'line:muro',x:'mk:victima',b:'line:abast',q:'line:corte','1':'mk:fuego','2':'mk:pm','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
   if(modes[k]){if(k==='v')select(null);setMode(modes[k]);return;}
   if(k==='a')orientA();
   if(k==='s')toggleSun();
