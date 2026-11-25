@@ -51,6 +51,11 @@ with sync_playwright() as p:
     pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
     pg.keyboard.press('Tab'); pg.wait_for_timeout(3000)
     pg.screenshot(path=f'{OUT}/5_territorio_otra_vez.png')
+    # pantalla de notebook: la barra de herramientas debe caber sin desplazarse
+    pg.set_viewport_size({'width': 1366, 'height': 768}); pg.wait_for_timeout(800)
+    pg.keyboard.press('Tab'); pg.wait_for_timeout(3500)
+    pg.screenshot(path=f'{OUT}/6_estructura_1366x768.png')
+    errs.append('info: barra ' + pg.evaluate("(()=>{const t=document.querySelector('#tools');return t.className+' '+t.scrollHeight+'/'+t.clientHeight})()"))
     b.close()
 open(f'{OUT}/errores.txt', 'w').write('\n'.join(errs) or 'sin errores')
 print('\n'.join(errs) or 'sin errores')

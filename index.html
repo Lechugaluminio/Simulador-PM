@@ -102,6 +102,8 @@ body.sb-hidden #side{display:none}
 #viewbar .pair{display:flex;gap:2px}
 #viewbar .pair button{padding:7px 8px}
 body.present #viewbar{display:flex!important}
+#tools.cmp button{padding:3px 2px;gap:1px;font-size:10.5px}#tools.cmp button svg{width:20px;height:20px}#tools.cmp .sep{margin:2px 4px}
+#tools.tight button{padding:5px 2px;font-size:0;gap:0}#tools.tight button svg{width:21px;height:21px}#tools.tight .grp .chev{font-size:9px;top:6px}
 #tools kbd{font-family:var(--fb);font-size:9.5px;opacity:.6;font-weight:600}
 #mapctl{position:absolute;right:52px;top:10px;z-index:5;display:flex;gap:10px;align-items:center;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:5px 9px;font-size:13px;font-weight:600}
 #mapctl label{display:flex;gap:6px;align-items:center;white-space:nowrap;cursor:pointer}
@@ -175,12 +177,13 @@ body.present #viewbar{display:flex!important}
 #viewTabs button.on{background:var(--acc);color:var(--accInk)}
 #viewTabs kbd{font-family:var(--fb);font-size:10px;opacity:.6;font-weight:600}
 body.view-terr #tools [data-sc="estr"],body.view-estr #tools [data-sc="terr"]{display:none}
-body.view-terr .mw.sc-estr,body.view-terr .lbl.sc-estr{display:none}
-body.view-estr .mw.sc-terr,body.view-estr .lbl.sc-terr{opacity:.38}
+body.view-terr .mw.sc-estr,body.view-terr .lblw.sc-estr{display:none}
+body.view-estr .mw.sc-terr,body.view-estr .lblw.sc-terr{opacity:.38}
 body.view-estr .tw{opacity:.55}
 body.view-estr .tw.sel,body.view-estr .mw.sel{opacity:1}
 body:not(.view-terr) .sumb{display:none}
-.sumb{font-family:var(--fc);font-weight:800;font-size:calc(15px * var(--tok));line-height:1;background:#fff;color:#111;border:2.5px solid #111;border-radius:999px;padding:.28em .6em .22em;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.45);cursor:pointer;transform:translateY(calc(26px * var(--tok)))}
+.sumw{width:0;height:0}
+.sumb{font-family:var(--fc);font-weight:800;font-size:calc(15px * var(--tok));line-height:1;background:#fff;color:#111;border:2.5px solid #111;border-radius:999px;padding:.28em .6em .22em;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.45);cursor:pointer;position:absolute;left:0;top:0}
 .sumb b{color:#d00000}
 .m-piton{position:relative;width:calc(34px * var(--tok));height:calc(34px * var(--tok));border-radius:50%;background:#1d6fe8;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.45);display:grid;place-items:center}
 .m-piton svg{width:76%;height:76%;transform:rotate(var(--r,0deg))}
@@ -218,7 +221,10 @@ body:not(.view-terr) .sumb{display:none}
 .m-text{font-family:var(--fc);font-weight:800;font-size:calc(20px * var(--tok));color:#fff;text-shadow:0 0 2px #000,0 0 3px #000,0 0 6px #000,1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
 .m-side{width:calc(38px * var(--tok));height:calc(38px * var(--tok));border-radius:50%;background:#fff;color:#111;border:3px solid #111;display:grid;place-items:center;font-family:var(--fc);font-weight:800;font-size:calc(24px * var(--tok));box-shadow:0 2px 8px rgba(0,0,0,.45)}
 .mw.sel>*{outline:4px solid var(--sel);outline-offset:3px}
-.lbl{font-family:var(--fc);font-weight:700;font-size:calc(16px * var(--tok));background:rgba(15,15,15,.84);color:#fff;padding:.14em .45em;border-radius:5px;white-space:nowrap;pointer-events:none}
+.lblw{width:0;height:0;pointer-events:none}
+.lbl{position:absolute;left:0;top:0;font-family:var(--fc);font-weight:700;font-size:calc(16px * var(--tok));background:rgba(15,15,15,.84);color:#fff;padding:.14em .45em;border-radius:5px;white-space:nowrap;pointer-events:none}
+.lbl.z{font-size:calc(13px * var(--tok));font-weight:600;border-left:4px solid var(--zc,#888);border-radius:3px 5px 5px 3px;background:rgba(15,15,15,.74)}
+.a-c{transform:translate(-50%,-50%)}.a-b{transform:translate(-50%,calc(-100% - 7px))}.a-tl{transform:translate(6px,6px)}.a-l{transform:translate(9px,-50%)}.a-t{transform:translate(-50%,calc(12px * var(--tok)))}
 .vh{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--sel);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:move}
 .ring{width:76px;height:76px;border-radius:50%;border:4px solid var(--sel);animation:pulse 1.1s ease-out 5 forwards;pointer-events:none}
 .ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.08);opacity:.92}
@@ -772,7 +778,8 @@ function initMap(){
   if(map.touchPitch)map.touchPitch.disable();
   map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();if(fork&&!forkResumed)setTimeout(fitAll,50);initGrifos();});
   map.on('click',onMapClick);
-  map.on('rotate',updatePitonRot);
+  let _rotQ=0;const onRot=()=>{updatePitonRot();if(_rotQ)return;_rotQ=requestAnimationFrame(()=>{_rotQ=0;syncLabels();syncSummaries();});};
+  map.on('rotate',onRot);map.on('pitch',onRot);
   map.on('mousemove',onMapMove);
   map.on('dblclick',onMapDbl);
   map.on('moveend',()=>{loadLocalFeatures();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
@@ -987,21 +994,35 @@ function syncMarks(){
   for(const [id,r] of mkMarks)if(!seen.has(id)){r.m.remove();mkMarks.delete(id);}
   syncSummaries();
 }
+const ZONE_C={fuego:'#ff3b30',humo:'#aab1bc',colapso:'#ffd60a'};
+/* Dónde va el rótulo de una figura, en pantalla (P: lngLat → [x,y]).
+   Estructura: encima del borde superior (como el nombre en un plano).
+   Zonas (fuego, humo, colapso): en su esquina superior izquierda, por dentro.
+   Líneas: a mitad del trazo. Así no chocan con el foco, las víctimas ni entre sí. */
+function bboxScr(coords,P){let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;for(const c of coords){const [x,y]=P(c);if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}return {x0,x1,y0,y1};}
+function labelSpot(s,P){
+  if(!(POLY_KINDS.includes(s.kind)&&s.coords.length>=3))return {p:P(alongLine(s.coords,.5)),a:'c'};
+  const b=bboxScr(s.coords,P);
+  if(s.kind==='estructura')return {p:[(b.x0+b.x1)/2,b.y0],a:'b'};
+  return {p:[b.x0,b.y0],a:'tl',z:ZONE_C[s.kind]||'#888'};
+}
+const mapP=c=>{const q=map.project(c);return [q.x,q.y];};
+function setSpot(r,spot,cls){const ll=map.unproject(spot.p);r.m.setLngLat(ll);const c=cls+' a-'+spot.a+(spot.z?' z':'');if(r.in.className!==c)r.in.className=c;if(spot.z)r.in.style.setProperty('--zc',spot.z);}
 function syncLabels(){
-  const seen=new Set();
+  if(!map)return;const seen=new Set();
   for(const s of state.shapes){
     if(!s.label||!s.coords||s.coords.length<2)continue;
-    const pos=POLY_KINDS.includes(s.kind)&&s.coords.length>=3?polyCenter(s.coords):alongLine(s.coords,0.5);
     seen.add(s.id);let r=mkLabels.get(s.id);
-    if(!r){const el=document.createElement('div');el.className='lbl';const m=new maplibregl.Marker({element:el}).setLngLat(pos).addTo(map);el.style.zIndex=1;r={m,el};mkLabels.set(s.id,r);}
-    r.m.setLngLat(pos);r.el.textContent=s.label;const sc=scaleOf(s.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');
+    if(!r){const el=document.createElement('div');el.className='lblw';const inn=document.createElement('div');el.appendChild(inn);const m=new maplibregl.Marker({element:el}).setLngLat(s.coords[0]).addTo(map);el.style.zIndex=1;r={m,el,in:inn};mkLabels.set(s.id,r);}
+    setSpot(r,labelSpot(s,mapP),'lbl');if(r.in.textContent!==s.label)r.in.textContent=s.label;
+    const sc=scaleOf(s.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');
   }
   for(const [id,r] of mkLabels)if(!seen.has(id)){r.m.remove();mkLabels.delete(id);}
 }
 /* ---- resumen de lo que pasa dentro de cada estructura (se ve en Territorio) ---- */
 const mkSum=new Map();
 function structSummaries(){
-  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),v:0,p:0,h:0}));
+  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),coords:x.coords,v:0,p:0,h:0}));
   const loose={id:'_',c:null,v:0,p:0,h:0,pts:[]};
   const near=pos=>{let best=null,bd=250;for(const t of sts){const d=distM(pos,t.c);if(d<bd){bd=d;best=t;}}return best;};
   for(const m of state.marks){if(m.kind!=='victima'&&m.kind!=='piton')continue;const t=near(m.pos)||loose;if(t===loose)loose.pts.push(m.pos);
@@ -1010,22 +1031,31 @@ function structSummaries(){
   if(loose.pts.length){loose.c=[loose.pts.reduce((a,p)=>a+p[0],0)/loose.pts.length,loose.pts.reduce((a,p)=>a+p[1],0)/loose.pts.length];sts.push(loose);}
   return sts.filter(t=>t.v||t.p||t.h).map(t=>({...t,txt:[t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.p?`${t.p} pitón${t.p>1?'es':''}`:'',t.h?'humo':''].filter(Boolean).join(' · ')}));
 }
+function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[b.x1,(b.y0+b.y1)/2],a:'l'};}
 function distM(a,b){const P=localProj(a);const q=P.to(b);return Math.hypot(q[0],q[1]);}
 function syncSummaries(){
   if(!mapReady)return;const seen=new Set();
   for(const t of structSummaries()){seen.add(t.id);let r=mkSum.get(t.id);
     if(!r){const el=document.createElement('div');el.className='sumw';el.title='Clic para ver el detalle en la vista Estructura';
       el.addEventListener('click',ev=>{ev.stopPropagation();setView('estr',true);});
-      const m=new maplibregl.Marker({element:el}).setLngLat(t.c).addTo(map);el.style.zIndex=4;r={m,el};mkSum.set(t.id,r);}
-    r.m.setLngLat(t.c);if(r.el._h!==t.txt){r.el.innerHTML=`<div class="sumb">${t.txt}</div>`;r.el._h=t.txt;}}
+      const inn=document.createElement('div');el.appendChild(inn);
+      const m=new maplibregl.Marker({element:el}).setLngLat(t.c).addTo(map);el.style.zIndex=4;r={m,el,in:inn};mkSum.set(t.id,r);}
+    setSpot(r,sumSpot(t,mapP),'sumb');if(r.el._h!==t.txt){r.in.innerHTML=t.txt;r.el._h=t.txt;}}
   for(const [id,r] of mkSum)if(!seen.has(id)){r.m.remove();mkSum.delete(id);}
 }
 function updatePitonRot(){for(const k of state.marks){if(k.kind!=='piton')continue;const r=mkMarks.get(k.id);const d=r&&r.el.querySelector('.m-piton');if(d)d.style.setProperty('--r',pitonRot(k)+'deg');}}
 const ESTR_LAYERS=['humo-fill','humo-line','ataque-casing','ataque-line','muro-casing','muro-line','muro-dash'];
 const TERR_LAYERS=[['abast-casing','line-opacity',.9],['abast-line','line-opacity',1],['corte-casing','line-opacity',.6],['corte-line','line-opacity',1],['corte-dash','line-opacity',1]];
+/* La barra de herramientas se compacta sola si no cabe en la pantalla (primero más apretada, luego solo íconos) */
+function fitTools(){const t=$('#tools');if(!t)return;t.classList.remove('cmp','tight');
+  if(getComputedStyle(t).flexDirection==='row')return;
+  const over=()=>t.scrollHeight>t.clientHeight+1;
+  if(over())t.classList.add('cmp');if(over()){t.classList.remove('cmp');t.classList.add('tight');}}
+addEventListener('resize',()=>{clearTimeout(fitTools._t);fitTools._t=setTimeout(fitTools,120);});
 function applyView(){
   const v=settings.view==='estr'?'estr':'terr';
   document.body.classList.toggle('view-terr',v==='terr');document.body.classList.toggle('view-estr',v==='estr');
+  fitTools();
   $$('#viewTabs [data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
   if(mapReady){
     for(const id of ESTR_LAYERS)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v==='estr'?'visible':'none');
@@ -1625,13 +1655,18 @@ async function renderSnapshot(scale){
   const drawM=m=>{const p=P(m.pos);if(!inView(p)||!visM(m))return;g.save();if(vw==='estr'&&scaleOf(m.kind)==='terr')g.globalAlpha=.38;drawMarkSnap(g,m,p[0],p[1]);g.restore();};
   const order=['lado','texto','grifo','piscina','fuego','piton','victima'];
   for(const k of order)for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
-  for(const s of state.shapes){if(!s.label||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&scaleOf(s.kind)==='estr')continue;const pos=POLY_KINDS.includes(s.kind)&&s.coords.length>=3?polyCenter(s.coords):alongLine(s.coords,.5);const p=P(pos);
-    if(inView(p)){const fs=16*settings.tok;g.font=FONT(700,fs);const w=g.measureText(s.label).width+fs*.9,h=fs*1.3;rr(g,p[0]-w/2,p[1]-h/2,w,h,5);g.fillStyle='rgba(15,15,15,.84)';g.fill();centerText(g,s.label,p[0],p[1],FONT(700,fs),'#fff');}}
+  const boxAt=(sp,w,h)=>{const [x,y]=sp.p,t=settings.tok;switch(sp.a){case 'b':return [x-w/2,y-7-h];case 'tl':return [x+6,y+6];case 'l':return [x+9,y-h/2];case 't':return [x-w/2,y+12*t];default:return [x-w/2,y-h/2];}};
+  for(const s of state.shapes){if(!s.label||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&scaleOf(s.kind)==='estr')continue;const sp=labelSpot(s,P);if(!inView(sp.p))continue;
+    g.save();if(vw==='estr'&&scaleOf(s.kind)==='terr')g.globalAlpha=.38;
+    const fs=(sp.z?13:16)*settings.tok,fw=sp.z?600:700,bar=sp.z?4:0;g.font=FONT(fw,fs);const w=g.measureText(s.label).width+fs*.9+bar,h=fs*1.3;const [bx,by]=boxAt(sp,w,h);
+    rr(g,bx,by,w,h,sp.z?3:5);g.fillStyle=sp.z?'rgba(15,15,15,.74)':'rgba(15,15,15,.84)';g.fill();if(bar){g.fillStyle=sp.z;g.fillRect(bx,by,bar,h);}
+    centerText(g,s.label,bx+bar+(w-bar)/2,by+h/2,FONT(fw,fs),'#fff');g.restore();}
   const units=state.units.filter(u=>u.pos&&!(settings.hideRetired&&u.status==='retirado')).sort((a,b)=>(a.status==='retirado')-(b.status==='retirado')||0);
   for(const u of [...units].reverse()){const p=P(u.pos);if(inView(p)){g.save();if(vw==='estr')g.globalAlpha=.55;drawUnitSnap(g,u,p[0],p[1]);g.restore();}}
   for(const k of ['rit','pm','espera','acv','pap','pas','mayday'])for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
-  if(vw==='terr')for(const t of structSummaries()){const p=P(t.c);if(!inView(p))continue;const txt=t.txt.replace(/<[^>]+>/g,'');const fs=15*settings.tok;
-    const bx=pillBox(g,p[0],p[1]+26*settings.tok,txt,{fs,h:fs*1.55,padX:1.2,bg:'#fff',border:'#111',outer:'#fff',bw:2.5});centerText(g,txt,p[0],p[1]+26*settings.tok+fs*.03,FONT(800,fs),t.v?'#c00000':'#111');}
+  if(vw==='terr')for(const t of structSummaries()){const sp=sumSpot(t,P);if(!inView(sp.p))continue;const txt=t.txt.replace(/<[^>]+>/g,'');const fs=15*settings.tok;
+    g.font=FONT(800,fs);const w=g.measureText(txt).width+fs*1.2,h=fs*1.55;const [bx,by]=boxAt(sp,w,h);const cx=bx+w/2,cy=by+h/2;
+    pillBox(g,cx,cy,txt,{fs,h,padX:1.2,bg:'#fff',border:'#111',outer:'#fff',bw:2.5});centerText(g,txt,cx,cy+fs*.03,FONT(800,fs),t.v?'#c00000':'#111');}
   {const vt=vw==='estr'?'VISTA ESTRUCTURA':'VISTA TERRITORIO';g.font=FONT(800,15);const w=g.measureText(vt).width+20;rr(g,10,10,w,26,6);g.fillStyle='rgba(17,17,17,.85)';g.fill();centerText(g,vt,10+w/2,23,FONT(800,15),'#fff');}
   // norte y créditos
   const br=map.getBearing();g.save();g.translate(W-40,40);g.beginPath();g.arc(0,0,22,0,Math.PI*2);g.fillStyle='rgba(255,255,255,.92)';g.fill();g.lineWidth=1.5;g.strokeStyle='#111';g.stroke();
@@ -1939,6 +1974,7 @@ function openOffline(){
 }
 function openHelp(){
   openModal('Cómo usar Croquis PM',`
+  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio, cada estructura muestra un resumen (víctimas, pitones, humo); clic en él para ver el detalle.</p>
   <ol style="padding-left:20px;margin-top:0">
     <li><b>Ubica el incidente:</b> escribe la dirección o el cruce arriba (ej: <i>Las Enredaderas &amp; Fermín Vivaceta, Independencia</i>) y presiona Enter.</li>
     <li><b>Dibuja la estructura</b> (E): clic en cada esquina y doble clic para cerrar. Luego haz clic en el borde del <b>frente</b> y se ponen los lados A–D. <b>A abajo</b> gira el mapa como en la pizarra.</li>
@@ -1949,6 +1985,8 @@ function openHelp(){
     <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
     <li><b>Líneas</b> (L): clic en el carro y luego hacia donde va la armada; doble clic para terminar. Puedes rotularlas (1½", 2½").</li>
+    <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
+    <li><b>Estructura:</b> el <b>pitón</b> (I) se pone donde está y apunta solo al fuego más cercano; en su panel eliges tipo (1½", 2", 2½", monitor, espuma) y dirección. La <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale. <b>Humo</b> (U) es una zona como el área con fuego; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
   <p>Todo se guarda solo en este navegador. Al terminar, usa <b>Menú → Exportar</b> para respaldar el croquis.</p>
@@ -1956,7 +1994,11 @@ function openHelp(){
   <table>
     <tr><td><kbd>V</kbd> / <kbd>Esc</kbd></td><td>Mover / cancelar</td><td><kbd>E</kbd></td><td>Estructura</td></tr>
     <tr><td><kbd>F</kbd></td><td>Área con fuego</td><td><kbd>C</kbd></td><td>Zona de colapso</td></tr>
+    <tr><td><kbd>Tab</kbd></td><td>Cambiar vista Territorio / Estructura</td><td><kbd>U</kbd></td><td>Zona con humo</td></tr>
     <tr><td><kbd>L</kbd></td><td>Línea con flecha</td><td><kbd>K</kbd></td><td>Trazo discontinuo</td></tr>
+    <tr><td><kbd>B</kbd></td><td>Línea de abastecimiento</td><td><kbd>Q</kbd></td><td>Calle cortada</td></tr>
+    <tr><td><kbd>I</kbd></td><td>Pitón</td><td><kbd>X</kbd></td><td>Víctima confirmada</td></tr>
+    <tr><td><kbd>M</kbd></td><td>Muro con riesgo de colapso</td><td></td><td></td></tr>
     <tr><td><kbd>1</kbd>–<kbd>0</kbd></td><td>1 Foco · 2 PC · 4 Piscina · 5 Mayday · 6 RIT · 7 Zona de espera · 8 ACV · 9 PAP · 0 PAS</td><td><kbd>T</kbd></td><td>Texto</td></tr>
     <tr><td><kbd>A</kbd></td><td>Orientar con lado A abajo</td><td><kbd>N</kbd></td><td>Norte arriba</td></tr>
     <tr><td><kbd>S</kbd></td><td>Modo sol (alto contraste)</td><td></td><td></td></tr>

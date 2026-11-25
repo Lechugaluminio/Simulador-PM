@@ -25,6 +25,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 - **El mapa es real.** Se busca la dirección del despacho y aparecen la imagen satelital, los nombres de calles, la numeración y los **grifos** publicados por Aguas Andinas.
 - **Los carros son piezas.** Se pegan los códigos del despacho y se arrastran al mapa cuando llegan. Cada pieza lleva su color por tipo, su estado, su función y la salida a la que pertenece.
 - **Las convenciones son las de siempre.** ✕ = carro sin función o que no puede cumplirla; ◯ = carro retirándose; símbolos SCI para el Puesto de Comando, la zona de espera y el ACV. No hay que aprender un lenguaje nuevo.
+- **Dos escalas, sin mezclar.** Como en dos pizarras: la vista **Territorio** muestra el despliegue urbano (carros, líneas de abastecimiento, zona de espera, PAP, PAS, ACV, calles cortadas) y la vista **Estructura** lo que pasa dentro del edificio (pitones, humo, fuego, víctimas confirmadas, muros con riesgo de colapso). Cada vista muestra solo sus herramientas y atenúa lo de la otra, para que el croquis no se vuelva una ensalada de información.
 - **La información no sale del equipo.** Todo vive en el navegador del computador del PM. No pasa por servidores ajenos ni por grupos de mensajería durante la emergencia.
 
 **Qué queremos lograr:** que todos en el puesto de mando lean de un vistazo dónde está cada recurso y qué está haciendo, y que el oficial deje de redibujar para dedicarse a decidir.
@@ -36,9 +37,10 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 1. **Buscar el lugar.** Escribir la dirección o el cruce del despacho (por ejemplo `Las Enredaderas & Avenida Fermín Vivaceta, Independencia`) y pulsar *Buscar*.
 2. **Dibujar la estructura.** Herramienta *Estructura*: clic en las esquinas. Los lados **A–D** se ponen solos; el botón **A abajo** orienta el mapa como en la pizarra.
 3. **Marcar el fuego.** *Área fuego* (achurada), *Colapso*, *Foco*.
+   En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo*, *Pitón* (tipo y dirección del chorro) y *Víctima* (cantidad; se marca rescatada cuando sale).
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª, 2ª o 3ª alarma), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
-6. **Instalaciones y avisos.** PC, zona de espera (E), ACV, PAP, PAS, RIT con la compañía a cargo y MAYDAY. Los grifos se marcan en uso o sin agua con un clic.
+6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z o piscina → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
 7. **Mostrar.** *Presentación* para la pantalla grande del PM, o *Imagen* para copiar o descargar el croquis.
 8. **Llevar a terreno.** Un ayudante escanea el QR y se lleva una copia editable al celular. Al volver, *Cambios* muestra qué se modificó.
 
@@ -79,28 +81,45 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 
 La barra superior resume la escena: cuántos están en escena, trabajando, sin función, retirándose y por llegar.
 
-### 3.3 Herramientas del croquis
+### 3.3 Dos vistas: Territorio y Estructura
 
-| Herramienta | Tecla | Qué dibuja |
+| | Territorio (escala urbana) | Estructura (escala del edificio) |
 |---|---|---|
-| Mover | `V` | Seleccionar y mover piezas y marcadores |
-| Estructura | `E` | Polígono del edificio con lados A–D automáticos |
-| Área fuego | `F` | Zona con fuego, achurada en rojo |
-| Colapso | `C` | Zona de colapso |
-| Línea | `L` | Línea de ataque con flecha (color a elegir) |
-| Trazo | `K` | Trazo punteado libre |
-| Foco | `1` | Llama en el punto de origen |
-| Puesto de Comando | `2` | Rectángulo naranja con **PC** (estándar SCI) |
-| Piscina | `4` | Piscina de abastecimiento |
-| MAYDAY | `5` | Pastilla roja de MAYDAY en el lugar del bombero |
-| RIT | `6` | Pastilla verde con la compañía a cargo |
-| Zona de espera | `7` | Círculo amarillo con **E** |
-| ACV | `8` | Círculo amarillo: área de concentración de víctimas |
-| PAP | `9` | Círculo amarillo: puesto de abastecimiento primario |
-| PAS | `0` | Círculo amarillo: puesto de abastecimiento secundario |
-| Texto | `T` | Rótulo libre |
+| Para qué | Despliegue en la manzana: dónde está cada carro y cómo llega el agua | Qué pasa dentro del edificio afectado |
+| Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), piscina, línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, línea de ataque, foco, pitón, víctima, RIT, MAYDAY |
+| Lo de la otra vista | Oculto; cada estructura muestra un **resumen** (víctimas, pitones, humo) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
+| Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
-### 3.4 Mapa y datos externos
+Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, trazo, texto y lados A–D están en ambas.
+
+### 3.4 Herramientas del croquis
+
+| Herramienta | Tecla | Vista | Qué dibuja |
+|---|---|---|---|
+| Mover | `V` | ambas | Seleccionar y mover piezas y marcadores |
+| Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
+| Área fuego | `F` | Estructura | Zona con fuego, achurada en rojo |
+| Colapso | `C` | Estructura | Zona de colapso |
+| Humo | `U` | Estructura | Zona con humo, gris translúcida |
+| Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
+| Línea | `L` | Estructura | Línea de ataque con flecha (color a elegir) |
+| Foco | `1` | Estructura | Llama en el punto de origen |
+| Pitón | `I` | Estructura | Pitón con tipo (1½", 2", 2½", monitor, espuma) y flecha de dirección; apunta solo al fuego más cercano |
+| Víctima | `X` | Estructura | Víctima confirmada con cantidad; se marca *rescatada* |
+| MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero |
+| RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
+| Puesto de Comando | `2` | Territorio | Rectángulo naranja con **PC** (estándar SCI) |
+| Piscina | `4` | Territorio | Piscina de abastecimiento |
+| Zona de espera | `7` | Territorio | Círculo amarillo con **E** |
+| ACV | `8` | Territorio | Círculo amarillo: área de concentración de víctimas |
+| PAP | `9` | Territorio | Círculo amarillo: puesto de abastecimiento primario |
+| PAS | `0` | Territorio | Círculo amarillo: puesto de abastecimiento secundario |
+| Línea de abastecimiento | `B` | Territorio | Línea azul gruesa con flechas: grifo → Z o piscina → bomba |
+| Calle cortada | `Q` | Territorio | Franja roja y blanca sobre la calle |
+| Trazo | `K` | ambas | Trazo punteado libre |
+| Texto | `T` | ambas | Rótulo libre |
+
+### 3.5 Mapa y datos externos
 
 | Fuente | Qué aporta | Cuándo se consulta |
 |---|---|---|
@@ -115,7 +134,7 @@ Clic en un grifo de Aguas Andinas para marcarlo **en uso** o **sin agua** (gris 
 
 El control *Atenuar* oscurece el mapa para que las piezas resalten.
 
-### 3.5 Compartir y respaldar
+### 3.6 Compartir y respaldar
 
 | Función | Qué hace |
 |---|---|
@@ -167,8 +186,12 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 
 | Tecla | Acción |
 |---|---|
+| `Tab` | Cambiar entre vista Territorio y Estructura |
 | `V` | Mover / seleccionar |
 | `E` `F` `C` | Estructura / Área fuego / Colapso |
+| `U` `M` | Humo / Muro con riesgo |
+| `I` `X` | Pitón / Víctima |
+| `B` `Q` | Línea de abastecimiento / Calle cortada |
 | `L` `K` | Línea de ataque / Trazo |
 | `1` `2` `4`…`0` | Foco, PC, Piscina, MAYDAY, RIT, Zona de espera, ACV, PAP, PAS |
 | `T` | Texto |
@@ -217,4 +240,4 @@ Para el computador del puesto de mando o del K-3: **Menú ⋯ → Descargar vers
 
 - Todo se guarda **solo en el navegador del equipo** (localStorage). Nada del incidente se sube a GitHub ni a otro servidor propio.
 - Para respaldar: *Menú → Exportar croquis (.json)*.
-- La aplicación sí consulta servicios públicos para el mapa, la búsqueda y los grifos (sección 3.4). Esas consultas llevan la zona del mapa o el texto buscado, no el croquis.
+- La aplicación sí consulta servicios públicos para el mapa, la búsqueda y los grifos (sección 3.5). Esas consultas llevan la zona del mapa o el texto buscado, no el croquis.
