@@ -785,7 +785,7 @@ let logFilter='all';const LOG_QUICK=['Fuego controlado','Fuego extinguido','PAR 
 function renderLog(){
   const L=state.log||[];const n=L.filter(e=>!e.u).length;$('#nLog').textContent=n;
   const f=logFilter,rows=L.filter(e=>f==='all'||(f==='crit'?e.c==='crit':f==='carro'?e.c==='carro':e.c==='man')).slice().sort((p,q)=>q.t-p.t);
-  const key=f+'|'+L.length+'|'+L.map(e=>e.id+e.x+(e.u?1:0)).join('').length+'|'+(L.length?L[L.length-1].x+L[L.length-1].t:'');
+  const key=f+'|'+fnv(L.map(e=>e.id+(e.u?'u':'')+e.x).join('|'));
   const lst=$('#logList');if(lst._k===key)return;lst._k=key;
   $('#logFilter').innerHTML=[['all','Todo'],['crit','Críticos'],['carro','Carros'],['man','Notas']].map(([v,l])=>`<button data-lf="${v}" class="${f===v?'on':''}">${l}</button>`).join('');
   lst.innerHTML=rows.length?rows.map(e=>{const d=new Date(e.t),tp=Math.max(0,e.t-state.startedAt);
