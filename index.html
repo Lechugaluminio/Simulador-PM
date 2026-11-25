@@ -528,6 +528,11 @@ const INCH_RE=/(^|[^\d])(1\s?½|1\s1\/2|1\s?¾|1\s3\/4|2\s?½|2\s1\/2|1|2|3|4)\s
 const INCH_MM={'1':'25','1½':'38','11/2':'38','1¾':'45','13/4':'45','2':'52','2½':'70','21/2':'70','3':'75','4':'110'};
 function toMM(t){if(typeof t!=='string')return t;return t.replace(INCH_RE,(all,p1,a,p2,b)=>{const k=(a||b).replace(/\s/g,'');const mm=INCH_MM[k];return mm?(p1!=null?p1:p2||'')+mm+' mm':all;});}
 function normState(st){if(!st)return st;
+  // 1) pulgadas → mm
+  for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
+  for(const x of st.shapes||[])if(x.label&&['ataque','abast','trazo'].includes(x.kind))x.label=toMM(x.label);
+  for(const u of st.units||[])if(u.note)u.note=toMM(u.note);
+  // 2) pitones sueltos (versiones anteriores) → punta de la línea en que estaban, o de una línea corta nueva
   if(Array.isArray(st.marks)&&st.marks.some(m=>m.kind==='piton')){st.shapes=st.shapes||[];
     st.marks=st.marks.filter(m=>{if(m.kind!=='piton')return true;const r=(+m.rot||0)*Math.PI/180,P=localProj(m.pos);
       const t=m.ptype||'',pt=/monitor/i.test(t)?'monitor':/espuma/i.test(t)?'espuma':'';
@@ -536,9 +541,8 @@ function normState(st){if(!st)return st;
         if(m.text&&!(near.label||'').includes(m.text))near.label=[near.label,m.text].filter(Boolean).join(' · ');if(pt)near.pt=pt;return false;}
       const x={id:'s_'+m.id,kind:'ataque',coords:[P.from([-Math.sin(r)*8,-Math.cos(r)*8]),m.pos],label:[pt?'':t,m.text||''].filter(Boolean).join(' · '),color:LINE_COLORS[0]};
       if(pt)x.pt=pt;st.shapes.push(x);return false;});
-    for(const x of st.shapes)delete x._pz;}for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
-  for(const x of st.shapes||[])if(x.label&&['ataque','abast','trazo'].includes(x.kind))x.label=toMM(x.label);
-  for(const u of st.units||[])if(u.note)u.note=toMM(u.note);return st;}
+    for(const x of st.shapes)delete x._pz;}
+  return st;}
 /* Botón rápido de diámetro: cambia la medida del rótulo y deja el resto (ej: "52 mm · B-1" → "70 mm · B-1") */
 function distPolyM(p,cs){const P=localProj(p);let best=Infinity;for(let i=0;i<cs.length-1;i++){const a=P.to(cs[i]),b=P.to(cs[i+1]);const dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy;
   let u=L?-(a[0]*dx+a[1]*dy)/L:0;u=Math.max(0,Math.min(1,u));best=Math.min(best,Math.hypot(a[0]+u*dx,a[1]+u*dy));}return best;}
