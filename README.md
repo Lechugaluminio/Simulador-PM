@@ -103,6 +103,7 @@ El mapa muestra la planta (el techo), así que los pisos se resuelven como en la
 | Pisos de la estructura | En su panel: pisos (1–99) y subterráneos |
 | Piso de cada elemento | Víctimas, foco, MAYDAY, RIT, texto, fuego, humo, colapso, muro y líneas de ataque tienen botones de *Piso* (S1… P1, P2… Techo). En el mapa llevan la etiqueta `P2`, `S1` o `Techo` |
 | Columna de pisos | Junto al edificio, en la vista Estructura: una fila por piso con lo que pasa en él (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se muestran solo los pisos con algo, el P1 y el techo |
+| Mover la columna | Se arrastra desde su encabezado negro y queda en ese lugar del mapa, aunque se cambie de vista; doble clic en el encabezado la devuelve junto al edificio |
 | Ver un piso | Clic en una fila: lo de los otros pisos se atenúa y lo que se agregue dentro del edificio queda en ese piso. *Ver todos* vuelve a mostrar todo |
 
 La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen los pisos.

@@ -43,6 +43,15 @@ with sync_playwright() as p:
     pg.click('.fcol .fr[data-f="2"]'); pg.wait_for_timeout(800)
     pg.screenshot(path=f'{OUT}/2b_solo_piso2.png')
     pg.click('.fcol .fh button'); pg.wait_for_timeout(500)
+    # mover la columna de pisos desde su encabezado y comprobar que vuelve al mismo lugar tras cambiar de vista
+    hb = pg.locator('.fcol .fh').bounding_box()
+    hx, hy = hb['x'] + 20, hb['y'] + hb['height'] / 2
+    pg.mouse.move(hx, hy); pg.mouse.down(); pg.mouse.move(hx + 30, hy + 60, steps=4); pg.mouse.move(hx + 60, hy + 230, steps=6); pg.mouse.up(); pg.wait_for_timeout(500)
+    b1 = pg.locator('.fcol').bounding_box()
+    pg.keyboard.press('Tab'); pg.wait_for_timeout(2500); pg.keyboard.press('Tab'); pg.wait_for_timeout(3500)
+    pg.screenshot(path=f'{OUT}/2c_columna_movida.png')
+    b2 = pg.locator('.fcol').bounding_box()
+    errs.append('info: columna movida a %d,%d; tras volver a Estructura %d,%d' % (b1['x'], b1['y'], b2['x'], b2['y']))
     # dibujar una línea de ataque nueva (la punta es el pitón) y elegir monitor
     pg.keyboard.press('l'); pg.mouse.click(700, 660); pg.wait_for_timeout(300); pg.mouse.dblclick(760, 470); pg.wait_for_timeout(1200)
     pg.click('#panel [data-act="lpt"][data-v="monitor"]'); pg.wait_for_timeout(800)
