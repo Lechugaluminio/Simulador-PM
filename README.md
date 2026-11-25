@@ -89,7 +89,7 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 |---|---|---|
 | Para qué | Despliegue en la manzana: dónde está cada carro y cómo llega el agua | Qué pasa dentro del edificio afectado |
 | Herramientas | Área fuego, instalaciones (PC, E, ACV, PAP, PAS), línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
-| Lo de la otra vista | Oculto, incluidos el foco, el RIT, las notas y el MAYDAY resuelto que están dentro del edificio o asignados a un piso (afuera se siguen viendo; el MAYDAY activo y las víctimas confirmadas se ven siempre); cada estructura muestra un **resumen** (fuego, víctimas, humo, RIT) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
+| Lo de la otra vista | Oculto, incluidos el foco, el RIT, las notas y el MAYDAY resuelto que están dentro del edificio o asignados a un piso (afuera se siguen viendo; el MAYDAY activo y las víctimas confirmadas se ven siempre) | Atenuado (carros e instalaciones al fondo) |
 | Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
 Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, **líneas de ataque**, trazo, texto y lados A–D están en ambas. En Territorio las líneas de ataque se ven sin rótulo ni tipo de pitón: alejando el mapa se sigue viendo dónde hay líneas y cuántas.
@@ -156,7 +156,7 @@ El control *Atenuar* oscurece el mapa para que las piezas resalten.
 
 #### Viento
 
-Abajo a la derecha del mapa hay una **rosa de los vientos**: la flecha azul muestra **hacia dónde va el viento** (y el humo), y al lado van la velocidad, de dónde viene y las ráfagas. Si hay un edificio de 8 pisos o más, se agrega el viento a la altura del edificio (80, 120 o 180 m), que suele ser bastante más fuerte. Es un pronóstico de modelos para el sector, no una medición en el lugar: entre edificios el viento cambia. Con clic se ve el detalle y se puede **anotar el viento observado** en el lugar, que pasa a mostrarse en vez del pronóstico (queda en la bitácora). Se puede ocultar en *Ajustes*.
+En la esquina inferior derecha del mapa hay una **rosa de los vientos**: la flecha azul muestra **hacia dónde va el viento** (y el humo), y al lado van la velocidad, de dónde viene y las ráfagas. Si hay un edificio de 8 pisos o más, se agrega el viento a la altura del edificio (80, 120 o 180 m), que suele ser bastante más fuerte. Es un pronóstico de modelos para el sector, no una medición en el lugar: entre edificios el viento cambia. Con clic se ve el detalle y se puede **anotar el viento observado** en el lugar, que pasa a mostrarse en vez del pronóstico (queda en la bitácora). Se puede ocultar en *Ajustes*.
 
 ### 3.6 Bitácora
 
