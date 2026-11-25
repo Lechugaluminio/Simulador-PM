@@ -177,7 +177,7 @@ body.present #viewbar{display:flex!important}
 #viewTabs button.on{background:var(--acc);color:var(--accInk)}
 #viewTabs kbd{font-family:var(--fb);font-size:10px;opacity:.6;font-weight:600}
 body.view-terr #tools [data-sc="estr"],body.view-estr #tools [data-sc="terr"]{display:none}
-body.view-terr .mw.sc-estr,body.view-terr .lblw.sc-estr{display:none}
+body.view-terr .mw.sc-estr,body.view-terr .mw.in-estr,body.view-terr .lblw.sc-estr{display:none}
 body.view-estr .mw.sc-terr,body.view-estr .lblw.sc-terr{opacity:.38}
 body.view-estr .tw{opacity:.55}
 body.view-estr .tw.sel,body.view-estr .mw.sel{opacity:1}
@@ -599,6 +599,9 @@ const FLOOR_MARKS=new Set(['victima','fuego','humo','vent','mayday','rit','texto
 const floorTag=f=>!f?'':f==='T'?'Techo':/^S/.test(f)?f:'P'+f;
 let floorSel=null;   // {sid, f}: piso elegido en la columna de pisos
 function inRing(pt,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if((yi>pt[1])!==(yj>pt[1])&&pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
+function inStruct(pos){for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const P=localProj(pos);if(inRing([0,0],s.coords.map(P.to)))return s.id;}return null;}
+/* el foco y el RIT dentro de un edificio son de la escala Estructura: en Territorio se ocultan (quedan en el resumen) */
+const interiorOnly=m=>(m.kind==='fuego'||m.kind==='rit')&&!!inStruct(m.pos);
 function sidAt(pos){let best=null,bd=40;for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const P=localProj(pos);
   if(inRing([0,0],s.coords.map(P.to)))return s.id;const d=distPolyM(pos,[...s.coords,s.coords[0]]);if(d<bd){bd=d;best=s.id;}}return best;}
 function posOf(o){if(o.pos)return o.pos;const c=o.coords;return o.kind==='ataque'?c[c.length-1]:POLY_KINDS.includes(o.kind)&&c.length>=3?polyCenter(c):alongLine(c,.5);}
@@ -1130,7 +1133,7 @@ function syncMarks(){
       r={m,el};mkMarks.set(k.id,r);makeDraggable('mark',k.id,el,m);}
     else if(!r.el._drag)r.m.setLngLat(k.pos);
     const h=markHTML(k)+(k.piso&&FLOOR_MARKS.has(k.kind)?`<span class="pz">${floorTag(k.piso)}</span>`:'');if(r.el._h!==h){r.el.innerHTML=h;r.el._h=h;}r.el.classList.toggle('dimf',isDim(k));
-    const sc=scaleOf(k.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');
+    const sc=scaleOf(k.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');r.el.classList.toggle('in-estr',interiorOnly(k));
     const s=isSel('mark',k.id);r.el.classList.toggle('sel',s);r.el.style.zIndex=s?100:(MARK_Z[k.kind]||2);
   }
   for(const [id,r] of mkMarks)if(!seen.has(id)){r.m.remove();mkMarks.delete(id);}
@@ -1208,15 +1211,16 @@ function floorChanged(){if(!mapReady)return;syncMarks();pushShapes();syncLabels(
 /* ---- resumen de lo que pasa dentro de cada estructura (se ve en Territorio) ---- */
 const mkSum=new Map();
 function structSummaries(){
-  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),coords:x.coords,lab:!!x.label,v:0,p:0,h:0}));
+  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),coords:x.coords,lab:!!x.label,v:0,p:0,h:0,f:0,r:0}));
   const loose={id:'_',c:null,v:0,p:0,h:0,pts:[]};
   const near=pos=>{let best=null,bd=250;for(const t of sts){const d=distM(pos,t.c);if(d<bd){bd=d;best=t;}}return best;};
   for(const m of state.marks){if(m.kind!=='victima')continue;const t=near(m.pos)||loose;if(t===loose)loose.pts.push(m.pos);
     if(m.kind==='victima'&&m.vstate!=='rescatada')t.v+=(m.n||1);}
   for(const m of state.marks){if(m.kind!=='humo')continue;const t=near(m.pos);if(t)t.h++;}
+  for(const m of state.marks){if(m.kind!=='fuego'&&m.kind!=='rit')continue;const sid=inStruct(m.pos);const t=sid&&sts.find(x=>x.id===sid);if(t){if(m.kind==='fuego')t.f++;else t.r++;}}
   for(const x of state.shapes){if(x.kind!=='humo'||!x.coords||x.coords.length<3)continue;const t=near(polyCenter(x.coords));if(t)t.h++;}
   if(loose.pts.length){loose.c=[loose.pts.reduce((a,p)=>a+p[0],0)/loose.pts.length,loose.pts.reduce((a,p)=>a+p[1],0)/loose.pts.length];sts.push(loose);}
-  return sts.filter(t=>t.v||t.h).map(t=>({...t,txt:[t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.h?'humo':''].filter(Boolean).join(' · ')}));
+  return sts.filter(t=>t.v||t.h||t.f||t.r).map(t=>({...t,txt:[t.f?'fuego':'',t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.h?'humo':'',t.r?'RIT':''].filter(Boolean).join(' · ')}));
 }
 function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[(b.x0+b.x1)/2,b.y0],a:t.lab?'bb':'b'};}
 function distM(a,b){const P=localProj(a);const q=P.to(b);return Math.hypot(q[0],q[1]);}
@@ -1881,7 +1885,7 @@ async function renderSnapshot(scale){
   const P=c=>{const p=map.project(c);return [p.x,p.y];};
   const inView=([x,y])=>x>-80&&y>-80&&x<W+80&&y<H+80;
   const vw=settings.view==='estr'?'estr':'terr';
-  const visM=m=>!(vw==='terr'&&scaleOf(m.kind)==='estr');
+  const visM=m=>!(vw==='terr'&&(scaleOf(m.kind)==='estr'||interiorOnly(m)));
   const drawM=m=>{const p=P(m.pos);if(!inView(p)||!visM(m))return;g.save();if(vw==='estr'&&scaleOf(m.kind)==='terr')g.globalAlpha=.38;if(isDim(m))g.globalAlpha=.16;drawMarkSnap(g,m,p[0],p[1]);
     if(vw==='estr'&&m.piso&&FLOOR_MARKS.has(m.kind)){const t=settings.tok,fs=11*t,tx=floorTag(m.piso);g.font=FONT(800,fs);const w=g.measureText(tx).width+fs*.7,h=fs*1.4,x=p[0]-24*t,y=p[1]-28*t;rr(g,x-1.5,y-1.5,w+3,h+3,5);g.fillStyle='#fff';g.fill();rr(g,x,y,w,h,4);g.fillStyle='#111';g.fill();centerText(g,tx,x+w/2,y+h/2,FONT(800,fs),'#fff');}
     g.restore();};
@@ -2241,7 +2245,7 @@ function openOffline(){
 }
 function openHelp(){
   openModal('Cómo usar Croquis PM',`
-  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio, cada estructura muestra un resumen (víctimas, pitones, humo); clic en él para ver el detalle.</p>
+  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio no se ven el foco ni el RIT que están dentro del edificio; cada estructura muestra un resumen (fuego, víctimas, humo, RIT); clic en él para ver el detalle.</p>
   <ol style="padding-left:20px;margin-top:0">
     <li><b>Ubica el incidente:</b> escribe la dirección o el cruce arriba (ej: <i>Las Enredaderas &amp; Fermín Vivaceta, Independencia</i>) y presiona Enter.</li>
     <li><b>Dibuja la estructura</b> (E): clic en cada esquina y doble clic para cerrar. Luego haz clic en el borde del <b>frente</b> y se ponen los lados A–D. <b>A abajo</b> gira el mapa como en la pizarra.</li>
