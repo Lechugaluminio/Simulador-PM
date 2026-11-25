@@ -1135,7 +1135,7 @@ function syncCols(){
   for(const c of floorCols()){seen.add(c.sid);let r=mkCols.get(c.sid);const isNew=!r;
     if(!r){const el=document.createElement('div');el.className='fcolw';const inn=document.createElement('div');el.appendChild(inn);
       inn.addEventListener('click',ev=>{ev.stopPropagation();
-        if(ev.target.closest('[data-x]')){if(colExp.has(el._sid))colExp.delete(el._sid);else colExp.add(el._sid);syncCols();return;}
+        if(ev.target.closest('[data-x]')){if(colExp.has(el._sid))colExp.delete(el._sid);else colExp.add(el._sid);el._auto=false;syncCols();return;}
         const b=ev.target.closest('[data-f]');if(!b)return;const f=b.dataset.f;
         floorSel=!f||(floorSel&&floorSel.sid===el._sid&&floorSel.f===f)?null:{sid:el._sid,f};el._scrollSel=true;floorChanged();});
       for(const t of ['mousedown','pointerdown','touchstart','dblclick','contextmenu'])inn.addEventListener(t,ev=>ev.stopPropagation());
