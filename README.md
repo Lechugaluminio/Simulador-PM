@@ -89,7 +89,7 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 |---|---|---|
 | Para qué | Despliegue en la manzana: dónde está cada carro y cómo llega el agua | Qué pasa dentro del edificio afectado |
 | Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), piscina, línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
-| Lo de la otra vista | Oculto, incluidos el foco y el RIT que están dentro del edificio (afuera se siguen viendo); cada estructura muestra un **resumen** (fuego, víctimas, humo, RIT) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
+| Lo de la otra vista | Oculto, incluidos el foco, el RIT, las notas y el MAYDAY resuelto que están dentro del edificio o asignados a un piso (afuera se siguen viendo; el MAYDAY activo se ve siempre); cada estructura muestra un **resumen** (fuego, víctimas, humo, RIT) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
 | Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
 Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indica en qué vista se hizo. Estructura, **líneas de ataque**, trazo, texto y lados A–D están en ambas. En Territorio las líneas de ataque se ven sin rótulo ni tipo de pitón: alejando el mapa se sigue viendo dónde hay líneas y cuántas.

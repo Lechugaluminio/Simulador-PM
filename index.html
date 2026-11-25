@@ -655,8 +655,9 @@ const floorTag=f=>!f?'':f==='T'?'Techo':/^S/.test(f)?f:'P'+f;
 let floorSel=null;   // {sid, f}: piso elegido en la columna de pisos
 function inRing(pt,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if((yi>pt[1])!==(yj>pt[1])&&pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
 function inStruct(pos){for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const P=localProj(pos);if(inRing([0,0],s.coords.map(P.to)))return s.id;}return null;}
-/* el foco y el RIT dentro de un edificio son de la escala Estructura: en Territorio se ocultan (quedan en el resumen) */
-const interiorOnly=m=>(m.kind==='fuego'||m.kind==='rit')&&!!inStruct(m.pos);
+/* Lo que está dentro de un edificio o asignado a un piso es de la escala Estructura: en Territorio se oculta (queda en el resumen).
+   Vale para el foco, el RIT, las notas (ej: red seca rota) y el MAYDAY ya resuelto. El MAYDAY activo se ve siempre. */
+const interiorOnly=m=>(m.kind==='fuego'||m.kind==='rit'||m.kind==='texto'||(m.kind==='mayday'&&m.mstate==='resuelto'))&&(!!m.piso||!!inStruct(m.pos));
 function sidAt(pos){let best=null,bd=40;for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const P=localProj(pos);
   if(inRing([0,0],s.coords.map(P.to)))return s.id;const d=distPolyM(pos,[...s.coords,s.coords[0]]);if(d<bd){bd=d;best=s.id;}}return best;}
 function posOf(o){if(o.pos)return o.pos;const c=o.coords;return o.kind==='ataque'?c[c.length-1]:POLY_KINDS.includes(o.kind)&&c.length>=3?polyCenter(c):alongLine(c,.5);}
@@ -2434,7 +2435,7 @@ function openOffline(){
 }
 function openHelp(){
   openModal('Cómo usar Croquis PM',`
-  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio no se ven el foco ni el RIT que están dentro del edificio; cada estructura muestra un resumen (fuego, víctimas, humo, RIT); clic en él para ver el detalle.</p>
+  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio no se ven el foco, el RIT, las notas ni el MAYDAY resuelto que están dentro del edificio o asignados a un piso (el MAYDAY activo sí); cada estructura muestra un resumen (fuego, víctimas, humo, RIT); clic en él para ver el detalle.</p>
   <ol style="padding-left:20px;margin-top:0">
     <li><b>Ubica el incidente:</b> escribe la dirección o el cruce arriba (ej: <i>Las Enredaderas &amp; Fermín Vivaceta, Independencia</i>) y presiona Enter.</li>
     <li><b>Dibuja la estructura</b> (E): clic en cada esquina y doble clic para cerrar. Luego haz clic en el borde del <b>frente</b> y se ponen los lados A–D. <b>A abajo</b> gira el mapa como en la pizarra.</li>
