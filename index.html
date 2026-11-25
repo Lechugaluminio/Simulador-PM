@@ -567,7 +567,6 @@ body.sun #wind{border:3px solid #000;box-shadow:none}
         <button data-act="rotl" title="Girar 15° a la izquierda"><svg class="i" viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M5.5 15a8 8 0 1 0 .5-8.5L4 10"/></svg></button>
         <button data-act="rotr" title="Girar 15° a la derecha"><svg class="i" viewBox="0 0 24 24"><path d="M20 4v6h-6"/><path d="M18.5 15a8 8 0 1 1-.5-8.5L20 10"/></svg></button>
       </div>
-      <button data-act="north" title="Volver al norte arriba (N)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l5 18-5-4-5 4z"/></svg>Norte</button>
       <button data-act="fit" title="Encuadrar todo (Z)"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="9" y="9" width="6" height="6"/></svg>Encuadrar</button>
       <button data-act="undo" title="Deshacer (Ctrl+Z)"><svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Deshacer</button>
     </nav>
@@ -619,7 +618,7 @@ const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona
 const POLY_KINDS=['estructura','fuego','colapso','humo'];
 /* escala de cada elemento: 'terr' (urbana), 'estr' (edificio) o ambas */
 const SC_TERR=new Set(['pm','espera','acv','pap','pas','piscina','grifo','abast','corte']);
-const SC_ESTR=new Set(['piton','victima','humo','muro','vent']);
+const SC_ESTR=new Set(['piton','humo','muro','vent']);
 const scaleOf=k=>SC_TERR.has(k)?'terr':SC_ESTR.has(k)?'estr':'both';
 const PITON_TYPES=['38 mm','45 mm','52 mm','70 mm','Monitor','Espuma'];
 const ATAQUE_MM=['38 mm','45 mm','52 mm','70 mm'],ABAST_MM=['75 mm','110 mm'];
@@ -656,8 +655,8 @@ let floorSel=null;   // {sid, f}: piso elegido en la columna de pisos
 function inRing(pt,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if((yi>pt[1])!==(yj>pt[1])&&pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
 function inStruct(pos){for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const P=localProj(pos);if(inRing([0,0],s.coords.map(P.to)))return s.id;}return null;}
 /* Lo que está dentro de un edificio o asignado a un piso es de la escala Estructura: en Territorio se oculta (queda en el resumen).
-   Vale para el foco, el RIT, las notas (ej: red seca rota) y el MAYDAY ya resuelto. El MAYDAY activo se ve siempre. */
-const interiorOnly=m=>(m.kind==='fuego'||m.kind==='rit'||m.kind==='texto'||(m.kind==='mayday'&&m.mstate==='resuelto'))&&(!!m.piso||!!inStruct(m.pos));
+   Vale para el foco, el RIT, las notas (ej: red seca rota), el MAYDAY resuelto y las víctimas rescatadas. El MAYDAY activo y las víctimas confirmadas se ven siempre. */
+const interiorOnly=m=>(m.kind==='fuego'||m.kind==='rit'||m.kind==='texto'||(m.kind==='mayday'&&m.mstate==='resuelto')||(m.kind==='victima'&&m.vstate==='rescatada'))&&(!!m.piso||!!inStruct(m.pos));
 function sidAt(pos){let best=null,bd=40;for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const P=localProj(pos);
   if(inRing([0,0],s.coords.map(P.to)))return s.id;const d=distPolyM(pos,[...s.coords,s.coords[0]]);if(d<bd){bd=d;best=s.id;}}return best;}
 function posOf(o){if(o.pos)return o.pos;const c=o.coords;return o.kind==='ataque'?c[c.length-1]:POLY_KINDS.includes(o.kind)&&c.length>=3?polyCenter(c):alongLine(c,.5);}
@@ -2435,7 +2434,7 @@ function openOffline(){
 }
 function openHelp(){
   openModal('Cómo usar Croquis PM',`
-  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio no se ven el foco, el RIT, las notas ni el MAYDAY resuelto que están dentro del edificio o asignados a un piso (el MAYDAY activo sí); cada estructura muestra un resumen (fuego, víctimas, humo, RIT); clic en él para ver el detalle.</p>
+  <p style="margin-top:0"><b>Dos vistas, como dos pizarras:</b> arriba del mapa eligen <b>Territorio</b> (carros, abastecimiento, instalaciones, calles cortadas) o <b>Estructura</b> (lo que pasa dentro del edificio: pitones, humo, víctimas, muros con riesgo). La barra muestra solo las herramientas de esa vista y el mapa se acerca o aleja solo. Cambia con <kbd>Tab</kbd>. En Territorio no se ven el foco, el RIT, las notas ni el MAYDAY resuelto o las víctimas rescatadas que están dentro del edificio o asignados a un piso (el MAYDAY activo y las víctimas confirmadas sí); cada estructura muestra un resumen (fuego, víctimas, humo, RIT); clic en él para ver el detalle.</p>
   <ol style="padding-left:20px;margin-top:0">
     <li><b>Ubica el incidente:</b> escribe la dirección o el cruce arriba (ej: <i>Las Enredaderas &amp; Fermín Vivaceta, Independencia</i>) y presiona Enter.</li>
     <li><b>Dibuja la estructura</b> (E): clic en cada esquina y doble clic para cerrar. Luego haz clic en el borde del <b>frente</b> y se ponen los lados A–D. <b>A abajo</b> gira el mapa como en la pizarra.</li>
