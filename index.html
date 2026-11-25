@@ -226,7 +226,7 @@ body:not(.view-terr) .sumb{display:none}
 .lblw{width:0;height:0;pointer-events:none}
 .lbl{position:absolute;left:0;top:0;font-family:var(--fc);font-weight:700;font-size:calc(16px * var(--tok));background:rgba(15,15,15,.84);color:#fff;padding:.14em .45em;border-radius:5px;white-space:nowrap;pointer-events:none}
 .lbl.z{font-size:calc(13px * var(--tok));font-weight:600;border-left:4px solid var(--zc,#888);border-radius:3px 5px 5px 3px;background:rgba(15,15,15,.74)}
-.a-c{transform:translate(-50%,-50%)}.a-b{transform:translate(-50%,calc(-100% - 7px))}.a-tl{transform:translate(6px,6px)}.a-l{transform:translate(9px,-50%)}.a-t{transform:translate(-50%,calc(12px * var(--tok)))}
+.a-c{transform:translate(-50%,-50%)}.a-b{transform:translate(-50%,calc(-100% - 7px))}.a-tl{transform:translate(6px,6px)}.a-l{transform:translate(9px,-50%)}.a-bb{transform:translate(-50%,calc(-100% - 11px - 21px * var(--tok)))}.a-t{transform:translate(-50%,calc(12px * var(--tok)))}
 .vh{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--sel);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:move}
 .ring{width:76px;height:76px;border-radius:50%;border:4px solid var(--sel);animation:pulse 1.1s ease-out 5 forwards;pointer-events:none}
 .ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.08);opacity:.92}
@@ -531,11 +531,17 @@ function normState(st){if(!st)return st;
   if(Array.isArray(st.marks)&&st.marks.some(m=>m.kind==='piton')){st.shapes=st.shapes||[];
     st.marks=st.marks.filter(m=>{if(m.kind!=='piton')return true;const r=(+m.rot||0)*Math.PI/180,P=localProj(m.pos);
       const t=m.ptype||'',pt=/monitor/i.test(t)?'monitor':/espuma/i.test(t)?'espuma':'';
+      const near=st.shapes.find(x=>x.kind==='ataque'&&!x._pz&&x.coords&&x.coords.length>=2&&distPolyM(m.pos,x.coords)<8);
+      if(near){near._pz=1;if(!pt&&t&&!/\b\d{2,3}\s?mm\b/.test(near.label||''))near.label=withMM(near.label,t);
+        if(m.text&&!(near.label||'').includes(m.text))near.label=[near.label,m.text].filter(Boolean).join(' · ');if(pt)near.pt=pt;return false;}
       const x={id:'s_'+m.id,kind:'ataque',coords:[P.from([-Math.sin(r)*8,-Math.cos(r)*8]),m.pos],label:[pt?'':t,m.text||''].filter(Boolean).join(' · '),color:LINE_COLORS[0]};
-      if(pt)x.pt=pt;st.shapes.push(x);return false;});}for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
+      if(pt)x.pt=pt;st.shapes.push(x);return false;});
+    for(const x of st.shapes)delete x._pz;}for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
   for(const x of st.shapes||[])if(x.label&&['ataque','abast','trazo'].includes(x.kind))x.label=toMM(x.label);
   for(const u of st.units||[])if(u.note)u.note=toMM(u.note);return st;}
 /* Botón rápido de diámetro: cambia la medida del rótulo y deja el resto (ej: "52 mm · B-1" → "70 mm · B-1") */
+function distPolyM(p,cs){const P=localProj(p);let best=Infinity;for(let i=0;i<cs.length-1;i++){const a=P.to(cs[i]),b=P.to(cs[i+1]);const dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy;
+  let u=L?-(a[0]*dx+a[1]*dy)/L:0;u=Math.max(0,Math.min(1,u));best=Math.min(best,Math.hypot(a[0]+u*dx,a[1]+u*dy));}return best;}
 function withMM(label,v){label=(label||'').trim();const re=/\b\d{2,3}\s?mm\b/;if(re.test(label))return label.replace(re,v);return label?v+' · '+label:v;}
 const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
 const ABAST_COLOR='#0a3a8c';   // azul oscuro: se distingue del azul de las líneas de ataque
@@ -1042,7 +1048,7 @@ function syncLabels(){
 /* ---- resumen de lo que pasa dentro de cada estructura (se ve en Territorio) ---- */
 const mkSum=new Map();
 function structSummaries(){
-  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),coords:x.coords,v:0,p:0,h:0}));
+  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),coords:x.coords,lab:!!x.label,v:0,p:0,h:0}));
   const loose={id:'_',c:null,v:0,p:0,h:0,pts:[]};
   const near=pos=>{let best=null,bd=250;for(const t of sts){const d=distM(pos,t.c);if(d<bd){bd=d;best=t;}}return best;};
   for(const m of state.marks){if(m.kind!=='victima')continue;const t=near(m.pos)||loose;if(t===loose)loose.pts.push(m.pos);
@@ -1051,7 +1057,7 @@ function structSummaries(){
   if(loose.pts.length){loose.c=[loose.pts.reduce((a,p)=>a+p[0],0)/loose.pts.length,loose.pts.reduce((a,p)=>a+p[1],0)/loose.pts.length];sts.push(loose);}
   return sts.filter(t=>t.v||t.h).map(t=>({...t,txt:[t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.h?'humo':''].filter(Boolean).join(' · ')}));
 }
-function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[b.x1,(b.y0+b.y1)/2],a:'l'};}
+function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[(b.x0+b.x1)/2,b.y0],a:t.lab?'bb':'b'};}
 function distM(a,b){const P=localProj(a);const q=P.to(b);return Math.hypot(q[0],q[1]);}
 function syncSummaries(){
   if(!mapReady)return;const seen=new Set();
@@ -1678,7 +1684,7 @@ async function renderSnapshot(scale){
   const drawM=m=>{const p=P(m.pos);if(!inView(p)||!visM(m))return;g.save();if(vw==='estr'&&scaleOf(m.kind)==='terr')g.globalAlpha=.38;drawMarkSnap(g,m,p[0],p[1]);g.restore();};
   const order=['lado','texto','grifo','piscina','fuego','piton','victima'];
   for(const k of order)for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
-  const boxAt=(sp,w,h)=>{const [x,y]=sp.p,t=settings.tok;switch(sp.a){case 'b':return [x-w/2,y-7-h];case 'tl':return [x+6,y+6];case 'l':return [x+9,y-h/2];case 't':return [x-w/2,y+12*t];default:return [x-w/2,y-h/2];}};
+  const boxAt=(sp,w,h)=>{const [x,y]=sp.p,t=settings.tok;switch(sp.a){case 'b':return [x-w/2,y-7-h];case 'tl':return [x+6,y+6];case 'l':return [x+9,y-h/2];case 'bb':return [x-w/2,y-11-21*t-h];case 't':return [x-w/2,y+12*t];default:return [x-w/2,y-h/2];}};
   for(const s of state.shapes){if(!s.label||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&scaleOf(s.kind)==='estr')continue;const sp=labelSpot(s,P);if(!inView(sp.p))continue;
     g.save();if(vw==='estr'&&scaleOf(s.kind)==='terr')g.globalAlpha=.38;
     const fs=(sp.z?13:16)*settings.tok,fw=sp.z?600:700,bar=sp.z?4:0;g.font=FONT(fw,fs);const w=g.measureText(s.label).width+fs*.9+bar,h=fs*1.3;const [bx,by]=boxAt(sp,w,h);
