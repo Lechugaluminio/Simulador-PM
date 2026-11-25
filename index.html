@@ -234,16 +234,24 @@ body:not(.view-estr) .fcolw{display:none}
 .fcol{position:absolute;left:0;top:0;background:rgba(255,255,255,.97);border:2px solid #111;border-radius:7px;box-shadow:0 2px 8px rgba(0,0,0,.4);font-family:var(--fc);font-size:calc(13px * var(--tok));min-width:calc(118px * var(--tok));overflow:hidden;cursor:default;color:#111;white-space:nowrap;user-select:none}
 .fcol .fh{cursor:grab;touch-action:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:.25em .55em;background:#111;color:#fff;font-weight:800;font-size:.85em;letter-spacing:.05em;text-transform:uppercase}
 .fcol .fh button{font:inherit;letter-spacing:0;text-transform:none;padding:.05em .5em;border-radius:4px;border:0;background:#fff;color:#111;cursor:pointer}
-.fcol .fr{display:flex;gap:.6em;align-items:center;padding:.32em .55em;border-top:1px solid #d8d8d8;cursor:pointer}
+.fcol .fl{overflow-y:auto;overscroll-behavior:contain;max-height:calc(8.5 * 1.95em)}
+.fcol.exp .fl{max-height:none}
+.fcol .fr{display:flex;gap:.55em;align-items:center;padding:.22em .55em;border-top:1px solid #d8d8d8;cursor:pointer;min-height:1.95em;box-sizing:border-box}
+.fcol.exp .fr{min-height:1.45em;padding:.08em .55em}.fcol.exp .fi svg{width:1.05em;height:1.05em}
 .fcol .fr:hover{background:#eef3ff}
-.fcol .fr b{min-width:3.3em;font-weight:800}
-.fcol .fr span{font-weight:600;color:#333}
-.fcol .fr em{font-style:normal;color:#c00000;font-weight:800}
+.fcol .fn{min-width:2.9em;font-weight:800}
+.fcol .ics{display:flex;gap:.42em;align-items:center}
+.fcol .fi{position:relative;display:inline-flex}
+.fcol .fi svg{width:1.4em;height:1.4em;display:block}
+.fcol .fi b{position:absolute;right:-.5em;bottom:-.4em;background:#111;color:#fff;font-size:.7em;line-height:1;padding:.14em .3em;border-radius:999px;border:1px solid #fff;font-weight:800}
+.fcol .fi.v b{background:#e00000}
+.fcol .fmay{background:#e00000;color:#fff;font-weight:800;font-size:.72em;padding:.2em .45em;border-radius:999px;letter-spacing:.03em;line-height:1}
+.fcol .fnone{color:#c4c4c4;font-weight:600}
 .fcol .fr.fire{background:#ffe0e0}
 .fcol .fr.on{background:#dbe8ff;box-shadow:inset 4px 0 0 var(--acc)}
-.fcol .fr.off{opacity:.5}
+.fcol .fr.off{opacity:.45}
+.fcol .fh .hb{display:flex;gap:4px}
 .fcolw.drag .fcol .fh{cursor:grabbing}.fcolw.drag .fcol{box-shadow:0 6px 18px rgba(0,0,0,.5)}
-.fcol .fgap{padding:.1em .55em;color:#777;font-size:.85em;border-top:1px solid #d8d8d8}
 body.sun .fcol{border-width:3px}
 .lbl{position:absolute;left:0;top:0;font-family:var(--fc);font-weight:700;font-size:calc(16px * var(--tok));background:rgba(15,15,15,.84);color:#fff;padding:.14em .45em;border-radius:5px;white-space:nowrap;pointer-events:none}
 .lbl.z{font-size:calc(13px * var(--tok));font-weight:600;border-left:4px solid var(--zc,#888);border-radius:3px 5px 5px 3px;background:rgba(15,15,15,.74)}
@@ -585,14 +593,28 @@ function floorCols(){const out=[];
   for(const st of state.shapes){if(st.kind!=='estructura'||!st.coords||st.coords.length<3)continue;
     const els=floorEls(st.id);if(!((+st.pisos||0)>=2||(+st.subt||0)>0||els.length))continue;
     const rows=floorsOf(st,els).map(f=>{const e=els.filter(o=>o.piso===f);
-      const fire=e.some(o=>o.kind==='fuego'),smoke=e.some(o=>o.kind==='humo'),may=e.some(o=>o.kind==='mayday'),risk=e.some(o=>o.kind==='colapso'||o.kind==='muro');
-      const v=e.filter(o=>o.kind==='victima'&&o.vstate!=='rescatada').reduce((a,o)=>a+(o.n||1),0),ln=e.filter(o=>o.kind==='ataque').length;
-      const parts=[fire?'fuego':'',smoke?'humo':'',v?v+' víct.':'',ln?ln+(ln>1?' líneas':' línea'):'',risk?'riesgo':'',may?'MAYDAY':''].filter(Boolean);
-      return {f,name:floorTag(f),parts,fire,may,v,empty:!parts.length};});
-    let shown=rows;   // edificio alto: solo los pisos con algo, el P1 y el techo; el resto se resume
-    if(rows.length>9){shown=[];let gap=0;for(const r of rows){if(!r.empty||r.f==='1'||r.f==='T'||(floorSel&&floorSel.sid===st.id&&floorSel.f===r.f)){if(gap){shown.push({gap});gap=0;}shown.push(r);}else gap++;}if(gap)shown.push({gap});}
-    out.push({sid:st.id,coords:st.coords,colPos:st.colPos||null,rows:shown});}
+      const r={f,name:floorTag(f),fire:e.some(o=>o.kind==='fuego'),smoke:e.some(o=>o.kind==='humo'),may:e.some(o=>o.kind==='mayday'),risk:e.some(o=>o.kind==='colapso'||o.kind==='muro'),
+        v:e.filter(o=>o.kind==='victima'&&o.vstate!=='rescatada').reduce((a,o)=>a+(o.n||1),0),ln:e.filter(o=>o.kind==='ataque').length};
+      r.empty=!(r.fire||r.smoke||r.may||r.risk||r.v||r.ln);return r;});
+    out.push({sid:st.id,coords:st.coords,colRel:st.colRel||null,rows});}
   return out;}
+const FIC={
+  fuego:[{d:'M12 2.5c1 4 6.5 6 6.5 11.5a6.5 6.5 0 0 1-13 0c0-3.2 2-4.4 2-6.6 1.3 1.1 2.2 2.5 2.2 4.4 1.5-2.2 2.5-5.6 2.3-9.3z',f:'#ff4a1c',s:'#8a0000',w:1.4}],
+  humo:[{d:'M6.5 19a4.5 4.5 0 0 1-.7-8.95A6 6 0 0 1 17.3 9a4.5 4.5 0 1 1 .7 10z',f:'#7b8290',s:'#2f343c',w:1.4}],
+  victima:[{c:[12,12,10.4],f:'#fff',s:'#e00000',w:2.6},{c:[12,7.2,2],f:'#111'},{d:'M12 10v4.8M8.6 11.8h6.8M9.6 18.6l2.4-3.8 2.4 3.8',s:'#111',w:2}],
+  linea:[{d:'M3.5 20.5L15 9',s:'#fff',w:6},{d:'M3.5 20.5L15 9',s:'#2f7bff',w:3.2},{d:'M20.5 3.5l-3 10-7-7z',f:'#2f7bff',s:'#fff',w:1.3}],
+  riesgo:[{d:'M12 2.8l10 18H2z',f:'#ffd60a',s:'#111',w:1.6},{d:'M12 9v5.5M12 17.2v.3',s:'#111',w:2.4}]};
+const ficSVG=k=>'<svg viewBox="0 0 24 24">'+FIC[k].map(q=>q.c?`<circle cx="${q.c[0]}" cy="${q.c[1]}" r="${q.c[2]}" fill="${q.f||'none'}" stroke="${q.s||'none'}" stroke-width="${q.w||0}"/>`:`<path d="${q.d}" fill="${q.f||'none'}" stroke="${q.s||'none'}" stroke-width="${q.w||0}" stroke-linecap="round" stroke-linejoin="round"/>`).join('')+'</svg>';
+function ficDraw(g,k,x,y,sz){g.save();g.translate(x,y);g.scale(sz/24,sz/24);g.lineCap='round';g.lineJoin='round';
+  for(const q of FIC[k]){const pth=q.c?(()=>{const P=new Path2D();P.arc(q.c[0],q.c[1],q.c[2],0,Math.PI*2);return P;})():new Path2D(q.d);if(q.f){g.fillStyle=q.f;g.fill(pth);}if(q.s){g.strokeStyle=q.s;g.lineWidth=q.w;g.stroke(pth);}}g.restore();}
+/* íconos de una fila: [tipo, cantidad] en orden fijo */
+const rowIcons=r=>[r.fire&&['fuego'],r.smoke&&['humo'],r.v&&['victima',r.v],r.ln&&['linea',r.ln],r.risk&&['riesgo'],r.may&&['mayday']].filter(Boolean);
+const rowTitle=r=>r.name+': '+([r.fire?'fuego':'',r.smoke?'humo':'',r.v?r.v+(r.v>1?' víctimas':' víctima'):'',r.ln?r.ln+(r.ln>1?' líneas':' línea'):'',r.risk?'riesgo de colapso':'',r.may?'MAYDAY':''].filter(Boolean).join(', ')||'sin novedad');
+/* Posición de la columna respecto del edificio (no del mapa): a la derecha/izquierda/arriba/abajo a tantos px, o dentro en proporción.
+   Así queda en el mismo lugar junto al edificio aunque cambie el zoom al pasar de una vista a otra. */
+function relAxis(v0,len,a0,a1){return v0>=a1?['a',Math.round(v0-a1)]:v0+len<=a0?['b',Math.round(v0+len-a0)]:['f',+((v0-a0)/Math.max(1,a1-a0)).toFixed(3)];}
+function absAxis(r,len,a0,a1){const [m,v]=r;return m==='a'?a1+v:m==='b'?a0+v-len:a0+v*(a1-a0);}
+function colXY(c,b,w,h){return c.colRel?[absAxis(c.colRel.x,w,b.x0,b.x1),absAxis(c.colRel.y,h,b.y0,b.y1)]:[b.x1+10,b.y0];}
 function autoFloor(o){if(!floorSel||settings.view!=='estr'||!canFloor(o))return;if(sidAt(posOf(o))===floorSel.sid)o.piso=floorSel.f;}
 function floorField(o){const sid=sidAt(posOf(o)),st=sid&&getShape(sid);const fl=(st?floorsOf(st):['T','3','2','1']).slice().reverse();
   if(fl.length<=9)return `<label class="l">Piso</label>${segBtns('piso',[['','—'],...fl.map(f=>[f,floorTag(f)])],o.piso||'')}`;
@@ -1104,30 +1126,41 @@ function syncLabels(){
   for(const [id,r] of mkLabels)if(!seen.has(id)){r.m.remove();mkLabels.delete(id);}
 }
 /* ---- columna de pisos (vista Estructura): un corte del edificio con lo que pasa en cada piso ---- */
-const mkCols=new Map();
+const mkCols=new Map(),colExp=new Set();
 function syncCols(){
-  if(!mapReady)return;const seen=new Set();
-  for(const c of floorCols()){seen.add(c.sid);let r=mkCols.get(c.sid);
+  if(!mapReady)return;const seen=new Set(),mc=map.getContainer();
+  for(const c of floorCols()){seen.add(c.sid);let r=mkCols.get(c.sid);const isNew=!r;
     if(!r){const el=document.createElement('div');el.className='fcolw';const inn=document.createElement('div');el.appendChild(inn);
-      inn.addEventListener('click',ev=>{ev.stopPropagation();const b=ev.target.closest('[data-f]');if(!b)return;const f=b.dataset.f;
-        floorSel=!f||(floorSel&&floorSel.sid===el._sid&&floorSel.f===f)?null:{sid:el._sid,f};floorChanged();});
+      inn.addEventListener('click',ev=>{ev.stopPropagation();
+        if(ev.target.closest('[data-x]')){if(colExp.has(el._sid))colExp.delete(el._sid);else colExp.add(el._sid);syncCols();return;}
+        const b=ev.target.closest('[data-f]');if(!b)return;const f=b.dataset.f;
+        floorSel=!f||(floorSel&&floorSel.sid===el._sid&&floorSel.f===f)?null:{sid:el._sid,f};el._scrollSel=true;floorChanged();});
       for(const t of ['mousedown','pointerdown','touchstart','dblclick','contextmenu'])inn.addEventListener(t,ev=>ev.stopPropagation());
+      inn.addEventListener('wheel',ev=>{const fl=inn.querySelector('.fl');if(fl&&fl.scrollHeight>fl.clientHeight+1)ev.stopPropagation();},{passive:true});
       inn.addEventListener('pointerdown',ev=>{const hd=ev.target.closest('.fh');if(!hd||ev.target.closest('button')||ev.button>0)return;ev.preventDefault();
-        const rc=inn.getBoundingClientRect(),mc=map.getContainer().getBoundingClientRect(),x0=rc.left-mc.left,y0=rc.top-mc.top,sx=ev.clientX,sy=ev.clientY;let moved=false,ll=null;
+        const rc=inn.getBoundingClientRect(),mr=mc.getBoundingClientRect(),x0=rc.left-mr.left,y0=rc.top-mr.top,sx=ev.clientX,sy=ev.clientY;let moved=false,px=null;
         hd.setPointerCapture(ev.pointerId);el._drag=true;
         const mv=e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(!moved&&Math.hypot(dx,dy)<4)return;if(!moved){moved=true;el.classList.add('drag');}
-          ll=map.unproject([x0+dx,y0+dy]);r.m.setLngLat(ll);if(inn.className!=='fcol a-tl0')inn.className='fcol a-tl0';};
+          px=[x0+dx,y0+dy];r.m.setLngLat(map.unproject(px));if(!inn.classList.contains('a-tl0')){inn.classList.remove('a-r0');inn.classList.add('a-tl0');}};
         const up=()=>{hd.removeEventListener('pointermove',mv);hd.removeEventListener('pointerup',up);hd.removeEventListener('pointercancel',up);el._drag=false;el.classList.remove('drag');
-          const st=getShape(el._sid);if(moved&&ll&&st){st.colPos=[+ll.lng.toFixed(6),+ll.lat.toFixed(6)];commit();}};
+          const st=getShape(el._sid);if(moved&&px&&st){const b=bboxScr(st.coords,mapP);st.colRel={x:relAxis(px[0],inn.offsetWidth,b.x0,b.x1),y:relAxis(px[1],inn.offsetHeight,b.y0,b.y1)};delete st.colPos;commit();}};
         hd.addEventListener('pointermove',mv);hd.addEventListener('pointerup',up);hd.addEventListener('pointercancel',up);});
-      inn.addEventListener('dblclick',ev=>{if(!ev.target.closest('.fh')||ev.target.closest('button'))return;const st=getShape(el._sid);if(st&&st.colPos){delete st.colPos;commit();}});
+      inn.addEventListener('dblclick',ev=>{if(!ev.target.closest('.fh')||ev.target.closest('button'))return;const st=getShape(el._sid);if(st&&(st.colRel||st.colPos)){delete st.colRel;delete st.colPos;commit();}});
       const m=new maplibregl.Marker({element:el}).setLngLat(c.coords[0]).addTo(map);el.style.zIndex=70;r={m,el,in:inn};mkCols.set(c.sid,r);}
-    r.el._sid=c.sid;if(!r.el._drag){const b=bboxScr(c.coords,mapP);setSpot(r,c.colPos?{p:mapP(c.colPos),a:'tl0'}:{p:[b.x1,b.y0],a:'r0'},'fcol');}
-    const sel=floorSel&&floorSel.sid===c.sid?floorSel.f:null;
-    const h=`<div class="fh"><span title="Arrastra para mover · doble clic para volver junto al edificio">Pisos</span>${sel?'<button data-f="">Ver todos</button>':''}</div>`+c.rows.map(x=>x.gap?`<div class="fgap">⋮ ${x.gap} piso${x.gap>1?'s':''}</div>`:
-      `<div class="fr${x.fire?' fire':''}${sel===x.f?' on':''}${sel&&sel!==x.f?' off':''}" data-f="${x.f}" title="Ver solo ${x.name}"><b>${x.name}</b><span>${x.parts.map(t=>/víct|MAYDAY/.test(t)?'<em>'+t+'</em>':t).join(' · ')||'—'}</span></div>`).join('');
-    if(r.in._h!==h){r.in.innerHTML=h;r.in._h=h;}}
-  for(const [id,r] of mkCols)if(!seen.has(id)){r.m.remove();mkCols.delete(id);}
+    r.el._sid=c.sid;
+    const sel=floorSel&&floorSel.sid===c.sid?floorSel.f:null,exp=colExp.has(c.sid),tall=c.rows.length>9;
+    const fl0=r.in.querySelector('.fl'),keep=fl0?fl0.scrollTop:0;
+    const h=`<div class="fh"><span title="Arrastra para mover · doble clic para volver junto al edificio">Pisos</span><span class="hb">${sel?'<button data-f="">Ver todos</button>':''}${tall?`<button data-x="1" title="${exp?'Achicar':'Ver el edificio completo'}">${exp?'⤡':'⤢'}</button>`:''}</span></div>`+
+      `<div class="fl"${exp?` style="max-height:${Math.max(160,mc.clientHeight-110)}px"`:''}>`+c.rows.map(x=>`<div class="fr${x.fire?' fire':''}${sel===x.f?' on':''}${sel&&sel!==x.f?' off':''}" data-f="${x.f}" title="${esc(rowTitle(x))}"><b class="fn">${x.name}</b><span class="ics">${
+        rowIcons(x).map(([k,n])=>k==='mayday'?'<span class="fmay">MAYDAY</span>':`<i class="fi${k==='victima'?' v':''}">${ficSVG(k)}${n>1||k==='victima'?'<b>'+n+'</b>':''}</i>`).join('')||'<span class="fnone">·</span>'}</span></div>`).join('')+'</div>';
+    if(r.in._h!==h){r.in.innerHTML=h;r.in._h=h;const fl=r.in.querySelector('.fl');
+      const target=(r.el._scrollSel&&sel)?r.in.querySelector('.fr.on'):isNew?(r.in.querySelector('.fr.fire')||[...r.in.querySelectorAll('.fr')].find(e=>e.querySelector('.fi,.fmay'))):null;
+      if(fl){fl.scrollTop=keep;if(target&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,target.offsetTop-fl.offsetTop-fl.clientHeight/2+target.offsetHeight/2);}
+      r.el._scrollSel=false;}
+    r.in.classList.toggle('exp',exp);
+    if(!r.el._drag){const b=bboxScr(c.coords,mapP);const [x,y]=colXY(c,b,r.in.offsetWidth,r.in.offsetHeight);
+      setSpot(r,{p:c.colRel?[x,y]:[b.x1,b.y0],a:c.colRel?'tl0':'r0'},'fcol'+(exp?' exp':''));}}
+  for(const [id,r] of mkCols)if(!seen.has(id)){r.m.remove();mkCols.delete(id);colExp.delete(id);}
   if(floorSel&&!seen.has(floorSel.sid))floorSel=null;
 }
 function floorChanged(){if(!mapReady)return;syncMarks();pushShapes();syncLabels();syncCols();}
@@ -1785,15 +1818,23 @@ async function renderSnapshot(scale){
     const fs=(sp.z?13:16)*settings.tok,fw=sp.z?600:700,bar=sp.z?4:0;g.font=FONT(fw,fs);const w=g.measureText(lt).width+fs*.9+bar,h=fs*1.3;const [bx,by]=boxAt(sp,w,h);
     rr(g,bx,by,w,h,sp.z?3:5);g.fillStyle=sp.z?'rgba(15,15,15,.74)':'rgba(15,15,15,.84)';g.fill();if(bar){g.fillStyle=sp.z;g.fillRect(bx,by,bar,h);}
     centerText(g,lt,bx+bar+(w-bar)/2,by+h/2,FONT(fw,fs),'#fff');g.restore();}
-  if(vw==='estr')for(const c of floorCols()){const b=bboxScr(c.coords,P),t=settings.tok,fs=13*t,rh=fs*1.75,hh=fs*1.5,nw=fs*3.6,sel=floorSel&&floorSel.sid===c.sid?floorSel.f:null;
-    const txt=r=>r.gap?'⋮ '+r.gap+(r.gap>1?' pisos':' piso'):(r.parts.join(' · ')||'—');g.font=FONT(600,fs);
-    const w=Math.max(118*t,...c.rows.map(r=>(r.gap?0:nw)+g.measureText(txt(r)).width+fs*1.2));const [x,y]=c.colPos?P(c.colPos):[b.x1+10,b.y0],H=hh+c.rows.reduce((a,r)=>a+(r.gap?rh*.7:rh),0);
+  if(vw==='estr')for(const c of floorCols()){const b=bboxScr(c.coords,P),t=settings.tok,fs=13*t,rh=fs*1.95,hh=fs*1.5,nw=fs*3.3,isz=fs*1.4,gap=fs*.5,sel=floorSel&&floorSel.sid===c.sid?floorSel.f:null;
+    // edificio alto: en la imagen van los pisos con algo, el P1 y el techo; el resto se resume
+    let rows=c.rows;if(rows.length>12){rows=[];let n=0;for(const r of c.rows){if(!r.empty||r.f==='1'||r.f==='T'||sel===r.f){if(n){rows.push({gap:n});n=0;}rows.push(r);}else n++;}if(n)rows.push({gap:n});}
+    g.font=FONT(800,fs*.72);const mayW=g.measureText('MAYDAY').width+fs*.9;
+    const rw=r=>r.gap?nw*1.6:nw+rowIcons(r).reduce((a,[k])=>a+(k==='mayday'?mayW:isz)+gap,0)+fs*.6;
+    const w=Math.max(118*t,...rows.map(rw)),H=hh+rows.reduce((a,r)=>a+(r.gap?rh*.65:rh),0);const [x,y]=colXY(c,b,w,H);
     g.save();rr(g,x-2,y-2,w+4,H+4,8);g.fillStyle='#111';g.fill();rr(g,x,y,w,H,6);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillRect(x,y,w,hh);
     g.textBaseline='middle';g.textAlign='left';g.font=FONT(800,fs*.85);g.fillStyle='#fff';g.fillText('PISOS',x+fs*.55,y+hh/2);let yy=y+hh;
-    for(const r of c.rows){const h=r.gap?rh*.7:rh;if(!r.gap&&(r.fire||sel===r.f)){g.fillStyle=sel===r.f?'#dbe8ff':'#ffe0e0';g.fillRect(x,yy,w,h);}
-      g.fillStyle='#d8d8d8';g.fillRect(x,yy,w,1);g.globalAlpha=sel&&sel!==r.f&&!r.gap?.5:1;
-      if(r.gap){g.font=FONT(600,fs*.85);g.fillStyle='#777';g.fillText(txt(r),x+fs*.55,yy+h/2);}
-      else{g.font=FONT(800,fs);g.fillStyle='#111';g.fillText(r.name,x+fs*.55,yy+h/2);g.font=FONT(600,fs);g.fillStyle=r.v||r.may?'#c00000':'#333';g.fillText(txt(r),x+nw,yy+h/2);}
+    for(const r of rows){const h=r.gap?rh*.65:rh;if(!r.gap&&(r.fire||sel===r.f)){g.fillStyle=sel===r.f?'#dbe8ff':'#ffe0e0';g.fillRect(x,yy,w,h);}
+      g.fillStyle='#d8d8d8';g.fillRect(x,yy,w,1);g.globalAlpha=sel&&sel!==r.f&&!r.gap?.45:1;
+      if(r.gap){g.font=FONT(600,fs*.85);g.fillStyle='#777';g.fillText('⋮ '+r.gap+(r.gap>1?' pisos':' piso'),x+fs*.55,yy+h/2);}
+      else{g.font=FONT(800,fs);g.fillStyle='#111';g.fillText(r.name,x+fs*.55,yy+h/2);let ix=x+nw;
+        for(const [k,n] of rowIcons(r)){if(k==='mayday'){rr(g,ix,yy+h/2-fs*.55,mayW,fs*1.1,fs*.55);g.fillStyle='#e00000';g.fill();centerText(g,'MAYDAY',ix+mayW/2,yy+h/2,FONT(800,fs*.72),'#fff');ix+=mayW+gap;continue;}
+          ficDraw(g,k,ix,yy+(h-isz)/2,isz);
+          if(n>1||k==='victima'){const bx=ix+isz-fs*.1,by=yy+(h+isz)/2-fs*.2,br=fs*.42;g.beginPath();g.arc(bx,by,br+1,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(bx,by,br,0,Math.PI*2);g.fillStyle=k==='victima'?'#e00000':'#111';g.fill();centerText(g,String(n),bx,by,FONT(800,fs*.62),'#fff');}
+          ix+=isz+gap;}
+        if(!rowIcons(r).length){g.font=FONT(600,fs);g.fillStyle='#c4c4c4';g.fillText('·',x+nw,yy+h/2);}}
       g.globalAlpha=1;yy+=h;}
     g.restore();}
   const units=state.units.filter(u=>u.pos&&!(settings.hideRetired&&u.status==='retirado')).sort((a,b)=>(a.status==='retirado')-(b.status==='retirado')||0);
@@ -2129,7 +2170,7 @@ function openHelp(){
     <li><b>Líneas de ataque</b> (L): clic en el carro, luego en cada quiebre y doble clic donde está el pitón. <b>La punta de la línea es el pitón</b> y apunta hacia donde va el chorro. En su panel eliges el diámetro (38, 45, 52 o 70 mm), el pitón (chorro, monitor o espuma) y el color. En Territorio se ven sin rótulo ni tipo de pitón, solo el recorrido: de un vistazo se sabe dónde hay líneas y cuántas.</li>
     <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
     <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). <b>Humo</b> (U) es una zona como el área con fuego; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
-    <li><b>Pisos:</b> en el panel de la estructura indica cuántos pisos y subterráneos tiene. Al lado del edificio aparece la <b>columna de pisos</b> con lo que pasa en cada uno (fuego, humo, víctimas, líneas, MAYDAY). Se mueve arrastrándola desde su encabezado negro (doble clic la devuelve junto al edificio). Clic en un piso para ver solo lo de ese piso; mientras está elegido, lo que agregues dentro del edificio queda en ese piso. Cada víctima, zona o línea también tiene botones de <b>Piso</b> en su panel, y en el mapa lleva la etiqueta (P2, S1, Techo).</li>
+    <li><b>Pisos:</b> en el panel de la estructura indica cuántos pisos y subterráneos tiene. Al lado del edificio aparece la <b>columna de pisos</b> con íconos de lo que pasa en cada uno (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se desplaza con la rueda del mouse y ⤢ la abre completa. Se mueve arrastrándola desde su encabezado negro (doble clic la devuelve junto al edificio). Clic en un piso para ver solo lo de ese piso; mientras está elegido, lo que agregues dentro del edificio queda en ese piso. Cada víctima, zona o línea también tiene botones de <b>Piso</b> en su panel, y en el mapa lleva la etiqueta (P2, S1, Techo).</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
   <p>Todo se guarda solo en este navegador. Al terminar, usa <b>Menú → Exportar</b> para respaldar el croquis.</p>

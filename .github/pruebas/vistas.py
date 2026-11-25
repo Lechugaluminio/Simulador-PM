@@ -74,6 +74,29 @@ with sync_playwright() as p:
     pg.keyboard.press('Tab'); pg.wait_for_timeout(3500)
     pg.screenshot(path=f'{OUT}/6_estructura_1366x768.png')
     errs.append('info: barra ' + pg.evaluate("(()=>{const t=document.querySelector('#tools');return t.className+' '+t.scrollHeight+'/'+t.clientHeight})()"))
+    # torre de 37 pisos: lista con scroll y botón para ver el edificio completo
+    tsq = [off(-25, -25), off(25, -25), off(25, 25), off(-25, 25)]
+    def zona(kind, piso, dx=0):
+        return {'id': 'z%s%s' % (kind, piso), 'kind': kind, 'coords': [off(-20 + dx, -20), off(0 + dx, -20), off(0 + dx, 0), off(-20 + dx, 0)], 'label': '', 'piso': piso}
+    torre = {'v': 1, 'title': 'Torre 37 pisos', 'address': 'Prueba', 'startedAt': 1795500000000, 'center': c, 'units': [],
+      'shapes': [{'id': 't1', 'kind': 'estructura', 'coords': tsq, 'label': 'Torre', 'pisos': 37, 'subt': 3},
+        zona('fuego', '18'), zona('humo', '18', 20), zona('humo', '19', 20), zona('humo', '20', 20), zona('colapso', '17'),
+        {'id': 'l1', 'kind': 'ataque', 'coords': [off(-60, -60), off(-10, -10)], 'label': '52 mm · B-1', 'color': '#2f7bff', 'piso': '18'},
+        {'id': 'l2', 'kind': 'ataque', 'coords': [off(60, -60), off(10, -10)], 'label': '52 mm · B-2', 'color': '#2f7bff', 'piso': '18'},
+        {'id': 'l3', 'kind': 'ataque', 'coords': [off(60, 60), off(10, 10)], 'label': '38 mm · Q-7', 'color': '#2f7bff', 'piso': '19'}],
+      'marks': [{'id': 'v1', 'kind': 'victima', 'pos': off(5, 5), 'text': '', 'n': 3, 'vstate': 'confirmada', 'piso': '19'},
+        {'id': 'v2', 'kind': 'victima', 'pos': off(-5, 10), 'text': '', 'n': 1, 'vstate': 'confirmada', 'piso': '25'},
+        {'id': 'my', 'kind': 'mayday', 'pos': off(10, -5), 'text': '', 'piso': '19'}]}
+    pg.evaluate("([s,v])=>{localStorage.setItem('croquisPM.state.v1',s);localStorage.setItem('croquisPM.view.v1',v);}",
+                [json.dumps(torre), json.dumps({'center': c, 'zoom': 18.8, 'bearing': 0})])
+    pg.reload(); pg.wait_for_timeout(7000)
+    if pg.locator('body.view-terr').count(): pg.keyboard.press('Tab'); pg.wait_for_timeout(3000)
+    pg.screenshot(path=f'{OUT}/7_torre.png')
+    pg.click('.fcol [data-x]'); pg.wait_for_timeout(800)
+    pg.screenshot(path=f'{OUT}/8_torre_completa.png')
+    pg.click('.fcol [data-x]'); pg.wait_for_timeout(300)
+    pg.click('#btnShare'); pg.wait_for_timeout(400); pg.click('[data-share="snap"]'); pg.wait_for_timeout(8000)
+    pg.screenshot(path=f'{OUT}/9_torre_imagen.png')
     b.close()
 open(f'{OUT}/errores.txt', 'w').write('\n'.join(errs) or 'sin errores')
 print('\n'.join(errs) or 'sin errores')
