@@ -237,7 +237,7 @@ body:not(.view-estr) .fcolw{display:none}
 .fcol .fl{overflow-y:auto;overscroll-behavior:contain;max-height:calc(8.5 * 1.95em)}
 .fcol.exp .fl{max-height:none}
 .fcol .fr{display:flex;gap:.55em;align-items:center;padding:.22em .55em;border-top:1px solid #d8d8d8;cursor:pointer;min-height:1.95em;box-sizing:border-box}
-.fcol.exp .fr{min-height:1.45em;padding:.08em .55em}.fcol.exp .fi svg{width:1.05em;height:1.05em}
+.fcol.exp .fr{min-height:1.6em;padding:.1em .55em}.fcol.exp .fi svg{width:1.2em;height:1.2em}
 .fcol .fr:hover{background:#eef3ff}
 .fcol .fn{min-width:2.9em;font-weight:800}
 .fcol .ics{display:flex;gap:.42em;align-items:center}
@@ -614,6 +614,9 @@ const rowTitle=r=>r.name+': '+([r.fire?'fuego':'',r.smoke?'humo':'',r.v?r.v+(r.v
    Así queda en el mismo lugar junto al edificio aunque cambie el zoom al pasar de una vista a otra. */
 function relAxis(v0,len,a0,a1){return v0>=a1?['a',Math.round(v0-a1)]:v0+len<=a0?['b',Math.round(v0+len-a0)]:['f',+((v0-a0)/Math.max(1,a1-a0)).toFixed(3)];}
 function absAxis(r,len,a0,a1){const [m,v]=r;return m==='a'?a1+v:m==='b'?a0+v-len:a0+v*(a1-a0);}
+function colAnchor(c,b){if(!c.colRel)return {p:[b.x1,b.y0],tr:'translate(10px,0)'};
+  const ax=(r,a0,a1)=>r[0]==='a'?a1:r[0]==='b'?a0:a0+r[1]*(a1-a0),tx=r=>r[0]==='a'?r[1]+'px':r[0]==='b'?`calc(-100% + ${r[1]}px)`:'0px';
+  return {p:[ax(c.colRel.x,b.x0,b.x1),ax(c.colRel.y,b.y0,b.y1)],tr:`translate(${tx(c.colRel.x)},${tx(c.colRel.y)})`};}
 function colXY(c,b,w,h){return c.colRel?[absAxis(c.colRel.x,w,b.x0,b.x1),absAxis(c.colRel.y,h,b.y0,b.y1)]:[b.x1+10,b.y0];}
 function autoFloor(o){if(!floorSel||settings.view!=='estr'||!canFloor(o))return;if(sidAt(posOf(o))===floorSel.sid)o.piso=floorSel.f;}
 function floorField(o){const sid=sidAt(posOf(o)),st=sid&&getShape(sid);const fl=(st?floorsOf(st):['T','3','2','1']).slice().reverse();
@@ -882,7 +885,7 @@ function initMap(){
   map.on('rotate',onRot);map.on('pitch',onRot);
   map.on('mousemove',onMapMove);
   map.on('dblclick',onMapDbl);
-  map.on('moveend',()=>{loadLocalFeatures();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
+  map.on('moveend',()=>{loadLocalFeatures();if(colExp.size)syncCols();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
   map.on('error',e=>{const now=Date.now();if(e&&e.sourceId&&LOCAL&&settings.base!=='local'&&/^(sat|streets|labels)$/.test(e.sourceId)){tileErrs=tileErrs.filter(t=>now-t<20000);tileErrs.push(now);if(!navigator.onLine||tileErrs.length>=6){tileErrs=[];useLocalMap(true,'El mapa satelital no carga (¿sin internet?).');return;}}if(e&&e.sourceId&&now-lastTileErr>30000){lastTileErr=now;toast('Algunas imágenes del mapa no cargan. Revisa la conexión o cambia a “Calles”.');}});
 }
 function addImages(){
@@ -1141,7 +1144,7 @@ function syncCols(){
         const rc=inn.getBoundingClientRect(),mr=mc.getBoundingClientRect(),x0=rc.left-mr.left,y0=rc.top-mr.top,sx=ev.clientX,sy=ev.clientY;let moved=false,px=null;
         hd.setPointerCapture(ev.pointerId);el._drag=true;
         const mv=e=>{const dx=e.clientX-sx,dy=e.clientY-sy;if(!moved&&Math.hypot(dx,dy)<4)return;if(!moved){moved=true;el.classList.add('drag');}
-          px=[x0+dx,y0+dy];r.m.setLngLat(map.unproject(px));if(!inn.classList.contains('a-tl0')){inn.classList.remove('a-r0');inn.classList.add('a-tl0');}};
+          px=[x0+dx,y0+dy];r.m.setLngLat(map.unproject(px));inn.style.transform='none';};
         const up=()=>{hd.removeEventListener('pointermove',mv);hd.removeEventListener('pointerup',up);hd.removeEventListener('pointercancel',up);el._drag=false;el.classList.remove('drag');
           const st=getShape(el._sid);if(moved&&px&&st){const b=bboxScr(st.coords,mapP);st.colRel={x:relAxis(px[0],inn.offsetWidth,b.x0,b.x1),y:relAxis(px[1],inn.offsetHeight,b.y0,b.y1)};delete st.colPos;commit();}};
         hd.addEventListener('pointermove',mv);hd.addEventListener('pointerup',up);hd.addEventListener('pointercancel',up);});
@@ -1151,15 +1154,19 @@ function syncCols(){
     const sel=floorSel&&floorSel.sid===c.sid?floorSel.f:null,exp=colExp.has(c.sid),tall=c.rows.length>9;
     const fl0=r.in.querySelector('.fl'),keep=fl0?fl0.scrollTop:0;
     const h=`<div class="fh"><span title="Arrastra para mover · doble clic para volver junto al edificio">Pisos</span><span class="hb">${sel?'<button data-f="">Ver todos</button>':''}${tall?`<button data-x="1" title="${exp?'Achicar':'Ver el edificio completo'}">${exp?'⤡':'⤢'}</button>`:''}</span></div>`+
-      `<div class="fl"${exp?` style="max-height:${Math.max(160,mc.clientHeight-110)}px"`:''}>`+c.rows.map(x=>`<div class="fr${x.fire?' fire':''}${sel===x.f?' on':''}${sel&&sel!==x.f?' off':''}" data-f="${x.f}" title="${esc(rowTitle(x))}"><b class="fn">${x.name}</b><span class="ics">${
+      '<div class="fl">'+c.rows.map(x=>`<div class="fr${x.fire?' fire':''}${sel===x.f?' on':''}${sel&&sel!==x.f?' off':''}" data-f="${x.f}" title="${esc(rowTitle(x))}"><b class="fn">${x.name}</b><span class="ics">${
         rowIcons(x).map(([k,n])=>k==='mayday'?'<span class="fmay">MAYDAY</span>':`<i class="fi${k==='victima'?' v':''}">${ficSVG(k)}${n>1||k==='victima'?'<b>'+n+'</b>':''}</i>`).join('')||'<span class="fnone">·</span>'}</span></div>`).join('')+'</div>';
     if(r.in._h!==h){r.in.innerHTML=h;r.in._h=h;const fl=r.in.querySelector('.fl');
-      const target=(r.el._scrollSel&&sel)?r.in.querySelector('.fr.on'):isNew?(r.in.querySelector('.fr.fire')||[...r.in.querySelectorAll('.fr')].find(e=>e.querySelector('.fi,.fmay'))):null;
+      const target=(r.el._scrollSel&&sel)?r.in.querySelector('.fr.on'):null;
       if(fl){fl.scrollTop=keep;if(target&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,target.offsetTop-fl.offsetTop-fl.clientHeight/2+target.offsetHeight/2);}
       r.el._scrollSel=false;}
-    r.in.classList.toggle('exp',exp);
-    if(!r.el._drag){const b=bboxScr(c.coords,mapP);const [x,y]=colXY(c,b,r.in.offsetWidth,r.in.offsetHeight);
-      setSpot(r,{p:c.colRel?[x,y]:[b.x1,b.y0],a:c.colRel?'tl0':'r0'},'fcol'+(exp?' exp':''));}}
+    const cls='fcol'+(exp?' exp':'');if(r.in.className!==cls)r.in.className=cls;
+    if(!r.el._drag){const a=colAnchor(c,bboxScr(c.coords,mapP));r.m.setLngLat(map.unproject(a.p));if(r.in.style.transform!==a.tr)r.in.style.transform=a.tr;}
+    const fl=r.in.querySelector('.fl');
+    if(fl&&exp){const top=r.in.getBoundingClientRect().top-mc.getBoundingClientRect().top;fl.style.maxHeight=Math.max(150,mc.clientHeight-top-fl.offsetTop-60)+'px';}
+    // la primera vez que la lista se ve, mostrar el piso con fuego (o el primero con algo)
+    if(fl&&!r.el._auto&&fl.clientHeight>0){r.el._auto=true;const t=r.in.querySelector('.fr.on')||r.in.querySelector('.fr.fire')||[...r.in.querySelectorAll('.fr')].find(e=>e.querySelector('.fi,.fmay'));
+      if(t&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,t.offsetTop-fl.offsetTop-fl.clientHeight/2+t.offsetHeight/2);}}
   for(const [id,r] of mkCols)if(!seen.has(id)){r.m.remove();mkCols.delete(id);colExp.delete(id);}
   if(floorSel&&!seen.has(floorSel.sid))floorSel=null;
 }
