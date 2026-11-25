@@ -149,10 +149,15 @@ Las medidas de mangueras y pitones van en milímetros, como en las guías de la 
 | Nominatim (OpenStreetMap) | Búsqueda de direcciones | Al pulsar *Buscar* |
 | Overpass (OpenStreetMap) | Ubicación exacta de un **cruce** de calles | Al buscar un cruce `Calle A & Calle B` |
 | Aguas Andinas · *Ubicación de grifos* | Grifos de Aguas Andinas, Aguas Cordillera y Aguas Manquehue | Una vez por semana o desde *Menú → Actualizar grifos*; quedan guardados en el navegador |
+| [Open-Meteo](https://open-meteo.com/) | Viento: velocidad, dirección y ráfagas a 10 m, y a 80, 120 y 180 m para edificios altos (pronóstico de modelos meteorológicos) | Al ubicar el incidente y cada 15 min; se pide con coordenadas redondeadas a ~1 km |
 
 Clic en un grifo de Aguas Andinas para marcarlo **en uso** o **sin agua** (gris con una raya roja). Clic en un grifo marcado para cambiar su estado o desmarcarlo.
 
 El control *Atenuar* oscurece el mapa para que las piezas resalten.
+
+#### Viento
+
+Abajo a la derecha del mapa hay una **rosa de los vientos**: la flecha azul muestra **hacia dónde va el viento** (y el humo), y al lado van la velocidad, de dónde viene y las ráfagas. Si hay un edificio de 8 pisos o más, se agrega el viento a la altura del edificio (80, 120 o 180 m), que suele ser bastante más fuerte. Es un pronóstico de modelos para el sector, no una medición en el lugar: entre edificios el viento cambia. Con clic se ve el detalle y se puede **anotar el viento observado** en el lugar, que pasa a mostrarse en vez del pronóstico (queda en la bitácora). Se puede ocultar en *Ajustes*.
 
 ### 3.6 Bitácora
 
@@ -198,6 +203,7 @@ En celulares y tablets verticales, la lista de carros se abre como panel desliza
 | Imagen satelital, mapa de calles y nombres | © Esri y sus proveedores | Servicios de teselas de ArcGIS Online, con atribución en el mapa |
 | Búsqueda de direcciones y cruces, mapa sin conexión | © colaboradores de [OpenStreetMap](https://www.openstreetmap.org/copyright) (Nominatim, Overpass) | Datos ODbL |
 | Grifos | Aguas Andinas · [Ubicación de grifos](https://www.aguasandinas.cl/web/aguasandinas/ubicacion-de-grifos) | Mapa público de la empresa |
+| Viento | [Open-Meteo](https://open-meteo.com/) | Datos CC BY 4.0, API gratuita para uso no comercial |
 | Íconos y símbolos (piezas, llama, PC, E, ACV, PAP, PAS, RIT, MAYDAY) | Dibujados con código (SVG y canvas) | Símbolos según el estándar SCI |
 
 ---
@@ -278,4 +284,4 @@ Para el computador del puesto de mando o del K-3: **Menú ⋯ → Descargar vers
 
 - Todo se guarda **solo en el navegador del equipo** (localStorage). Nada del incidente se sube a GitHub ni a otro servidor propio.
 - Para respaldar: *Menú → Exportar croquis (.json)*.
-- La aplicación sí consulta servicios públicos para el mapa, la búsqueda y los grifos (sección 3.5). Esas consultas llevan la zona del mapa o el texto buscado, no el croquis.
+- La aplicación sí consulta servicios públicos para el mapa, la búsqueda, los grifos y el viento (sección 3.5). Esas consultas llevan la zona del mapa o el texto buscado, no el croquis.

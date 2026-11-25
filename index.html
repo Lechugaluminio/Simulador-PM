@@ -393,6 +393,7 @@ body.fork #forkInfo,body.fork #btnChanges,body.fork #btnShareView,body.fork .for
   #toasts{bottom:190px;width:92vw}
   .tst{font-size:14px}
   #panel{left:0;right:0;top:auto;bottom:0;width:auto;max-height:60%;border-radius:16px 16px 0 0;z-index:9}
+  #wind{bottom:auto;top:54px;right:8px;transform:scale(.85);transform-origin:top right}
   #mapctl{right:50px;top:8px;gap:6px;padding:4px 6px;font-size:12px;flex-wrap:wrap;max-width:calc(100% - 64px)}
   #mapctl label:last-child,#grifosInfo{display:none}
   .maplibregl-ctrl-bottom-right{bottom:72px}
@@ -407,6 +408,18 @@ body.present #title{font-size:34px}
 body.present #exitPresent{display:inline-flex!important}
 
 /* ---------- toast / modal ---------- */
+#wind{position:absolute;right:10px;bottom:96px;z-index:5;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:5px 10px 5px 5px;display:flex;gap:8px;align-items:center;cursor:pointer;font-family:var(--fc);min-width:150px;user-select:none}
+#wind:empty{display:none}
+#wind svg{width:60px;height:60px;flex:none;display:block}
+#wind .ws{font-size:22px;font-weight:800;line-height:1}
+#wind .ws small{font-size:13px;font-weight:700}
+#wind .wd{font-size:13px;font-weight:700;color:var(--muted);line-height:1.2}
+#wind .wh{font-size:12px;font-weight:800;color:var(--ink);margin-top:2px}
+#wind .wsrc{font-family:var(--fb);font-size:10px;color:var(--muted);margin-top:2px}
+#wind.obs .wsrc{color:#0b84d8;font-weight:700}
+body.sun #wind{border:3px solid #000;box-shadow:none}
+.wdirs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:6px 0}
+.wdirs button.on{background:var(--ink);color:var(--panel)}
 #toastsR{position:fixed;right:14px;bottom:40px;z-index:100;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none}
 .tst.sm{padding:7px 10px;gap:6px;font-size:13px}.tst.sm button{padding:4px 8px;font-size:13px}
 #toasts{position:fixed;left:50%;bottom:132px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
@@ -511,6 +524,7 @@ body.present #exitPresent{display:inline-flex!important}
   <div id="mapwrap">
     <div id="map"></div>
     <div id="maperr"></div>
+    <div id="wind" title="Viento: la flecha muestra hacia dónde va el viento (y el humo). Clic para detalle o para anotar el viento observado."></div>
 
     <nav id="tools">
       <button data-mode="select" title="Seleccionar y mover (V / Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6 3l13 8-6 1.5L10 19z"/></svg>Mover</button>
@@ -1035,13 +1049,13 @@ function initMap(){
   map.addControl(new maplibregl.NavigationControl({visualizePitch:false}),'top-right');
   map.addControl(new maplibregl.ScaleControl({unit:'metric',maxWidth:140}),'bottom-right');
   if(map.touchPitch)map.touchPitch.disable();
-  map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();if(fork&&!forkResumed)setTimeout(fitAll,50);initGrifos();});
+  map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();if(fork&&!forkResumed)setTimeout(fitAll,50);initGrifos();loadWind();});
   map.on('click',onMapClick);
-  let _rotQ=0;const onRot=()=>{updatePitonRot();if(_rotQ)return;_rotQ=requestAnimationFrame(()=>{_rotQ=0;syncLabels();syncSummaries();syncCols();});};
+  let _rotQ=0;const onRot=()=>{updatePitonRot();if(_rotQ)return;_rotQ=requestAnimationFrame(()=>{_rotQ=0;syncLabels();syncSummaries();syncCols();renderWind();});};
   map.on('rotate',onRot);map.on('pitch',onRot);
   map.on('mousemove',onMapMove);
   map.on('dblclick',onMapDbl);
-  map.on('moveend',()=>{loadLocalFeatures();if(colExp.size)syncCols();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
+  map.on('moveend',()=>{loadLocalFeatures();if(!state.center)loadWind();if(colExp.size)syncCols();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
   map.on('error',e=>{const now=Date.now();if(e&&e.sourceId&&LOCAL&&settings.base!=='local'&&/^(sat|streets|labels)$/.test(e.sourceId)){tileErrs=tileErrs.filter(t=>now-t<20000);tileErrs.push(now);if(!navigator.onLine||tileErrs.length>=6){tileErrs=[];useLocalMap(true,'El mapa satelital no carga (¿sin internet?).');return;}}if(e&&e.sourceId&&now-lastTileErr>30000){lastTileErr=now;toast('Algunas imágenes del mapa no cargan. Revisa la conexión o cambia a “Calles”.');}});
 }
 function addImages(){
@@ -1295,8 +1309,8 @@ function syncCols(){
       inn.addEventListener('click',ev=>{ev.stopPropagation();
         if(ev.target.closest('[data-x]')){if(colExp.has(el._sid))colExp.delete(el._sid);else colExp.add(el._sid);el._auto=false;syncCols();return;}
         if(ev.target.closest('[data-c]')){if(colCol.has(el._sid))colCol.delete(el._sid);else colCol.add(el._sid);el._auto=false;syncCols();return;}
-        const b=ev.target.closest('[data-f]');if(!b)return;const f=b.dataset.f;
-        floorSel=!f||(floorSel&&floorSel.sid===el._sid&&floorSel.f===f)?null:{sid:el._sid,f};el._scrollSel=true;floorChanged();});
+        const b=ev.target.closest('[data-f]');if(!b||ev.detail>1)return;const f=b.dataset.f;
+        floorSel=!f||(floorSel&&floorSel.sid===el._sid&&floorSel.f===f)?null:{sid:el._sid,f};floorChanged();});
       for(const t of ['mousedown','pointerdown','touchstart','dblclick','contextmenu'])inn.addEventListener(t,ev=>ev.stopPropagation());
       inn.addEventListener('wheel',ev=>{const fl=inn.querySelector('.fl');if(fl&&fl.scrollHeight>fl.clientHeight+1)ev.stopPropagation();},{passive:true});
       inn.addEventListener('pointerdown',ev=>{const hd=ev.target.closest('.fh');if(!hd||ev.target.closest('button')||ev.button>0)return;ev.preventDefault();
@@ -1315,14 +1329,15 @@ function syncCols(){
     const h=`<div class="fh"><span title="Arrastra para mover · doble clic para volver junto al edificio">Pisos</span><span class="hb">${sel?'<button data-f="">Ver todos</button>':''}${anyEmpty||col?`<button data-c="1" class="${col?'act':''}" title="${col?'Mostrar todos los pisos':'Mostrar solo los pisos con algo'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg></button>`:''}${tall||exp?`<button data-x="1" title="${exp?'Achicar':'Ver el edificio completo'}">${exp?'⤡':'⤢'}</button>`:''}</span></div>`+
       '<div class="fl">'+(rows.length?'':'<div class="fgap" style="padding:.4em .55em">Sin novedades aún</div>')+rows.map(x=>x.gap?`<div class="fgap">⋮ ${x.gap} piso${x.gap>1?'s':''}</div>`:`<div class="fr${x.fire?' fire':''}${x.base?' base':''}${sel===x.f?' on':''}${sel&&sel!==x.f?' off':''}" data-f="${x.f}" title="${esc(rowTitle(x))}"><b class="fn">${x.name}</b><span class="ics">${x.base?'<span class="fbase">F−2</span>':''}${
         rowIcons(x).map(([k,n])=>k==='mayday'?'<span class="fmay">MAYDAY</span>':k==='rit'?'<span class="fpill">RIT</span>':k==='mayok'?'<span class="fpill" title="MAYDAY resuelto">✓ MAYDAY</span>':`<i class="fi${k==='victima'?' v':k==='victimaok'?' ok':''}">${ficSVG(k)}${n>1||k==='victima'||k==='victimaok'?'<b>'+n+'</b>':''}</i>`).join('')}${x.notes&&x.notes.length?`<span class="fnote">${esc(x.notes.join(' · '))}</span>`:''}${!x.base&&x.empty?'<span class="fnone">·</span>':''}</span></div>`).join('')+'</div>';
-    if(r.in._h!==h){r.in.innerHTML=h;r.in._h=h;const fl=r.in.querySelector('.fl');
-      const target=(r.el._scrollSel&&sel)?r.in.querySelector('.fr.on'):null;
-      if(fl){fl.scrollTop=keep;if(target&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,target.offsetTop-fl.offsetTop-fl.clientHeight/2+target.offsetHeight/2);}
-      r.el._scrollSel=false;}
+    const changed=r.in._h!==h;if(changed){r.in.innerHTML=h;r.in._h=h;}
     const cls='fcol'+(exp?' exp':'');if(r.in.className!==cls)r.in.className=cls;
     if(!r.el._drag){const a=colAnchor(c,bboxScr(c.coords,mapP));r.m.setLngLat(map.unproject(a.p));if(r.in.style.transform!==a.tr)r.in.style.transform=a.tr;}
     const fl=r.in.querySelector('.fl');
+    // primero el alto (expandida), después el desplazamiento: si no, la lista vuelve arriba
     if(fl&&exp){const top=r.in.getBoundingClientRect().top-mc.getBoundingClientRect().top;fl.style.maxHeight=Math.max(150,mc.clientHeight-top-fl.offsetTop-60)+'px';}
+    if(fl&&changed){const on=sel&&r.in.querySelector('.fr.on');
+      if(on&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,on.offsetTop-fl.offsetTop-fl.clientHeight/2+on.offsetHeight/2);   // el piso elegido siempre al centro
+      else fl.scrollTop=keep;}
     // la primera vez que la lista se ve, mostrar el piso con fuego (o el primero con algo)
     if(fl&&!r.el._auto&&fl.clientHeight>0){r.el._auto=true;const t=r.in.querySelector('.fr.on')||r.in.querySelector('.fr.fire')||[...r.in.querySelectorAll('.fr')].find(e=>e.querySelector('.fi,.fmay'));
       if(t&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,t.offsetTop-fl.offsetTop-fl.clientHeight/2+t.offsetHeight/2);}}
@@ -1808,9 +1823,53 @@ function toolDrag(ev){const b=ev.target.closest('button[data-mode^="mk:"]');if(!
       if(settings.view!==(scaleOf(k)==='terr'?'terr':scaleOf(k)==='estr'?'estr':settings.view))setView(scaleOf(k),false);placeMark(k,[ll.lng,ll.lat]);}};
   const cancel=()=>end();
   addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',cancel);}
+/* =========================================================
+   Viento: modelo meteorológico de Open-Meteo (gratis, sin clave, datos CC BY 4.0) o lo observado en el lugar.
+   Se pide para el sector del incidente (coordenadas redondeadas a ~1 km), cada 15 min.
+   ========================================================= */
+let windData=null,windAt=0,windPos=null,windErr=false;
+const DIR8=['N','NE','E','SE','S','SO','O','NO'];
+const dirName=d=>DIR8[Math.round(((d%360)+360)%360/45)%8];
+async function loadWind(force){
+  if(settings.wind===false)return;const c=state.center||(map&&mapReady?map.getCenter().toArray():null);if(!c)return;
+  if(!force&&Date.now()-windAt<15*60000&&windPos&&distM(windPos,c)<3000)return;
+  windAt=Date.now();windPos=c;
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${c[1].toFixed(2)}&longitude=${c[0].toFixed(2)}&current=wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=wind_speed_80m,wind_direction_80m,wind_speed_120m,wind_direction_120m,wind_speed_180m,wind_direction_180m&forecast_days=1&timezone=auto&wind_speed_unit=kmh`;
+  try{const r=await fetch(u);if(!r.ok)throw new Error(r.status);const j=await r.json();const cu=j.current;if(!cu||cu.wind_speed_10m==null)throw new Error('sin datos');
+    const ht=(j.hourly&&j.hourly.time)||[];let hi=0;ht.forEach((t,i)=>{if(t<=cu.time)hi=i;});
+    const alt={};for(const h of [80,120,180]){const sp=j.hourly&&j.hourly['wind_speed_'+h+'m'],dr=j.hourly&&j.hourly['wind_direction_'+h+'m'];if(sp&&sp[hi]!=null&&dr&&dr[hi]!=null)alt[h]=[sp[hi],dr[hi]];}
+    windData={t:Date.now(),time:cu.time,kmh:cu.wind_speed_10m,dir:cu.wind_direction_10m,gust:cu.wind_gusts_10m,alt};windErr=false;
+    if(!fork&&(state.address||state.center)&&!(state.log||[]).some(e=>/^Viento/.test(e.x))){addLog({c:'esc',x:`Viento (modelo Open-Meteo): del ${dirName(windData.dir)}, ${Math.round(windData.kmh)} km/h, ráfagas ${Math.round(windData.gust)}`});commit();}
+  }catch(e){windErr=true;}
+  renderWind();}
+function windShown(){const o=state.wind;if(o&&o.kmh!=null&&o.dir!=null)return {kmh:o.kmh,dir:o.dir,t:o.t,obs:true};if(windData)return {...windData,obs:false};return null;}
+function tallFloors(){let n=0;for(const x of state.shapes)if(x.kind==='estructura')n=Math.max(n,+x.pisos||0);return n;}
+function windAlt(){const n=tallFloors();if(n<8||!windData||!windData.alt)return null;const h=n*3,lv=h<100?80:h<150?120:180;const a=windData.alt[lv];return a?{lv,kmh:a[0],dir:a[1]}:null;}
+function roseSVG(dir,bearing,has){const rot=((dir+180)-bearing),L=['N','E','S','O'];
+  return `<svg viewBox="-32 -32 64 64"><circle r="30" fill="#fff" stroke="#111" stroke-width="1.6"/><g transform="rotate(${-bearing})">${L.map((l,i)=>`<text transform="rotate(${i*90}) translate(0 -21) rotate(${-i*90+bearing})" text-anchor="middle" dominant-baseline="central" font-family="Barlow Condensed,Arial" font-weight="800" font-size="10" fill="${i?'#555':'#d62828'}">${l}</text>`).join('')}${[45,135,225,315].map(a=>`<path transform="rotate(${a})" d="M0 -29v4" stroke="#999" stroke-width="1.4"/>`).join('')}</g>`+
+    (has?`<g transform="rotate(${rot})"><path d="M0 -19 L7.5 -6 L2.6 -7 L2.6 16 L-2.6 16 L-2.6 -7 L-7.5 -6 Z" fill="#0b84d8" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></g>`:'<text text-anchor="middle" dominant-baseline="central" font-family="Barlow Condensed,Arial" font-weight="800" font-size="18" fill="#999">?</text>')+'</svg>';}
+function renderWind(){const el=$('#wind');if(!el)return;if(settings.wind===false){el.innerHTML='';return;}
+  const w=windShown(),b=map?map.getBearing():0,hh=t=>{const d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes());};
+  el.classList.toggle('obs',!!(w&&w.obs));
+  if(!w){el.innerHTML=roseSVG(0,b,false)+`<div><div class="wd">${windErr?'Sin datos de viento':'Cargando viento…'}</div><div class="wsrc">Clic para anotarlo</div></div>`;return;}
+  const a=!w.obs&&windAlt();
+  el.innerHTML=roseSVG(w.dir,b,true)+`<div><div class="ws">${Math.round(w.kmh)} <small>km/h</small></div><div class="wd">del ${dirName(w.dir)}${!w.obs&&w.gust!=null?' · ráfagas '+Math.round(w.gust):''}</div>${a?`<div class="wh">a ${a.lv} m: ${Math.round(a.kmh)} km/h del ${dirName(a.dir)}</div>`:''}<div class="wsrc">${w.obs?'Observado '+hh(w.t):'Open-Meteo '+hh(w.t)}</div></div>`;}
+function openWind(){let sel=state.wind&&state.wind.dir!=null?String(Math.round(state.wind.dir/45)*45%360):'';
+  const d=windData,a=d&&d.alt,row=(l,k,dr)=>`<tr><td>${l}</td><td><b>${Math.round(k)} km/h</b></td><td>del ${dirName(dr)}</td></tr>`;
+  openModal('Viento',`${d?`<p>Pronóstico para el sector según modelos meteorológicos (<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>), hora ${d.time.slice(11)}. Entre edificios el viento real puede cambiar de dirección y de fuerza: si lo ves distinto en el lugar, anótalo abajo.</p>
+    <table class="tbl"><tr><td>10 m</td><td><b>${Math.round(d.kmh)} km/h</b> (ráfagas ${Math.round(d.gust)})</td><td>del ${dirName(d.dir)}</td></tr>${a&&a[80]?row('80 m (~P27)',a[80][0],a[80][1]):''}${a&&a[120]?row('120 m (~P40)',a[120][0],a[120][1]):''}${a&&a[180]?row('180 m (~P60)',a[180][0],a[180][1]):''}</table>`
+    :`<p>${windErr?'No se pudo obtener el viento (¿sin internet?).':'Cargando…'} Puedes anotar el viento observado en el lugar.</p>`}
+    <h4>Viento observado en el lugar</h4><p class="help">¿Desde dónde viene el viento?</p>
+    <div class="wdirs">${DIR8.map((n,i)=>`<button data-wd="${i*45}" class="${sel===String(i*45)?'on':''}">del ${n}</button>`).join('')}</div>
+    <label>Velocidad aproximada <input id="wKmh" type="number" min="0" max="200" step="1" style="width:90px" value="${state.wind&&state.wind.kmh!=null?Math.round(state.wind.kmh):''}"> km/h</label>`,
+    [{label:'Actualizar pronóstico',fn:()=>{windAt=0;loadWind(true);}},
+     ...(state.wind?[{label:'Quitar observado',fn:()=>{delete state.wind;addLog({c:'esc',x:'Viento observado quitado: se usa el pronóstico'});commit();renderWind();}}]:[]),
+     {label:'Guardar observado',cls:'pri',fn:()=>{const k=+$('#wKmh').value;if(sel===''){toast('Elige desde dónde viene el viento');return;}
+       state.wind={dir:+sel,kmh:isFinite(k)?k:0,t:Date.now()};addLog({c:'esc',x:`Viento observado: del ${dirName(+sel)}, ${Math.round(state.wind.kmh)} km/h`});commit();renderWind();}}]);
+  $('#mBody').onclick=(e=>{const b=e.target.closest('[data-wd]');if(!b)return;sel=b.dataset.wd;$$('#mBody [data-wd]').forEach(x=>x.classList.toggle('on',x===b));});}
 function addFire(pos){state.marks.push({id:uid(),kind:'fuego',pos,text:''});commit();}
 function goTo(pos,label,msg,approx){
-  state.center=pos;state.address=label;if(!state.title||!state.title.trim())state.title=String(label).split(',')[0];
+  state.center=pos;state.address=label;setTimeout(()=>loadWind(),300);if(!state.title||!state.title.trim())state.title=String(label).split(',')[0];
   commit();
   if(map){map.flyTo({center:pos,zoom:18.3,essential:true});pulse(pos);}
   if(approx)toast(msg,null,9000);
@@ -2053,7 +2112,13 @@ async function renderSnapshot(scale){
   // norte y créditos
   const br=map.getBearing();g.save();g.translate(W-40,40);g.beginPath();g.arc(0,0,22,0,Math.PI*2);g.fillStyle='rgba(255,255,255,.92)';g.fill();g.lineWidth=1.5;g.strokeStyle='#111';g.stroke();
   g.rotate(-br*Math.PI/180);g.beginPath();g.moveTo(0,-15);g.lineTo(6,4);g.lineTo(0,1);g.lineTo(-6,4);g.closePath();g.fillStyle='#d62828';g.fill();centerText(g,'N',0,11,FONT(800,11),'#111');g.restore();
-  g.font='500 11px Arial, sans-serif';g.textAlign='right';g.textBaseline='alphabetic';const cred='Imágenes y calles © Esri · Grifos: Aguas Andinas · Croquis PM';
+  {const w=settings.wind!==false&&windShown();if(w){const R=26,cw=178,ch=66,x0=W-cw-10,y0=H-18-ch-8;g.save();rr(g,x0,y0,cw,ch,10);g.fillStyle='rgba(255,255,255,.95)';g.fill();g.lineWidth=1.5;g.strokeStyle='#111';g.stroke();
+    const cx=x0+8+R,cy=y0+ch/2;g.beginPath();g.arc(cx,cy,R,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.stroke();
+    g.save();g.translate(cx,cy);g.rotate(-br*Math.PI/180);g.textAlign='center';g.textBaseline='middle';['N','E','S','O'].forEach((l,i)=>{const an=i*Math.PI/2;g.fillStyle=i?'#555':'#d62828';g.font=FONT(800,9);g.fillText(l,Math.sin(an)*(R-7),-Math.cos(an)*(R-7));});g.restore();
+    g.save();g.translate(cx,cy);g.rotate((w.dir+180-br)*Math.PI/180);const k=R/32;g.scale(k,k);const ar=new Path2D('M0 -19 L7.5 -6 L2.6 -7 L2.6 16 L-2.6 16 L-2.6 -7 L-7.5 -6 Z');g.fillStyle='#0b84d8';g.fill(ar);g.lineWidth=1.4;g.strokeStyle='#fff';g.stroke(ar);g.restore();
+    g.textAlign='left';g.textBaseline='alphabetic';g.fillStyle='#111';g.font=FONT(800,20);g.fillText(Math.round(w.kmh)+' km/h',cx+R+10,y0+26);g.font=FONT(700,12);g.fillStyle='#444';g.fillText('del '+dirName(w.dir)+(!w.obs&&w.gust!=null?' · ráfagas '+Math.round(w.gust):''),cx+R+10,y0+43);
+    g.font='500 10px Arial, sans-serif';g.fillStyle='#777';g.fillText(w.obs?'viento observado':'viento: Open-Meteo',cx+R+10,y0+58);g.restore();}}
+  g.font='500 11px Arial, sans-serif';g.textAlign='right';g.textBaseline='alphabetic';const cred='Imágenes y calles © Esri · Grifos: Aguas Andinas'+(windData&&settings.wind!==false?' · Viento: Open-Meteo':'')+' · Croquis PM';
   const cw=g.measureText(cred).width+12;g.fillStyle='rgba(255,255,255,.8)';g.fillRect(W-cw,H-18,cw,18);g.fillStyle='#222';g.fillText(cred,W-6,H-5);
   g.restore();
   return cv;
@@ -2331,6 +2396,7 @@ function openSettings(){
   openModal('Ajustes',`
     <div class="row2"><label>Tamaño de las piezas <input id="sTok" type="range" min="0.7" max="2" step="0.05" value="${settings.tok}"></label>
     <label><input id="sHide" type="checkbox" ${settings.hideRetired?'checked':''}> Ocultar retirados del mapa</label>
+    <label><input id="sWind" type="checkbox" ${settings.wind!==false?'checked':''}> Mostrar viento</label>
     <label>Recordatorio de PAR <select id="sPar">${[[0,'No'],[10,'cada 10 min'],[15,'cada 15 min'],[20,'cada 20 min'],[30,'cada 30 min']].map(([v,l])=>`<option value="${v}" ${(+settings.parMin||0)===v?'selected':''}>${l}</option>`).join('')}</select></label>
 </div>
     <h4>Tipos de carro (por prefijo del código)</h4>
@@ -2341,7 +2407,7 @@ function openSettings(){
     <textarea id="sFns">${esc(settings.functions.join('\n'))}</textarea>
     <p class="help">Restaurar valores originales: <button id="sReset" style="padding:3px 8px">Restaurar</button></p>`,
     [{label:'Cancelar'},{label:'Guardar',cls:'pri',fn:()=>{
-      settings.tok=+$('#sTok').value;settings.hideRetired=$('#sHide').checked;settings.parMin=+$('#sPar').value||0;
+      settings.tok=+$('#sTok').value;settings.hideRetired=$('#sHide').checked;settings.parMin=+$('#sPar').value||0;settings.wind=$('#sWind').checked;if(settings.wind){windAt=0;loadWind(true);}renderWind();
       const normP=v=>{v=v.trim().toUpperCase();return /\d/.test(v)?(parseCodes(v)[0]||''):v.replace(/[^A-ZÑ]/g,'');};
       settings.types=$$('#sTypes tr').map(tr=>({prefix:normP($('.tp',tr).value),name:$('.tn',tr).value.trim(),color:$('.tc',tr).value})).filter(t=>t.prefix).map(t=>({...t,name:t.name||t.prefix}));
       settings.functions=$('#sFns').value.split('\n').map(s=>s.trim()).filter(Boolean);
@@ -2382,6 +2448,7 @@ function openHelp(){
     <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
     <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). El <b>MAYDAY</b> se marca <b>resuelto</b> en su panel cuando el bombero ya salió: queda como una pastilla verde chica. <b>Humo</b> (U) es un marcador como el foco; <b>Ventilación</b> (W) marca un ventilador que inyecta aire o extrae humo (la flecha es hacia donde va el aire) o un exutorio abierto; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
     <li><b>Pisos:</b> en el panel de la estructura indica cuántos pisos y subterráneos tiene. Al lado del edificio aparece la <b>columna de pisos</b> con íconos de lo que pasa en cada uno (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se desplaza con la rueda del mouse y ⤢ la abre completa; el embudo deja solo los pisos con algo. El <b>piso fuego −2</b> se marca solo con <b>F−2</b> (conexión de la línea que sube y RIT). Las notas de texto de un piso (ej: <i>Red seca rota</i>) se leen en su fila. Se mueve arrastrándola desde su encabezado negro (doble clic la devuelve junto al edificio). Clic en un piso para ver solo lo de ese piso; mientras está elegido, lo que agregues dentro del edificio queda en ese piso. Cada víctima, zona o línea también tiene botones de <b>Piso</b> en su panel, y en el mapa lleva la etiqueta (P2, S1, Techo).</li>
+    <li><b>Viento:</b> abajo a la derecha, la flecha azul muestra hacia dónde va el viento (pronóstico de Open-Meteo para el sector; en edificios altos también a su altura). Clic para ver el detalle o anotar el viento observado en el lugar.</li>
     <li><b>Bitácora:</b> la pestaña junto a <i>Carros</i> anota sola, con hora y T+, las llegadas, estados de los carros, MAYDAY, víctimas, fuego, humo, ventilación y líneas. Anota a mano con la caja o los botones rápidos (<i>Fuego controlado</i>, <i>PAR realizado</i>…). Lo que se deshace queda tachado. Se exporta en .txt o .csv. En <i>Ajustes</i> puedes activar un recordatorio de PAR.</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
@@ -2455,6 +2522,7 @@ function bindUI(){
   $('#sideLog').addEventListener('click',e=>{const f=e.target.closest('[data-lf]');if(f){logFilter=f.dataset.lf;renderLog();return;}
     const x=e.target.closest('[data-lx]');if(x){exportLog(x.dataset.lx);return;}
     const r=e.target.closest('.lg.pos');if(r&&map){const en=(state.log||[]).find(q=>q.id===r.dataset.id);if(en&&en.p)map.flyTo({center:en.p,zoom:Math.max(map.getZoom(),18)});}});
+  $('#wind').addEventListener('click',openWind);
   $('#tools').addEventListener('click',onToolClick);$('#tools').addEventListener('pointerdown',toolDrag);$('#flyInst').addEventListener('pointerdown',toolDrag);$('#viewbar').addEventListener('click',onToolClick);
   // menú desplegable "Instalaciones": se abre al pasar el mouse (o con clic) y se cierra al salir
   const fly=$('#flyInst'),bi=$('#btnInst');let flyT=null;
@@ -2552,7 +2620,7 @@ function tick(){checkPAR();$('#clock').textContent=new Date().toLocaleTimeString
     try{await setupFork(location.hash.slice(5));}
     catch(e){console.warn(e);setTimeout(()=>toast('El código QR no se pudo leer completo. Vuelve a escanearlo.'),300);}
   }
-  bindUI();applySettings();render();tick();setInterval(tick,1000);
+  bindUI();applySettings();render();tick();setInterval(tick,1000);setInterval(()=>loadWind(),5*60000);renderWind();
   if(fork){$('#forkAt').textContent=hhmm(forkAt);if(!forkResumed)setTimeout(()=>toast('Copia de terreno creada: tus cambios quedan solo en este celular.'),600);}
   (LOCAL?refreshLocalInfo():Promise.resolve(null)).then(()=>{
     if(LOCAL){if(settings.base==='local'&&!(localInfo&&localInfo.mapa))settings.base='sat';if(!navigator.onLine&&localInfo&&localInfo.mapa)settings.base='local';

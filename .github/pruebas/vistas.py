@@ -113,8 +113,17 @@ with sync_playwright() as p:
     pg.reload(); pg.wait_for_timeout(7000)
     if pg.locator('body.view-terr').count(): pg.keyboard.press('Tab'); pg.wait_for_timeout(3000)
     pg.screenshot(path=f'{OUT}/7_torre.png')
+    pg.wait_for_timeout(1500)
+    errs.append('info: viento -> ' + pg.inner_text('#wind').replace('\n', ' | '))
     pg.click('.fcol [data-x]'); pg.wait_for_timeout(800)
     pg.screenshot(path=f'{OUT}/8_torre_completa.png')
+    # elegir un piso con la lista expandida: debe quedar al centro; doble clic no debe quitar la selección
+    cen = "(()=>{const fl=document.querySelector('.fcol .fl'),on=document.querySelector('.fcol .fr.on');if(!on)return 'sin selección';const a=on.getBoundingClientRect(),b=fl.getBoundingClientRect();return on.dataset.f+' desfase '+Math.round(a.top+a.height/2-(b.top+b.height/2))+' px'})()"
+    pg.click('.fcol .fr[data-f="25"]'); pg.wait_for_timeout(600); r1 = pg.evaluate(cen)
+    pg.dblclick('.fcol .fr[data-f="22"]'); pg.wait_for_timeout(600); r2 = pg.evaluate(cen)
+    pg.screenshot(path=f'{OUT}/8a_piso_centrado.png')
+    errs.append('info: piso elegido %s; tras doble clic %s' % (r1, r2))
+    pg.click('.fcol .fh button[data-f=""]'); pg.wait_for_timeout(300)
     pg.click('.fcol [data-x]'); pg.wait_for_timeout(300)
     pg.click('.fcol [data-c]'); pg.wait_for_timeout(600)
     pg.screenshot(path=f'{OUT}/8b_torre_solo_con_algo.png')
