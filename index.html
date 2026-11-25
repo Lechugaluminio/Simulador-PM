@@ -520,7 +520,17 @@ const POLY_KINDS=['estructura','fuego','colapso','humo'];
 const SC_TERR=new Set(['pm','espera','acv','pap','pas','piscina','grifo','abast','corte']);
 const SC_ESTR=new Set(['piton','victima','humo','ataque','muro']);
 const scaleOf=k=>SC_TERR.has(k)?'terr':SC_ESTR.has(k)?'estr':'both';
-const PITON_TYPES=['1½"','2"','2½"','Monitor','Espuma'];
+const PITON_TYPES=['38 mm','45 mm','52 mm','70 mm','Monitor','Espuma'];
+const ATAQUE_MM=['38 mm','45 mm','52 mm','70 mm'],ABAST_MM=['75 mm','110 mm'];
+/* Medidas en milímetros (como en Bomberos de Chile). Los croquis antiguos traían pulgadas: se convierten al abrirlos. */
+const INCH_RE=/(^|[^\d])(1\s?½|1\s1\/2|1\s?¾|1\s3\/4|2\s?½|2\s1\/2|1|2|3|4)\s?(?:"|”|''|pulg(?:adas?|\.)?)|(^|[^\d])(1\s?½|1\s?¾|2\s?½)(?!\d)/g;
+const INCH_MM={'1':'25','1½':'38','11/2':'38','1¾':'45','13/4':'45','2':'52','2½':'70','21/2':'70','3':'75','4':'110'};
+function toMM(t){if(typeof t!=='string')return t;return t.replace(INCH_RE,(all,p1,a,p2,b)=>{const k=(a||b).replace(/\s/g,'');const mm=INCH_MM[k];return mm?(p1!=null?p1:p2||'')+mm+' mm':all;});}
+function normState(st){if(!st)return st;for(const m of st.marks||[]){if(m.ptype)m.ptype=toMM(m.ptype);if(m.kind==='piton'&&m.text)m.text=toMM(m.text);}
+  for(const x of st.shapes||[])if(x.label&&['ataque','abast','trazo'].includes(x.kind))x.label=toMM(x.label);
+  for(const u of st.units||[])if(u.note)u.note=toMM(u.note);return st;}
+/* Botón rápido de diámetro: cambia la medida del rótulo y deja el resto (ej: "52 mm · B-1" → "70 mm · B-1") */
+function withMM(label,v){label=(label||'').trim();const re=/\b\d{2,3}\s?mm\b/;if(re.test(label))return label.replace(re,v);return label?v+' · '+label:v;}
 const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
 const ABAST_COLOR='#0b84d8';
 const DEFAULT_SETTINGS={
@@ -550,7 +560,7 @@ const FLAME_SVG='<svg viewBox="0 0 24 24"><path d="M12 1.8c.9 3.7 5.8 5.9 5.8 11
    ========================================================= */
 function newState(){return {v:1,title:'',address:'',startedAt:Date.now(),center:null,units:[],shapes:[],marks:[]};}
 function loadState(){
-  try{const s=JSON.parse(LS.get(KEY_STATE)||'null');if(s&&Array.isArray(s.units)&&Array.isArray(s.shapes)&&Array.isArray(s.marks))return s;}catch(e){}
+  try{const s=JSON.parse(LS.get(KEY_STATE)||'null');if(s&&Array.isArray(s.units)&&Array.isArray(s.shapes)&&Array.isArray(s.marks))return normState(s);}catch(e){}
   return newState();
 }
 function loadSettings(){
@@ -1164,7 +1174,7 @@ function finishDraft(){
   if(kind==='estructura'){pendingFront=s.id;selected=null;commit();setMode('pickA');}
   else{selected={type:'shape',id:s.id};setMode('select');commit();if(kind==='ataque')focusPanel('#pnLabel');}
 }
-let lastPiton='1½"';
+let lastPiton='38 mm';
 /* dirección inicial del pitón: hacia el fuego más cercano (si hay), si no hacia arriba */
 function pitonGuess(pos){
   const tg=[...state.marks.filter(m=>m.kind==='fuego').map(m=>m.pos),...state.shapes.filter(x=>x.kind==='fuego'&&x.coords&&x.coords.length>=3).map(x=>polyCenter(x.coords))];
@@ -1288,7 +1298,7 @@ function renderPanel(){
       <label class="l">Salida</label>${segBtns('wave',WAVES.map(w=>[w[0],w[2]]),u.wave||'')}
       <label class="l">Estado</label>${segBtns('status',[['lugar','✕ Sin función'],['trabajando','Trabajando'],['nocumple','✕ No puede cumplir'],['retirandose','◯ Retirándose'],['retirado','Retirado']],u.status)}
       <label class="l">Función</label>${segBtns('fn',[['','—'],...settings.functions.map(f=>[f,f])],u.fn)}
-      <label class="l">Nota (se muestra bajo el carro)</label><input id="pnNote" type="text" value="${esc(u.note)}" placeholder="ej: piso 2 · línea 2½ · techo">
+      <label class="l">Nota (se muestra bajo el carro)</label><input id="pnNote" type="text" value="${esc(u.note)}" placeholder="ej: piso 2 · línea 70 mm · techo">
       <div class="meta">${u.arrivedAt?'Ubicado en escena: <b>'+hhmm(u.arrivedAt)+'</b>':'Aún no ubicado en el mapa'} · agregado ${hhmm(u.addedAt)}</div>
       <div class="acts">${u.pos?'<button data-act="unplace">Quitar del mapa</button>':`<button class="pri" data-act="placeMode">Ubicar en el mapa</button>`}<button class="danger" data-act="delete">Eliminar carro</button></div></div>`;
   }else if(selected.type==='mark'){
@@ -1312,10 +1322,11 @@ function renderPanel(){
   }else{
     const s=o;const poly=POLY_KINDS.includes(s.kind);
     h=`<div class="pn-h"><span class="ttl">${esc(SHAPE_LABEL[s.kind]||'Forma')}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">
-      <label class="l">Rótulo</label><input id="pnLabel" type="text" value="${esc(s.label||'')}" placeholder="${({ataque:'ej: 2½ · B-1',abast:'ej: grifo → Z-3 → B-1',corte:'ej: cortada por Carabineros',muro:'ej: muro lado C · 2 pisos',humo:'ej: humo denso piso 2'})[s.kind]||'ej: Casa 2 pisos · bodega'}">`;
+      <label class="l">Rótulo</label><input id="pnLabel" type="text" value="${esc(s.label||'')}" placeholder="${({ataque:'ej: 52 mm · B-1',abast:'ej: 75 mm · grifo → Z-3 → B-1',corte:'ej: cortada por Carabineros',muro:'ej: muro lado C · 2 pisos',humo:'ej: humo denso piso 2'})[s.kind]||'ej: Casa 2 pisos · bodega'}">`;
+    if(s.kind==='ataque'||s.kind==='abast'){const cur=((s.label||'').match(/\b\d{2,3}\s?mm\b/)||[''])[0].replace(/\s?mm/,' mm');
+      h+=`<label class="l">Diámetro</label><div class="seg">${(s.kind==='abast'?ABAST_MM:ATAQUE_MM).map(q=>`<button data-act="quick" data-v="${esc(q)}" class="${q===cur?'on':''}">${esc(q)}</button>`).join('')}</div>`;}
     if(s.kind==='ataque'){
-      h+=`<div class="seg" style="margin-top:6px">${['1½"','2½"','Monitor','Abastecimiento'].map(q=>`<button data-act="quick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
-      <label class="l">Color</label><div class="colors">${LINE_COLORS.map(c=>`<button data-act="color" data-v="${c}" class="${c===(s.color||LINE_COLORS[0])?'on':''}" style="--c:${c}" title="${c}"></button>`).join('')}</div>`;
+      h+=`<label class="l">Color</label><div class="colors">${LINE_COLORS.map(c=>`<button data-act="color" data-v="${c}" class="${c===(s.color||LINE_COLORS[0])?'on':''}" style="--c:${c}" title="${c}"></button>`).join('')}</div>`;
     }
     h+=`<div class="meta">${poly?'Superficie aprox.: <b>'+Math.round(areaM2(s.coords)).toLocaleString('es-CL')+' m²</b>':'Largo aprox.: <b>'+Math.round(lengthM(s.coords))+' m</b>'}</div><div class="acts">
       <button data-act="verts" class="${editingId===s.id?'pri':''}">${editingId===s.id?'Terminar edición':'Editar puntos'}</button>
@@ -1344,7 +1355,7 @@ function onPanelClick(ev){
     case 'wave':o.wave=v;commit();break;
     case 'qtext':o.text=v;commit();break;
     case 'orient':orientA();break;
-    case 'quick':o.label=v;commit();break;
+    case 'quick':o.label=withMM(o.label,v);commit();break;
     case 'color':o.color=v;lastLineColor=v;commit();break;
     case 'verts':editingId=editingId===o.id?null:o.id;render();break;
     case 'front':pendingFront=o.id;setMode('pickA');break;
@@ -1729,6 +1740,7 @@ async function unpackState(txt){
   st.shapes=o.g.map((a,i)=>{const cs=[];let x=0,y=0;for(let k=3;k<a.length;k+=2){x+=a[k];y+=a[k+1];cs.push(L(x,y));}
     const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque')s.color=LINE_COLORS[a[1]]||LINE_COLORS[0];
     if(s.kind==='estructura'&&a[1]>0&&a[1]-1<cs.length){s.front=a[1]-1;s.azA=computeSides(cs,s.front).azA;}return s;});
+  normState(st);
   return {st,at:o.x,bearing:o.b||0,types:(o.y||[]).map(([p,c])=>({prefix:p,name:p,color:'#'+c}))};
 }
 function fnv(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36);}
@@ -1916,7 +1928,7 @@ function importJSON(file){
   const r=new FileReader();
   r.onload=()=>{try{const j=JSON.parse(r.result);const s=j.state||j;
     if(!Array.isArray(s.units)||!Array.isArray(s.shapes)||!Array.isArray(s.marks))throw new Error('formato');
-    state=Object.assign(newState(),s);selected=null;editingId=null;commit();setTimeout(fitAll,100);toast('Croquis importado');}
+    state=normState(Object.assign(newState(),s));selected=null;editingId=null;commit();setTimeout(fitAll,100);toast('Croquis importado');}
     catch(e){toast('El archivo no es un croquis válido');}};
   r.readAsText(file);
 }
@@ -1984,9 +1996,9 @@ function openHelp(){
     <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª, 2ª o 3ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª, 2ª, 3ª) de un carro para cambiarla.</li>
     <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
-    <li><b>Líneas</b> (L): clic en el carro y luego hacia donde va la armada; doble clic para terminar. Puedes rotularlas (1½", 2½").</li>
+    <li><b>Líneas</b> (L): clic en el carro y luego hacia donde va la armada; doble clic para terminar. Puedes rotularlas y elegir el diámetro (38, 45, 52 o 70 mm).</li>
     <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
-    <li><b>Estructura:</b> el <b>pitón</b> (I) se pone donde está y apunta solo al fuego más cercano; en su panel eliges tipo (1½", 2", 2½", monitor, espuma) y dirección. La <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale. <b>Humo</b> (U) es una zona como el área con fuego; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
+    <li><b>Estructura:</b> el <b>pitón</b> (I) se pone donde está y apunta solo al fuego más cercano; en su panel eliges tipo (38, 45, 52 o 70 mm, monitor o espuma) y dirección. La <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale. <b>Humo</b> (U) es una zona como el área con fuego; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
   <p>Todo se guarda solo en este navegador. Al terminar, usa <b>Menú → Exportar</b> para respaldar el croquis.</p>

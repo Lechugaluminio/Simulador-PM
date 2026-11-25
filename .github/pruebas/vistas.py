@@ -43,6 +43,10 @@ with sync_playwright() as p:
     pg.keyboard.press('i'); pg.mouse.click(760, 520); pg.wait_for_timeout(1500)
     pg.screenshot(path=f'{OUT}/3_piton_panel.png')
     pg.keyboard.press('Escape'); pg.keyboard.press('Escape')
+    # panel de la línea de ataque (diámetros en mm)
+    pg.mouse.click(824, 572); pg.wait_for_timeout(1000)
+    pg.screenshot(path=f'{OUT}/3b_linea_panel.png')
+    pg.keyboard.press('Escape'); pg.keyboard.press('Escape')
     # imagen exportada
     pg.click('#btnShare'); pg.wait_for_timeout(400)
     pg.click('[data-share="snap"]')

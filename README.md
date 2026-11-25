@@ -102,9 +102,9 @@ Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indic
 | Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Zona con humo, gris translúcida |
 | Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
-| Línea | `L` | Estructura | Línea de ataque con flecha (color a elegir) |
+| Línea | `L` | Estructura | Línea de ataque con flecha; diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | Estructura | Llama en el punto de origen |
-| Pitón | `I` | Estructura | Pitón con tipo (1½", 2", 2½", monitor, espuma) y flecha de dirección; apunta solo al fuego más cercano |
+| Pitón | `I` | Estructura | Pitón con tipo (38, 45, 52 o 70 mm, monitor o espuma) y flecha de dirección; apunta solo al fuego más cercano |
 | Víctima | `X` | Estructura | Víctima confirmada con cantidad; se marca *rescatada* |
 | MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero |
 | RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
@@ -114,10 +114,12 @@ Se cambia con las pestañas sobre el mapa o con `Tab`. La imagen exportada indic
 | ACV | `8` | Territorio | Círculo amarillo: área de concentración de víctimas |
 | PAP | `9` | Territorio | Círculo amarillo: puesto de abastecimiento primario |
 | PAS | `0` | Territorio | Círculo amarillo: puesto de abastecimiento secundario |
-| Línea de abastecimiento | `B` | Territorio | Línea azul gruesa con flechas: grifo → Z o piscina → bomba |
+| Línea de abastecimiento | `B` | Territorio | Línea azul gruesa con flechas: grifo → Z o piscina → bomba; diámetro de 75 o 110 mm |
 | Calle cortada | `Q` | Territorio | Franja roja y blanca sobre la calle |
 | Trazo | `K` | ambas | Trazo punteado libre |
 | Texto | `T` | ambas | Rótulo libre |
+
+Las medidas de mangueras y pitones van en milímetros, como en las guías de la Academia Nacional de Bomberos. Los croquis antiguos guardados en pulgadas se convierten solos al abrirlos (1½" → 38 mm, 2" → 52 mm, 2½" → 70 mm).
 
 ### 3.5 Mapa y datos externos
 
