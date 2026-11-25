@@ -107,7 +107,9 @@ with sync_playwright() as p:
         {'id': 'f1', 'kind': 'vent', 'pos': off(0, -40), 'text': 'acceso', 'vt': 'iny', 'rot': 0, 'piso': '1'},
         {'id': 'f2', 'kind': 'vent', 'pos': off(15, 18), 'text': '', 'vt': 'exu', 'piso': '37'},
         {'id': 'n1', 'kind': 'texto', 'pos': off(-15, 15), 'text': 'Red seca rota', 'piso': '12'},
-        {'id': 'r1', 'kind': 'rit', 'pos': off(-12, -12), 'text': 'B-19', 'piso': '16'}]}
+        {'id': 'r1', 'kind': 'rit', 'pos': off(-12, -12), 'text': 'B-19', 'piso': '16'},
+        {'id': 'x1', 'kind': 'fuego', 'pos': off(-18, 5), 'text': '', 'fstate': 'extinto', 'piso': '5'},
+        {'id': 'x2', 'kind': 'humo', 'pos': off(18, -15), 'text': '', 'hstate': 'ventilado', 'piso': '21'}]}
     pg.evaluate("([s,v])=>{localStorage.setItem('croquisPM.state.v1',s);localStorage.setItem('croquisPM.view.v1',v);}",
                 [json.dumps(torre), json.dumps({'center': c, 'zoom': 18.8, 'bearing': 0})])
     pg.reload(); pg.wait_for_timeout(7000)

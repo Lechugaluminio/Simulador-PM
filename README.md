@@ -116,11 +116,11 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
 | Área fuego | `F` | ambas | Zona con fuego, achurada en rojo |
 | Colapso | `C` | Estructura | Zona de colapso |
-| Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco) |
+| Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco). Al marcarlo *ventilado* queda como un ícono chico de viento |
 | Ventilación | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
 | Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
 | Línea de ataque | `L` | ambas | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
-| Foco | `1` | Estructura | Llama en el punto de origen |
+| Foco | `1` | ambas | Llama en el punto de origen. Al marcarlo *extinto* queda como un ícono chico de mecha recién apagada |
 | Víctima | `X` | Estructura | Víctima confirmada con cantidad; al marcarla *rescatada* queda como un punto verde chico |
 | MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero. Al marcarlo *resuelto* (bombero fuera) queda como una pastilla verde chica `✓ MAYDAY`, sin pulso |
 | RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
