@@ -42,7 +42,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
    *Pisos*: en el panel de la estructura se indican pisos y subterráneos; aparece la columna de pisos junto al edificio (ver 3.4).
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª, 2ª o 3ª alarma), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
-6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z o piscina → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
+6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z, PAP o PAS → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
 7. **Mostrar.** *Presentación* para la pantalla grande del PM, o *Imagen* para copiar o descargar el croquis.
 8. **Llevar a terreno.** Un ayudante escanea el QR y se lleva una copia editable al celular. Al volver, *Cambios* muestra qué se modificó.
 
@@ -88,7 +88,7 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 | | Territorio (escala urbana) | Estructura (escala del edificio) |
 |---|---|---|
 | Para qué | Despliegue en la manzana: dónde está cada carro y cómo llega el agua | Qué pasa dentro del edificio afectado |
-| Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), piscina, línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
+| Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
 | Lo de la otra vista | Oculto, incluidos el foco, el RIT, las notas y el MAYDAY resuelto que están dentro del edificio o asignados a un piso (afuera se siguen viendo; el MAYDAY activo y las víctimas confirmadas se ven siempre); cada estructura muestra un **resumen** (fuego, víctimas, humo, RIT) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
 | Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
@@ -125,17 +125,16 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero. Al marcarlo *resuelto* (bombero fuera) queda como una pastilla verde chica `✓ MAYDAY`, sin pulso |
 | RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
 | Puesto de Comando | `2` | Territorio | Rectángulo naranja con **PC** (estándar SCI) |
-| Piscina | `4` | Territorio | Piscina de abastecimiento |
 | Zona de espera | `7` | Territorio | Círculo amarillo con **E** |
 | ACV | `8` | Territorio | Círculo amarillo: área de concentración de víctimas |
 | PAP | `9` | Territorio | Círculo amarillo: puesto de abastecimiento primario |
 | PAS | `0` | Territorio | Círculo amarillo: puesto de abastecimiento secundario |
-| Línea de abastecimiento | `B` | Territorio | Línea azul oscuro gruesa con flecha: grifo → Z o piscina → bomba; diámetro de 75 o 110 mm |
+| Línea de abastecimiento | `B` | Territorio | Línea azul oscuro gruesa con flecha: grifo → Z, PAP o PAS → bomba; diámetro de 75 o 110 mm |
 | Calle cortada | `Q` | Territorio | Franja roja y blanca sobre la calle |
 | Trazo | `K` | ambas | Trazo punteado libre |
 | Texto | `T` | ambas | Rótulo libre |
 
-Los marcadores (foco, humo, víctima, MAYDAY, RIT, texto, piscina e instalaciones) se ponen con clic en el botón y clic en el mapa, o **arrastrando el botón al mapa**, como los carros. Una vez puestos se mueven arrastrándolos.
+Los marcadores (foco, humo, víctima, MAYDAY, RIT, texto e instalaciones) se ponen con clic en el botón y clic en el mapa, o **arrastrando el botón al mapa**, como los carros. Una vez puestos se mueven arrastrándolos.
 
 Las medidas de mangueras y pitones van en milímetros, como en las guías de la Academia Nacional de Bomberos. Los croquis antiguos guardados en pulgadas se convierten solos al abrirlos (1½" → 38 mm, 2" → 52 mm, 2½" → 70 mm), y los pitones sueltos de versiones anteriores pasan a ser la punta de una línea corta. Las zonas de humo dibujadas como polígono pasan a ser un marcador de humo en su centro.
 
@@ -237,7 +236,7 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 | `X` | Víctima |
 | `B` `Q` | Línea de abastecimiento / Calle cortada |
 | `L` `K` | Línea de ataque / Trazo |
-| `1` `2` `4`…`0` | Foco, PC, Piscina, MAYDAY, RIT, Zona de espera, ACV, PAP, PAS |
+| `1` `2` `5`…`0` | Foco, PC, MAYDAY, RIT, Zona de espera, ACV, PAP, PAS |
 | `T` | Texto |
 | `A` | Orientar con el lado A abajo |
 | `N` | Norte arriba |

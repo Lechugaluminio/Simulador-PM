@@ -541,8 +541,7 @@ body.sun #wind{border:3px solid #000;box-shadow:none}
       <button data-mode="mk:vent" data-sc="estr" title="Ventilación: ventilador que inyecta aire, extrae humo o exutorio abierto (W)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 12c-.5-3 .4-5.6 2.8-6.3M12 12c2.6 1.5 4 4 3.2 6.4M12 12c-2.2 1.6-5 1.8-6.8.1"/><circle cx="12" cy="12" r="1.3"/></svg>Ventilación</button>
       <button data-mode="mk:victima" data-sc="estr" title="Víctima confirmada (X)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><path d="M12 9.5v6M8 12h8M9 21l3-5.5 3 5.5"/></svg>Víctima</button>
       <button class="grp" id="btnInst" data-sc="terr" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
-      <button data-mode="mk:piscina" data-sc="terr" title="Piscina / estanque portátil (4)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 11c1.5-1.3 3-1.3 4.5 0s3 1.3 4.5 0 3-1.3 3 0"/></svg>Piscina</button>
-      <button data-mode="line:abast" data-sc="terr" title="Línea de abastecimiento: grifo → Z → piscina → bomba (B)"><svg class="i" viewBox="0 0 24 24"><path d="M3 18c4 0 4-6 9-6s5-6 9-6" stroke-width="3"/><path d="M17 3.5l4 2.5-3.5 3"/></svg>Abastec.</button>
+      <button data-mode="line:abast" data-sc="terr" title="Línea de abastecimiento: grifo → Z → PAP/PAS → bomba (B)"><svg class="i" viewBox="0 0 24 24"><path d="M3 18c4 0 4-6 9-6s5-6 9-6" stroke-width="3"/><path d="M17 3.5l4 2.5-3.5 3"/></svg>Abastec.</button>
       <button data-mode="line:corte" data-sc="terr" title="Calle cortada (Q)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9l-3 6M12 9l-3 6M17 9l-3 6M21 10l-2 5"/><path d="M6 15v5M18 15v5"/></svg>Calle cortada</button>
       <button data-mode="mk:rit" data-sc="estr" title="Pastilla RIT: equipo de intervención rápida (6)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M8 15v-5h2.2a1.4 1.4 0 0 1 0 2.8H8M10.2 12.8l1.3 2.2M14 10v5M16.5 10h3M18 10v5"/></svg>RIT</button>
       <button data-mode="mk:mayday" data-sc="estr" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
@@ -1425,7 +1424,7 @@ const HINTS={
   'poly:colapso':'<b>Zona de colapso:</b> clic en cada esquina · doble clic o clic en el primer punto para cerrar',
   'poly:humo':'<b>Zona con humo:</b> clic en cada esquina · doble clic o clic en el primer punto para cerrar',
   'line:muro':'<b>Muro con riesgo de colapso:</b> clic a lo largo del muro · doble clic para terminar',
-  'line:abast':'<b>Abastecimiento:</b> clic desde el grifo o carro que entrega agua, pasando por cada carro o piscina, hasta el que la recibe · doble clic para terminar',
+  'line:abast':'<b>Abastecimiento:</b> clic desde el grifo o carro que entrega agua, pasando por cada carro, PAP o PAS, hasta el que la recibe · doble clic para terminar',
   'line:corte':'<b>Calle cortada:</b> clic de un lado a otro de la calle (o a lo largo del tramo cortado) · doble clic para terminar',
   'mk:piton':'Clic donde está el <b>pitón</b> (después eliges tipo y dirección)',
   'mk:victima':'Clic donde está la <b>víctima</b>',
@@ -2439,13 +2438,13 @@ function openHelp(){
     <li><b>Ubica el incidente:</b> escribe la dirección o el cruce arriba (ej: <i>Las Enredaderas &amp; Fermín Vivaceta, Independencia</i>) y presiona Enter.</li>
     <li><b>Dibuja la estructura</b> (E): clic en cada esquina y doble clic para cerrar. Luego haz clic en el borde del <b>frente</b> y se ponen los lados A–D. <b>A abajo</b> gira el mapa como en la pizarra.</li>
     <li>En <b>Instalaciones</b> (pasa el mouse sobre el botón) están el <b>Puesto de Comando</b>, la <b>Zona de espera</b> y el <b>ACV</b>, con los símbolos del SCI.</li>
-    <li>Los marcadores se ponen con clic en el botón y clic en el mapa, o arrastrando el botón al mapa como los carros. Marca el <b>foco</b>, <b>grifos</b>, <b>piscinas</b> de abastecimiento, el <b>área con fuego</b> y, si ocurre, la ubicación de un <b>MAYDAY</b>.</li>
+    <li>Los marcadores se ponen con clic en el botón y clic en el mapa, o arrastrando el botón al mapa como los carros. Marca el <b>foco</b>, <b>grifos</b>, el <b>área con fuego</b> y, si ocurre, la ubicación de un <b>MAYDAY</b>.</li>
     <li><b>Carros:</b> escribe o pega los despachados en la columna izquierda y arrástralos al mapa cuando lleguen. Clic en un carro para asignar estado, función, lado y nota. Como en la pizarra: <b>✕</b> = sin función o no puede cumplirla, <b>◯</b> = se está retirando.</li>
     <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª, 2ª o 3ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª, 2ª, 3ª) de un carro para cambiarla.</li>
     <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
     <li><b>Líneas de ataque</b> (L): clic en el carro, luego en cada quiebre y doble clic donde está el pitón. <b>La punta de la línea es el pitón</b> y apunta hacia donde va el chorro. En su panel eliges el diámetro (38, 45, 52 o 70 mm), el pitón (chorro, monitor o espuma) y el color. En Territorio se ven sin rótulo ni tipo de pitón, solo el recorrido: de un vistazo se sabe dónde hay líneas y cuántas.</li>
-    <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
+    <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z, el PAP o el PAS; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
     <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). El <b>MAYDAY</b> se marca <b>resuelto</b> en su panel cuando el bombero ya salió: queda como una pastilla verde chica. <b>Humo</b> (U) es un marcador como el foco; <b>Ventilación</b> (W) marca un ventilador que inyecta aire o extrae humo (la flecha es hacia donde va el aire) o un exutorio abierto; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
     <li><b>Pisos:</b> en el panel de la estructura indica cuántos pisos y subterráneos tiene. Al lado del edificio aparece la <b>columna de pisos</b> con íconos de lo que pasa en cada uno (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se desplaza con la rueda del mouse y ⤢ la abre completa; el embudo deja solo los pisos con algo. El <b>piso fuego −2</b> se marca solo con <b>F−2</b> (conexión de la línea que sube y RIT). Las notas de texto de un piso (ej: <i>Red seca rota</i>) se leen en su fila. Se mueve arrastrándola desde su encabezado negro (doble clic la devuelve junto al edificio). Clic en un piso para ver solo lo de ese piso; mientras está elegido, lo que agregues dentro del edificio queda en ese piso. Cada víctima, zona o línea también tiene botones de <b>Piso</b> en su panel, y en el mapa lleva la etiqueta (P2, S1, Techo).</li>
     <li><b>Viento:</b> abajo a la derecha, la flecha azul muestra hacia dónde va el viento (pronóstico de Open-Meteo para el sector; en edificios altos también a su altura). Clic para ver el detalle o anotar el viento observado en el lugar.</li>
@@ -2462,7 +2461,7 @@ function openHelp(){
     <tr><td><kbd>B</kbd></td><td>Línea de abastecimiento</td><td><kbd>Q</kbd></td><td>Calle cortada</td></tr>
     <tr><td><kbd>X</kbd></td><td>Víctima confirmada</td><td><kbd>W</kbd></td><td>Ventilación</td></tr>
     <tr><td><kbd>M</kbd></td><td>Muro con riesgo de colapso</td><td></td><td></td></tr>
-    <tr><td><kbd>1</kbd>–<kbd>0</kbd></td><td>1 Foco · 2 PC · 4 Piscina · 5 Mayday · 6 RIT · 7 Zona de espera · 8 ACV · 9 PAP · 0 PAS</td><td><kbd>T</kbd></td><td>Texto</td></tr>
+    <tr><td><kbd>1</kbd>–<kbd>0</kbd></td><td>1 Foco · 2 PC · 5 Mayday · 6 RIT · 7 Zona de espera · 8 ACV · 9 PAP · 0 PAS</td><td><kbd>T</kbd></td><td>Texto</td></tr>
     <tr><td><kbd>A</kbd></td><td>Orientar con lado A abajo</td><td><kbd>N</kbd></td><td>Norte arriba</td></tr>
     <tr><td><kbd>S</kbd></td><td>Modo sol (alto contraste)</td><td></td><td></td></tr>
     <tr><td><kbd>Z</kbd></td><td>Encuadrar todo</td><td><kbd>P</kbd></td><td>Modo presentación</td></tr>
@@ -2600,7 +2599,7 @@ function onKey(e){
   if((e.key==='Delete'||e.key==='Backspace')&&selected){e.preventDefault();deleteSelected();return;}
   const k=e.key.toLowerCase();
   if(e.key==='Tab'&&!isDrawing()){e.preventDefault();setView(settings.view==='estr'?'terr':'estr',true);return;}
-  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo',u:'mk:humo',w:'mk:vent',m:'line:muro',x:'mk:victima',b:'line:abast',q:'line:corte','1':'mk:fuego','2':'mk:pm','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
+  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo',u:'mk:humo',w:'mk:vent',m:'line:muro',x:'mk:victima',b:'line:abast',q:'line:corte','1':'mk:fuego','2':'mk:pm','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
   if(modes[k]){if(k==='v')select(null);setMode(modes[k]);return;}
   if(k==='a')orientA();
   if(k==='s')toggleSun();
