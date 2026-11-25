@@ -1,0 +1,22 @@
+name: Prueba visual
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['index.html', '.github/pruebas/**', '.github/workflows/prueba-vistas.yml']
+jobs:
+  capturas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - run: |
+          python -m http.server 8000 >/dev/null 2>&1 &
+          sleep 1
+          python .github/pruebas/vistas.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: capturas, path: capturas}

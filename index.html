@@ -167,6 +167,33 @@ body.present #viewbar{display:flex!important}
 #flyInst .ic{flex:none;width:46px;display:grid;place-items:center}
 #flyInst .ic>*{--tok:.62;box-shadow:none}
 #tools .grp.on{background:var(--acc);color:var(--accInk)}
+/* ---- dos escalas: Territorio / Estructura ---- */
+#viewTabs{position:absolute;left:100px;top:10px;z-index:5;display:flex;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:4px;gap:3px}
+#viewTabs button{display:flex;align-items:center;gap:7px;border:0;border-radius:8px;padding:7px 13px;font-size:14px;font-weight:800;background:transparent;color:var(--ink)}
+#viewTabs button svg{width:20px;height:20px}
+#viewTabs button:hover{background:var(--hover)}
+#viewTabs button.on{background:var(--acc);color:var(--accInk)}
+#viewTabs kbd{font-family:var(--fb);font-size:10px;opacity:.6;font-weight:600}
+body.view-terr #tools [data-sc="estr"],body.view-estr #tools [data-sc="terr"]{display:none}
+body.view-terr .mw.sc-estr,body.view-terr .lbl.sc-estr{display:none}
+body.view-estr .mw.sc-terr,body.view-estr .lbl.sc-terr{opacity:.38}
+body.view-estr .tw{opacity:.55}
+body.view-estr .tw.sel,body.view-estr .mw.sel{opacity:1}
+body:not(.view-terr) .sumb{display:none}
+.sumb{font-family:var(--fc);font-weight:800;font-size:calc(15px * var(--tok));line-height:1;background:#fff;color:#111;border:2.5px solid #111;border-radius:999px;padding:.28em .6em .22em;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.45);cursor:pointer;transform:translateY(calc(26px * var(--tok)))}
+.sumb b{color:#d00000}
+.m-piton{position:relative;width:calc(34px * var(--tok));height:calc(34px * var(--tok));border-radius:50%;background:#1d6fe8;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.45);display:grid;place-items:center}
+.m-piton svg{width:76%;height:76%;transform:rotate(var(--r,0deg))}
+.m-piton .pt,.m-vic .pt{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);font-family:var(--fc);font-weight:800;font-size:calc(13px * var(--tok));line-height:1;background:rgba(17,17,17,.9);color:#fff;padding:.2em .4em;border-radius:4px;white-space:nowrap}
+.m-vic{position:relative;width:calc(34px * var(--tok));height:calc(34px * var(--tok));border-radius:50%;background:#fff;border:3px solid #e00000;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.45);display:grid;place-items:center}
+.m-vic svg{width:70%;height:70%}
+.m-vic.ok{border-color:#16a34a}
+.m-vic .n{position:absolute;right:-9px;top:-9px;min-width:calc(19px * var(--tok));height:calc(19px * var(--tok));border-radius:999px;background:#e00000;color:#fff;border:2px solid #fff;font-family:var(--fc);font-weight:800;font-size:calc(13px * var(--tok));display:grid;place-items:center;padding:0 3px}
+.m-vic.ok .n{background:#16a34a}
+.dirs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px}
+.dirs button{padding:5px 0;font-size:16px}
+.dirs button.on{background:var(--acc);color:var(--accInk)}
+.cnt{display:flex;align-items:center;gap:8px}.cnt b{font-size:22px;min-width:28px;text-align:center}.cnt button{width:40px;font-size:20px;padding:4px 0}
 #tools .grp{position:relative}
 #tools .grp .chev{position:absolute;right:3px;top:12px;font-size:10px;opacity:.7}
 .m-grifo{width:calc(30px * var(--tok));height:calc(30px * var(--tok));border-radius:50%;background:#ffd60a;color:#111;font-family:var(--fc);font-weight:800;display:grid;place-items:center;font-size:calc(18px * var(--tok));border:2.5px solid #111;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.45)}
@@ -282,6 +309,7 @@ body.fork #forkInfo,body.fork #btnChanges,body.fork #btnShareView,body.fork .for
   #tools button{flex:0 0 auto;min-width:66px;padding:8px 4px;font-size:11.5px}
   #tools .sep{width:1px;height:auto;margin:6px 3px}
   #tools .grp .chev{display:none}
+  #viewTabs{left:8px;top:8px;padding:3px}#viewTabs button{padding:6px 9px;font-size:13px}#viewTabs kbd{display:none}
   #viewbar{left:8px;bottom:80px;padding:3px}
   #viewbar button{font-size:0;gap:0;padding:9px}
   #hint{bottom:134px;max-width:94%;font-size:14px}
@@ -395,19 +423,29 @@ body.present #exitPresent{display:inline-flex!important}
       <button data-mode="select" title="Seleccionar y mover (V / Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6 3l13 8-6 1.5L10 19z"/></svg>Mover</button>
       <div class="sep"></div>
       <button data-mode="poly:estructura" title="Dibujar la estructura / manzana afectada (E)"><svg class="i" viewBox="0 0 24 24"><path d="M4 8l7-4 9 4-2 11-12 1z"/></svg>Estructura</button>
-      <button data-mode="poly:fuego" title="Área con fuego, achurada (F)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12l8-8M4 20L20 4M12 20l8-8"/></svg>Área fuego</button>
-      <button data-mode="poly:colapso" title="Zona de colapso / peligro (C)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 2.5"/><path d="M12 9v4M12 16v.5"/></svg>Colapso</button>
-      <button data-mode="line:ataque" title="Línea / armada con flecha (L)"><svg class="i" viewBox="0 0 24 24"><path d="M4 20c3-7 7-11 14-13"/><path d="M13 5l5.5 2-3 5"/></svg>Línea</button>
+      <button data-mode="poly:fuego" data-sc="estr" title="Área con fuego, achurada (F)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12l8-8M4 20L20 4M12 20l8-8"/></svg>Área fuego</button>
+      <button data-mode="poly:colapso" data-sc="estr" title="Zona de colapso / peligro (C)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 2.5"/><path d="M12 9v4M12 16v.5"/></svg>Colapso</button>
+      <button data-mode="poly:humo" data-sc="estr" title="Zona con humo (U)"><svg class="i" viewBox="0 0 24 24"><path d="M5 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15.6 8 3.5 3.5 0 0 1 19 14.5"/><path d="M4 20h15M7 13.5h9"/></svg>Humo</button>
+      <button data-mode="line:muro" data-sc="estr" title="Muro con riesgo de colapso: dibújalo sobre el muro (M)"><svg class="i" viewBox="0 0 24 24"><path d="M3 19h18M4 19V9l4-2 4 2v10M12 19v-6l4-2 4 2v6"/><path d="M8 11v3M16 14v2"/></svg>Muro riesgo</button>
+      <button data-mode="line:ataque" data-sc="estr" title="Línea / armada con flecha (L)"><svg class="i" viewBox="0 0 24 24"><path d="M4 20c3-7 7-11 14-13"/><path d="M13 5l5.5 2-3 5"/></svg>Línea</button>
       <button data-mode="line:trazo" title="Trazo discontinuo libre (K)"><svg class="i" viewBox="0 0 24 24"><path d="M3 17L21 7" stroke-dasharray="3.5 3"/></svg>Trazo</button>
       <div class="sep"></div>
-      <button data-mode="mk:fuego" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
-      <button class="grp" id="btnInst" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
-      <button data-mode="mk:piscina" title="Piscina / estanque portátil (4)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 11c1.5-1.3 3-1.3 4.5 0s3 1.3 4.5 0 3-1.3 3 0"/></svg>Piscina</button>
-      <button data-mode="mk:rit" title="Pastilla RIT: equipo de intervención rápida (6)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M8 15v-5h2.2a1.4 1.4 0 0 1 0 2.8H8M10.2 12.8l1.3 2.2M14 10v5M16.5 10h3M18 10v5"/></svg>RIT</button>
-      <button data-mode="mk:mayday" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
+      <button data-mode="mk:fuego" data-sc="estr" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
+      <button data-mode="mk:piton" data-sc="estr" title="Pitón: ubicación, tipo y dirección (I)"><svg class="i" viewBox="0 0 24 24"><path d="M3 15l8-3v4l-8 3z"/><path d="M11 12l4-1.5v3L11 16"/><path d="M17 9l4-2M17 12h4M17 15l4 2"/></svg>Pitón</button>
+      <button data-mode="mk:victima" data-sc="estr" title="Víctima confirmada (X)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><path d="M12 9.5v6M8 12h8M9 21l3-5.5 3 5.5"/></svg>Víctima</button>
+      <button class="grp" id="btnInst" data-sc="terr" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
+      <button data-mode="mk:piscina" data-sc="terr" title="Piscina / estanque portátil (4)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 11c1.5-1.3 3-1.3 4.5 0s3 1.3 4.5 0 3-1.3 3 0"/></svg>Piscina</button>
+      <button data-mode="line:abast" data-sc="terr" title="Línea de abastecimiento: grifo → Z → piscina → bomba (B)"><svg class="i" viewBox="0 0 24 24"><path d="M3 18c4 0 4-6 9-6s5-6 9-6" stroke-width="3"/><path d="M17 3.5l4 2.5-3.5 3"/></svg>Abastec.</button>
+      <button data-mode="line:corte" data-sc="terr" title="Calle cortada (Q)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9l-3 6M12 9l-3 6M17 9l-3 6M21 10l-2 5"/><path d="M6 15v5M18 15v5"/></svg>Calle cortada</button>
+      <button data-mode="mk:rit" data-sc="estr" title="Pastilla RIT: equipo de intervención rápida (6)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M8 15v-5h2.2a1.4 1.4 0 0 1 0 2.8H8M10.2 12.8l1.3 2.2M14 10v5M16.5 10h3M18 10v5"/></svg>RIT</button>
+      <button data-mode="mk:mayday" data-sc="estr" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
       <button data-mode="mk:texto" title="Texto libre (T)"><svg class="i" viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>Texto</button>
       <button data-mode="sides" title="Ubicar lados A, B, C, D a mano"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 16l3-8 3 8M10 13.5h4"/></svg>Lados A–D</button>
     </nav>
+    <div id="viewTabs" title="Dos escalas del croquis (Tab para cambiar)">
+      <button data-view="terr" title="Escala urbana: carros, abastecimiento, instalaciones, calles cortadas (Tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Territorio</button>
+      <button data-view="estr" title="Escala del edificio: fuego, humo, pitones, víctimas, riesgos (Tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-5 8 5v12z"/><path d="M9 21v-6h6v6M8 11h2M14 11h2"/></svg>Estructura</button>
+    </div>
     <div id="flyInst">
       <div class="fh">Instalaciones</div>
       <button data-mode="mk:pm" title="Puesto de Comando (2)"><span class="ic"><span class="m-pc">PC</span></span>Puesto de Comando</button>
@@ -469,11 +507,18 @@ const waveOf=w=>WAVES.find(x=>x[0]===w);
 function waveTag(u){const w=waveOf(u.wave);return `<span class="wv w-${w?w[0]:'n'}" data-wave-uid="${u.id}" title="${w?w[2]:'Sin salida asignada'} · clic para cambiar">${w?w[1]:'·'}</span>`;}
 function renderWaveSeg(){const cur=state.addWave||'D';$('#waveSeg').innerHTML=WAVES.map(([v,t,l])=>`<button data-addwave="${v}" class="${v===cur?'on':''}" title="${l}">${v==='D'?'Despacho':t}</button>`).join('');}
 const XSVG='<svg class="xx" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M3 3L97 97M97 3L3 97" stroke="#000" stroke-opacity=".8" stroke-width="5" vector-effect="non-scaling-stroke"/><path d="M3 3L97 97M97 3L3 97" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>';
-const MARK_LABEL={fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',pap:'Puesto de abastecimiento primario (PAP)',pas:'Puesto de abastecimiento secundario (PAS)',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
-const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona de colapso',ataque:'Línea',trazo:'Trazo'};
-const POLY_KINDS=['estructura','fuego','colapso'];
+const MARK_LABEL={piton:'Pitón',victima:'Víctima',fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',pap:'Puesto de abastecimiento primario (PAP)',pas:'Puesto de abastecimiento secundario (PAS)',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
+const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona de colapso',ataque:'Línea',trazo:'Trazo',humo:'Zona con humo',abast:'Línea de abastecimiento',corte:'Calle cortada',muro:'Muro con riesgo de colapso'};
+const POLY_KINDS=['estructura','fuego','colapso','humo'];
+/* escala de cada elemento: 'terr' (urbana), 'estr' (edificio) o ambas */
+const SC_TERR=new Set(['pm','espera','acv','pap','pas','piscina','grifo','abast','corte']);
+const SC_ESTR=new Set(['piton','victima','humo','ataque','muro']);
+const scaleOf=k=>SC_TERR.has(k)?'terr':SC_ESTR.has(k)?'estr':'both';
+const PITON_TYPES=['1½"','2"','2½"','Monitor','Espuma'];
+const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
+const ABAST_COLOR='#0b84d8';
 const DEFAULT_SETTINGS={
-  theme:'light',base:'sat',labels:true,grifos:true,dim:0,tok:1.15,hideRetired:true,legend:true,typesV:4,
+  theme:'light',base:'sat',view:'terr',labels:true,grifos:true,dim:0,tok:1.15,hideRetired:true,legend:true,typesV:4,
   types:[
     {prefix:'B',name:'Bomba',color:'#d62828'},
     {prefix:'BX',name:'Bomba 4x4',color:'#f15b2a'},
@@ -727,6 +772,7 @@ function initMap(){
   if(map.touchPitch)map.touchPitch.disable();
   map.on('load',()=>{addImages();addShapeLayers();addGrifosLayer();mapReady=true;applySettings();render();if(fork&&!forkResumed)setTimeout(fitAll,50);initGrifos();});
   map.on('click',onMapClick);
+  map.on('rotate',updatePitonRot);
   map.on('mousemove',onMapMove);
   map.on('dblclick',onMapDbl);
   map.on('moveend',()=>{loadLocalFeatures();const vw={center:map.getCenter().toArray(),zoom:map.getZoom(),bearing:map.getBearing()};if(fork){forkView=vw;saveFork();}else LS.set(KEY_VIEW,JSON.stringify(vw));});
@@ -737,14 +783,14 @@ function addImages(){
   x.strokeStyle='rgba(255,35,35,.95)';x.lineWidth=3;
   for(const o of [-20,0,20]){x.beginPath();x.moveTo(o,20);x.lineTo(o+20,0);x.stroke();}
   if(!map.hasImage('hatch'))map.addImage('hatch',x.getImageData(0,0,20,20));
-  for(const col of LINE_COLORS){const id='arrow-'+col.slice(1);if(map.hasImage(id))continue;
+  for(const col of [...LINE_COLORS,ABAST_COLOR]){const id='arrow-'+col.slice(1);if(map.hasImage(id))continue;
     const s=64,cv=document.createElement('canvas');cv.width=cv.height=s;const g=cv.getContext('2d');
     g.beginPath();g.moveTo(s/2,4);g.lineTo(s-8,s-8);g.lineTo(s/2,s-20);g.lineTo(8,s-8);g.closePath();
     g.lineJoin='round';g.lineWidth=5;g.strokeStyle=col==='#ffffff'?'#111':'#fff';g.stroke();g.fillStyle=col;g.fill();
     map.addImage(id,g.getImageData(0,0,s,s),{pixelRatio:2});}
 }
 const EMPTY={type:'FeatureCollection',features:[]};
-const PICK_LAYERS=['arrows','ataque-line','trazo-line','fuego-line','colapso-line','estructura-line','fuego-tint','estructura-fill','colapso-fill'];
+const PICK_LAYERS=['arrows','ataque-line','trazo-line','abast-line','corte-line','muro-line','fuego-line','colapso-line','humo-line','estructura-line','fuego-tint','humo-fill','estructura-fill','colapso-fill'];
 function addShapeLayers(){
   map.addSource('shapes',{type:'geojson',data:EMPTY});
   map.addSource('arrows',{type:'geojson',data:EMPTY});
@@ -753,14 +799,24 @@ function addShapeLayers(){
   const L=l=>map.addLayer(l);
   L({id:'colapso-fill',type:'fill',source:'shapes',filter:K('colapso'),paint:{'fill-color':'#ffd60a','fill-opacity':0.13}});
   L({id:'estructura-fill',type:'fill',source:'shapes',filter:K('estructura'),paint:{'fill-color':'#ffb703','fill-opacity':0.2}});
+  L({id:'humo-fill',type:'fill',source:'shapes',filter:K('humo'),paint:{'fill-color':'#3f4652','fill-opacity':0.42}});
   L({id:'fuego-tint',type:'fill',source:'shapes',filter:K('fuego'),paint:{'fill-color':'#ff1e1e','fill-opacity':0.22}});
   L({id:'fuego-hatch',type:'fill',source:'shapes',filter:K('fuego'),paint:{'fill-pattern':'hatch'}});
   L({id:'poly-casing',type:'line',source:'shapes',filter:['in',['get','kind'],['literal',POLY_KINDS]],paint:{'line-color':'#000','line-width':6.5,'line-opacity':0.55},layout:{'line-join':'round'}});
+  L({id:'humo-line',type:'line',source:'shapes',filter:K('humo'),paint:{'line-color':'#c9ced6','line-width':3,'line-dasharray':[1,1.2]}});
   L({id:'colapso-line',type:'line',source:'shapes',filter:K('colapso'),paint:{'line-color':'#ffd60a','line-width':3.5,'line-dasharray':[2,1.5]}});
   L({id:'estructura-line',type:'line',source:'shapes',filter:K('estructura'),paint:{'line-color':'#ffffff','line-width':3.5},layout:{'line-join':'round'}});
   L({id:'fuego-line',type:'line',source:'shapes',filter:K('fuego'),paint:{'line-color':'#ff2020','line-width':3.5},layout:{'line-join':'round'}});
   L({id:'trazo-casing',type:'line',source:'shapes',filter:K('trazo'),paint:{'line-color':'#000','line-width':6,'line-opacity':0.5},layout:{'line-cap':'round','line-join':'round'}});
   L({id:'trazo-line',type:'line',source:'shapes',filter:K('trazo'),paint:{'line-color':'#ffffff','line-width':3,'line-dasharray':[2,2]},layout:{'line-join':'round'}});
+  L({id:'abast-casing',type:'line',source:'shapes',filter:K('abast'),paint:{'line-color':'#ffffff','line-width':10,'line-opacity':.9},layout:{'line-cap':'round','line-join':'round'}});
+  L({id:'abast-line',type:'line',source:'shapes',filter:K('abast'),paint:{'line-color':ABAST_COLOR,'line-width':6},layout:{'line-cap':'round','line-join':'round'}});
+  L({id:'corte-casing',type:'line',source:'shapes',filter:K('corte'),paint:{'line-color':'#000','line-width':12,'line-opacity':.6},layout:{'line-join':'round'}});
+  L({id:'corte-line',type:'line',source:'shapes',filter:K('corte'),paint:{'line-color':'#e00000','line-width':9},layout:{'line-join':'round'}});
+  L({id:'corte-dash',type:'line',source:'shapes',filter:K('corte'),paint:{'line-color':'#ffffff','line-width':9,'line-dasharray':[0.6,0.6]},layout:{'line-join':'round'}});
+  L({id:'muro-casing',type:'line',source:'shapes',filter:K('muro'),paint:{'line-color':'#000','line-width':11},layout:{'line-cap':'round','line-join':'round'}});
+  L({id:'muro-line',type:'line',source:'shapes',filter:K('muro'),paint:{'line-color':'#ffd60a','line-width':8},layout:{'line-join':'round'}});
+  L({id:'muro-dash',type:'line',source:'shapes',filter:K('muro'),paint:{'line-color':'#111','line-width':8,'line-dasharray':[0.7,0.7]},layout:{'line-join':'round'}});
   L({id:'ataque-casing',type:'line',source:'shapes',filter:K('ataque'),paint:{'line-color':'#ffffff','line-width':9},layout:{'line-cap':'round','line-join':'round'}});
   L({id:'ataque-line',type:'line',source:'shapes',filter:K('ataque'),paint:{'line-color':['get','color'],'line-width':5},layout:{'line-cap':'round','line-join':'round'}});
   L({id:'arrows',type:'symbol',source:'arrows',layout:{'icon-image':['get','icon'],'icon-rotate':['get','bearing'],'icon-rotation-alignment':'map','icon-allow-overlap':true,'icon-ignore-placement':true}});
@@ -779,9 +835,10 @@ function shapesGeo(){
     geometry:POLY_KINDS.includes(s.kind)&&s.coords.length>=3?{type:'Polygon',coordinates:[[...s.coords,s.coords[0]]]}:{type:'LineString',coordinates:s.coords}}))};
 }
 function arrowsGeo(){
-  return {type:'FeatureCollection',features:state.shapes.filter(s=>s.kind==='ataque'&&s.coords.length>=2).map(s=>{
-    const n=s.coords.length;const a=s.coords[n-2],b=s.coords[n-1];const col=(s.color||LINE_COLORS[0]);
-    return {type:'Feature',properties:{id:s.id,kind:'ataque',bearing:azimuth(a,b),icon:'arrow-'+(LINE_COLORS.includes(col)?col:LINE_COLORS[0]).slice(1)},geometry:{type:'Point',coordinates:b}};})};
+  const v=settings.view==='estr'?'estr':'terr';
+  return {type:'FeatureCollection',features:state.shapes.filter(s=>(s.kind==='ataque'&&v==='estr'||s.kind==='abast')&&s.coords.length>=2).map(s=>{
+    const n=s.coords.length;const a=s.coords[n-2],b=s.coords[n-1];const col=s.kind==='abast'?ABAST_COLOR:(s.color||LINE_COLORS[0]);
+    return {type:'Feature',properties:{id:s.id,kind:'ataque',bearing:azimuth(a,b),icon:'arrow-'+(s.kind==='abast'?ABAST_COLOR:LINE_COLORS.includes(col)?col:LINE_COLORS[0]).slice(1)},geometry:{type:'Point',coordinates:b}};})};
 }
 function pushShapes(){
   if(!mapReady)return;
@@ -865,8 +922,13 @@ function tokenHTML(u,mini){
   const bd=(!mini&&(badge||u.note))?`<span class="bd">${esc(badge)}${u.note?`<i>${esc(u.note)}</i>`:''}</span>`:'';
   return `<div class="tok st-${u.status}${u.fn==='RIT'?' rit':''}" style="--c:${t.color};--fg:${fg(t.color)}">${XSTAT.includes(u.status)?XSVG:''}<span class="cd">${esc(u.code)}</span>${bd}</div>`;
 }
+const PITON_SVG='<svg viewBox="0 0 24 24"><path d="M12 2.5l5 7.5h-3.2v11.5h-3.6V10H7z" fill="#fff" stroke="#0a2a66" stroke-width="1" stroke-linejoin="round"/></svg>';
+const VIC_SVG='<svg viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="3" fill="#111"/><path d="M12 9.5v6.5M7 12.5h10M8.5 22l3.5-6 3.5 6" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const pitonRot=m=>((+m.rot||0)-(map?map.getBearing():0));
 function markHTML(m){
   switch(m.kind){
+    case 'piton':return `<div class="m-piton" style="--r:${pitonRot(m)}deg">${PITON_SVG}<span class="pt">${esc(m.ptype||'Pitón')}${m.text?' · '+esc(m.text):''}</span></div>`;
+    case 'victima':{const ok=m.vstate==='rescatada';return `<div class="m-vic${ok?' ok':''}" title="${ok?'Víctima rescatada':'Víctima confirmada'}">${VIC_SVG}${(m.n||1)>1?`<span class="n">${m.n}</span>`:''}${m.text?`<span class="pt">${esc(m.text)}</span>`:''}</div>`;}
     case 'fuego':return `<div class="m-fire">${FLAME_SVG}</div>`;
     case 'pm':return `<div class="m-pc">${esc(m.text||'PC')}</div>`;
     case 'espera':return `<div class="m-circ">E</div>`;
@@ -882,7 +944,7 @@ function markHTML(m){
   }
   return '<div>?</div>';
 }
-const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,rit:30,pm:50,espera:50,acv:50,pap:50,pas:50,mayday:60};
+const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,fuego:5,piton:20,victima:40,rit:30,pm:50,espera:50,acv:50,pap:50,pas:50,mayday:60};
 function draftFromMarker(pos){if(isDrawing()){draft.push(pos);updateDraft();return true;}return false;}
 function makeDraggable(kind,id,el,m){
   m.on('dragstart',()=>{el.classList.add('dragging');el._drag=true;document.body.classList.add('dragging-mark');$('#flyInst').classList.remove('open');});
@@ -919,9 +981,11 @@ function syncMarks(){
       r={m,el};mkMarks.set(k.id,r);makeDraggable('mark',k.id,el,m);}
     else if(!r.el._drag)r.m.setLngLat(k.pos);
     const h=markHTML(k);if(r.el._h!==h){r.el.innerHTML=h;r.el._h=h;}
+    const sc=scaleOf(k.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');
     const s=isSel('mark',k.id);r.el.classList.toggle('sel',s);r.el.style.zIndex=s?100:(MARK_Z[k.kind]||2);
   }
   for(const [id,r] of mkMarks)if(!seen.has(id)){r.m.remove();mkMarks.delete(id);}
+  syncSummaries();
 }
 function syncLabels(){
   const seen=new Set();
@@ -930,9 +994,54 @@ function syncLabels(){
     const pos=POLY_KINDS.includes(s.kind)&&s.coords.length>=3?polyCenter(s.coords):alongLine(s.coords,0.5);
     seen.add(s.id);let r=mkLabels.get(s.id);
     if(!r){const el=document.createElement('div');el.className='lbl';const m=new maplibregl.Marker({element:el}).setLngLat(pos).addTo(map);el.style.zIndex=1;r={m,el};mkLabels.set(s.id,r);}
-    r.m.setLngLat(pos);r.el.textContent=s.label;
+    r.m.setLngLat(pos);r.el.textContent=s.label;const sc=scaleOf(s.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');
   }
   for(const [id,r] of mkLabels)if(!seen.has(id)){r.m.remove();mkLabels.delete(id);}
+}
+/* ---- resumen de lo que pasa dentro de cada estructura (se ve en Territorio) ---- */
+const mkSum=new Map();
+function structSummaries(){
+  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3).map(x=>({id:x.id,c:polyCenter(x.coords),v:0,p:0,h:0}));
+  const loose={id:'_',c:null,v:0,p:0,h:0,pts:[]};
+  const near=pos=>{let best=null,bd=250;for(const t of sts){const d=distM(pos,t.c);if(d<bd){bd=d;best=t;}}return best;};
+  for(const m of state.marks){if(m.kind!=='victima'&&m.kind!=='piton')continue;const t=near(m.pos)||loose;if(t===loose)loose.pts.push(m.pos);
+    if(m.kind==='victima'&&m.vstate!=='rescatada')t.v+=(m.n||1);if(m.kind==='piton')t.p++;}
+  for(const x of state.shapes){if(x.kind!=='humo'||!x.coords||x.coords.length<3)continue;const t=near(polyCenter(x.coords));if(t)t.h++;}
+  if(loose.pts.length){loose.c=[loose.pts.reduce((a,p)=>a+p[0],0)/loose.pts.length,loose.pts.reduce((a,p)=>a+p[1],0)/loose.pts.length];sts.push(loose);}
+  return sts.filter(t=>t.v||t.p||t.h).map(t=>({...t,txt:[t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.p?`${t.p} pitón${t.p>1?'es':''}`:'',t.h?'humo':''].filter(Boolean).join(' · ')}));
+}
+function distM(a,b){const P=localProj(a);const q=P.to(b);return Math.hypot(q[0],q[1]);}
+function syncSummaries(){
+  if(!mapReady)return;const seen=new Set();
+  for(const t of structSummaries()){seen.add(t.id);let r=mkSum.get(t.id);
+    if(!r){const el=document.createElement('div');el.className='sumw';el.title='Clic para ver el detalle en la vista Estructura';
+      el.addEventListener('click',ev=>{ev.stopPropagation();setView('estr',true);});
+      const m=new maplibregl.Marker({element:el}).setLngLat(t.c).addTo(map);el.style.zIndex=4;r={m,el};mkSum.set(t.id,r);}
+    r.m.setLngLat(t.c);if(r.el._h!==t.txt){r.el.innerHTML=`<div class="sumb">${t.txt}</div>`;r.el._h=t.txt;}}
+  for(const [id,r] of mkSum)if(!seen.has(id)){r.m.remove();mkSum.delete(id);}
+}
+function updatePitonRot(){for(const k of state.marks){if(k.kind!=='piton')continue;const r=mkMarks.get(k.id);const d=r&&r.el.querySelector('.m-piton');if(d)d.style.setProperty('--r',pitonRot(k)+'deg');}}
+const ESTR_LAYERS=['humo-fill','humo-line','ataque-casing','ataque-line','muro-casing','muro-line','muro-dash'];
+const TERR_LAYERS=[['abast-casing','line-opacity',.9],['abast-line','line-opacity',1],['corte-casing','line-opacity',.6],['corte-line','line-opacity',1],['corte-dash','line-opacity',1]];
+function applyView(){
+  const v=settings.view==='estr'?'estr':'terr';
+  document.body.classList.toggle('view-terr',v==='terr');document.body.classList.toggle('view-estr',v==='estr');
+  $$('#viewTabs [data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+  if(mapReady){
+    for(const id of ESTR_LAYERS)if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v==='estr'?'visible':'none');
+    for(const [id,prop,full] of TERR_LAYERS)if(map.getLayer(id))map.setPaintProperty(id,prop,v==='estr'?full*.35:full);
+    pushShapes();}
+  const sm=mode.startsWith('mk:')||mode.startsWith('poly:')||mode.startsWith('line:')?scaleOf(mode.split(':')[1]):'both';
+  if(INST_MODES.includes(mode)&&v==='estr')setMode('select');else if(sm!=='both'&&sm!==v)setMode('select');
+}
+function setView(v,zoom){
+  if(settings.view===v){return;}
+  settings.view=v;saveSettings();applyView();
+  if(!zoom||!map)return;
+  const sts=state.shapes.filter(x=>x.kind==='estructura'&&x.coords&&x.coords.length>=3);
+  if(v==='estr'&&sts.length&&map.getZoom()<17.3){const b=new maplibregl.LngLatBounds(sts[0].coords[0],sts[0].coords[0]);sts.forEach(x=>x.coords.forEach(c=>b.extend(c)));
+    map.fitBounds(b,{padding:{top:90,bottom:90,left:120,right:selected?380:120},maxZoom:19.5,bearing:map.getBearing(),duration:600});}
+  else if(v==='terr'&&map.getZoom()>18)map.easeTo({zoom:17,duration:600});
 }
 function syncHandles(){
   vHandles.forEach(h=>h.remove());vHandles=[];
@@ -956,6 +1065,12 @@ const HINTS={
   'poly:estructura':'<b>Estructura:</b> clic en cada esquina · doble clic o clic en el primer punto para cerrar',
   'poly:fuego':'<b>Área con fuego:</b> clic en cada esquina · doble clic o clic en el primer punto para cerrar',
   'poly:colapso':'<b>Zona de colapso:</b> clic en cada esquina · doble clic o clic en el primer punto para cerrar',
+  'poly:humo':'<b>Zona con humo:</b> clic en cada esquina · doble clic o clic en el primer punto para cerrar',
+  'line:muro':'<b>Muro con riesgo de colapso:</b> clic a lo largo del muro · doble clic para terminar',
+  'line:abast':'<b>Abastecimiento:</b> clic desde el grifo o carro que entrega agua, pasando por cada carro o piscina, hasta el que la recibe · doble clic para terminar',
+  'line:corte':'<b>Calle cortada:</b> clic de un lado a otro de la calle (o a lo largo del tramo cortado) · doble clic para terminar',
+  'mk:piton':'Clic donde está el <b>pitón</b> (después eliges tipo y dirección)',
+  'mk:victima':'Clic donde está la <b>víctima</b>',
   'line:ataque':'<b>Línea:</b> clic en el carro o punto de origen y luego en cada quiebre · doble clic para terminar',
   'line:trazo':'<b>Trazo:</b> clic en cada punto · doble clic para terminar',
   'mk:fuego':'Clic en el mapa para ubicar el <b>foco del fuego</b>',
@@ -989,6 +1104,8 @@ function onHintClick(e){
   if(a==='cancel'){if(mode==='pickA')pendingFront=null;setMode('select');}
 }
 function setMode(m){
+  {const sm=(m.startsWith('mk:')||m.startsWith('poly:')||m.startsWith('line:'))?scaleOf(m.split(':')[1]):(INST_MODES.includes(m)?'terr':'both');
+   if(sm!=='both'&&sm!==(settings.view==='estr'?'estr':'terr')){settings.view=sm;saveSettings();applyView();}}
   if(isDrawing()&&m!==mode){draft=[];updateDraft();}
   mode=m;if(m==='sides')sideIdx=0;
   $$('#tools [data-mode],#flyInst [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m||(m==='pickA'&&b.dataset.mode==='poly:estructura')));
@@ -1017,6 +1134,13 @@ function finishDraft(){
   if(kind==='estructura'){pendingFront=s.id;selected=null;commit();setMode('pickA');}
   else{selected={type:'shape',id:s.id};setMode('select');commit();if(kind==='ataque')focusPanel('#pnLabel');}
 }
+let lastPiton='1½"';
+/* dirección inicial del pitón: hacia el fuego más cercano (si hay), si no hacia arriba */
+function pitonGuess(pos){
+  const tg=[...state.marks.filter(m=>m.kind==='fuego').map(m=>m.pos),...state.shapes.filter(x=>x.kind==='fuego'&&x.coords&&x.coords.length>=3).map(x=>polyCenter(x.coords))];
+  if(!tg.length)return 0;let best=tg[0],bd=Infinity;for(const t of tg){const d=distM(pos,t);if(d<bd){bd=d;best=t;}}
+  if(bd<1)return 0;return Math.round(azimuth(pos,best)/45)*45%360;
+}
 function onMapClick(e){
   const t=e.originalEvent&&e.originalEvent.target;
   if(t&&t.closest&&t.closest('.maplibregl-marker'))return;
@@ -1027,7 +1151,8 @@ function onMapClick(e){
   }
   if(mode.startsWith('mk:')){const k=mode.slice(3);let pos=ll;
     if(k==='grifo'&&map.getLayer('grifos')){const g=map.queryRenderedFeatures([[e.point.x-14,e.point.y-14],[e.point.x+14,e.point.y+14]],{layers:['grifos']});if(g.length)pos=g[0].geometry.coordinates.slice();}
-    const m={id:uid(),kind:k,pos,text:''};state.marks.push(m);selected={type:'mark',id:m.id};setMode('select');commit();
+    const m={id:uid(),kind:k,pos,text:''};if(k==='piton'){m.ptype=lastPiton;m.rot=pitonGuess(pos);}if(k==='victima'){m.n=1;m.vstate='confirmada';}
+    state.marks.push(m);selected={type:'mark',id:m.id};setMode('select');commit();
     if(k==='texto'||k==='rit')focusPanel('#pnText');return;}
   if(mode==='sides'){const L='ABCD'[sideIdx];state.marks=state.marks.filter(m=>!(m.kind==='lado'&&m.letter===L));
     state.marks.push({id:uid(),kind:'lado',letter:L,pos:ll,shapeId:null});sideIdx++;commit();
@@ -1147,11 +1272,17 @@ function renderPanel(){
         (sc.length?`<div class="seg" style="margin-top:6px">${sc.map(u=>`<button data-act="qtext" data-v="${esc(u.code)}" class="${m.text===u.code?'on':''}">${esc(u.code)}</button>`).join('')}</div>`:'');}
     if(m.kind==='lado')h+=`<label class="l">Letra</label>${segBtns('letter',[['A','A'],['B','B'],['C','C'],['D','D']],m.letter)}`;
     if(m.kind==='grifo')h+=`<label class="l">Estado</label>${segBtns('gstate',[['uso','En uso'],['seco','✕ Sin agua']],m.seco?'seco':'uso')}`;
+    if(m.kind==='piton'){h+=`<label class="l">Tipo</label>${segBtns('ptype',PITON_TYPES.map(t=>[t,t]),m.ptype||'')}
+      <label class="l">Dirección del chorro</label><div class="dirs">${DIRS.map(([v,l])=>`<button data-act="prot" data-v="${v}" class="${String(+m.rot||0)===v?'on':''}">${l}</button>`).join('')}</div>
+      <label class="l">Compañía / nota (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: B-1 · piso 2">`;}
+    if(m.kind==='victima'){h+=`<label class="l">Cantidad</label><div class="cnt"><button data-act="vn" data-v="-1">−</button><b>${m.n||1}</b><button data-act="vn" data-v="1">+</button></div>
+      <label class="l">Estado</label>${segBtns('vstate',[['confirmada','Confirmada'],['rescatada','✓ Rescatada']],m.vstate||'confirmada')}
+      <label class="l">Ubicación / nota (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: piso 2 · dormitorio lado C">`;}
     h+=`<div class="meta">Arrastra el marcador para moverlo.</div><div class="acts">${m.kind==='lado'?'<button data-act="orient">Orientar con A abajo</button>':''}<button class="danger" data-act="delete">${m.kind==='grifo'?'Desmarcar grifo':'Eliminar'}</button></div></div>`;
   }else{
     const s=o;const poly=POLY_KINDS.includes(s.kind);
     h=`<div class="pn-h"><span class="ttl">${esc(SHAPE_LABEL[s.kind]||'Forma')}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">
-      <label class="l">Rótulo</label><input id="pnLabel" type="text" value="${esc(s.label||'')}" placeholder="${s.kind==='ataque'?'ej: 2½ · pitón':'ej: Casa 2 pisos · bodega'}">`;
+      <label class="l">Rótulo</label><input id="pnLabel" type="text" value="${esc(s.label||'')}" placeholder="${({ataque:'ej: 2½ · B-1',abast:'ej: grifo → Z-3 → B-1',corte:'ej: cortada por Carabineros',muro:'ej: muro lado C · 2 pisos',humo:'ej: humo denso piso 2'})[s.kind]||'ej: Casa 2 pisos · bodega'}">`;
     if(s.kind==='ataque'){
       h+=`<div class="seg" style="margin-top:6px">${['1½"','2½"','Monitor','Abastecimiento'].map(q=>`<button data-act="quick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
       <label class="l">Color</label><div class="colors">${LINE_COLORS.map(c=>`<button data-act="color" data-v="${c}" class="${c===(s.color||LINE_COLORS[0])?'on':''}" style="--c:${c}" title="${c}"></button>`).join('')}</div>`;
@@ -1176,6 +1307,10 @@ function onPanelClick(ev){
     case 'delete':deleteSelected();break;
     case 'letter':o.letter=v;o.shapeId=null;commit();break;
     case 'gstate':o.seco=v==='seco';commit();break;
+    case 'ptype':o.ptype=v;lastPiton=v;commit();break;
+    case 'prot':o.rot=+v;commit();break;
+    case 'vn':o.n=Math.max(1,(o.n||1)+(+v));commit();break;
+    case 'vstate':o.vstate=v;commit();break;
     case 'wave':o.wave=v;commit();break;
     case 'qtext':o.text=v;commit();break;
     case 'orient':orientA();break;
@@ -1419,6 +1554,13 @@ const FLAME_P=['M12 1.8c.9 3.7 5.8 5.9 5.8 11.4A5.8 5.8 0 0 1 12 19a5.8 5.8 0 0 
 function drawMarkSnap(g,m,x,y){
   const tok=settings.tok;
   switch(m.kind){
+    case 'piton':{const d=34*tok;g.beginPath();g.arc(x,y,d/2+1.5,0,Math.PI*2);g.fillStyle='#000';g.fill();g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(x,y,d/2-2.5,0,Math.PI*2);g.fillStyle='#1d6fe8';g.fill();
+      g.save();g.translate(x,y);g.rotate(pitonRot(m)*Math.PI/180);const k=d*.76/24;g.scale(k,k);g.translate(-12,-12);const pa=new Path2D('M12 2.5l5 7.5h-3.2v11.5h-3.6V10H7z');g.fillStyle='#fff';g.fill(pa);g.lineWidth=1;g.strokeStyle='#0a2a66';g.stroke(pa);g.restore();
+      darkLabel(g,[(m.ptype||'Pitón')+(m.text?' · '+m.text:'')],x,y+d/2+4,13*tok);break;}
+    case 'victima':{const d=34*tok,ok=m.vstate==='rescatada';g.beginPath();g.arc(x,y,d/2+1.5,0,Math.PI*2);g.fillStyle='#000';g.fill();g.beginPath();g.arc(x,y,d/2,0,Math.PI*2);g.fillStyle=ok?'#16a34a':'#e00000';g.fill();g.beginPath();g.arc(x,y,d/2-3,0,Math.PI*2);g.fillStyle='#fff';g.fill();
+      g.save();g.translate(x-d*.35,y-d*.35);g.scale(d*.7/24,d*.7/24);g.fillStyle='#111';g.beginPath();g.arc(12,5.5,3,0,Math.PI*2);g.fill();g.strokeStyle='#111';g.lineWidth=2.6;g.lineCap='round';g.lineJoin='round';g.stroke(new Path2D('M12 9.5v6.5M7 12.5h10M8.5 22l3.5-6 3.5 6'));g.restore();
+      if((m.n||1)>1){const r=10*tok;g.beginPath();g.arc(x+d/2-2,y-d/2+2,r,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(x+d/2-2,y-d/2+2,r-2,0,Math.PI*2);g.fillStyle=ok?'#16a34a':'#e00000';g.fill();centerText(g,String(m.n),x+d/2-2,y-d/2+2,FONT(800,13*tok),'#fff');}
+      if(m.text)darkLabel(g,[m.text],x,y+d/2+4,13*tok);break;}
     case 'fuego':{const sz=50*tok;g.save();g.translate(x-sz/2,y-sz/2);g.scale(sz/24,sz/24);g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=4;
       const a=new Path2D(FLAME_P[0]);g.fillStyle='#ff3b1f';g.fill(a);g.shadowBlur=0;g.lineWidth=1.4;g.strokeStyle='#fff';g.lineJoin='round';g.stroke(a);g.fillStyle='#ffd166';g.fill(new Path2D(FLAME_P[1]));g.restore();break;}
     case 'pm':{const t=m.text||'PC',fs=22*tok;pillBox(g,x,y,t,{fs,h:fs*1.45,padX:1.25,r:3,bg:'#ff8c00',border:'#111',outer:'#fff',bw:3});centerText(g,t,x,y+fs*.03,FONT(800,fs),'#111');break;}
@@ -1478,13 +1620,19 @@ async function renderSnapshot(scale){
   g.save();g.translate(0,HEAD);g.beginPath();g.rect(0,0,W,H);g.clip();
   const P=c=>{const p=map.project(c);return [p.x,p.y];};
   const inView=([x,y])=>x>-80&&y>-80&&x<W+80&&y<H+80;
-  const order=['lado','texto','grifo','piscina','fuego'];
-  for(const k of order)for(const m of state.marks.filter(m=>m.kind===k)){const p=P(m.pos);if(inView(p))drawMarkSnap(g,m,p[0],p[1]);}
-  for(const s of state.shapes){if(!s.label||!s.coords||s.coords.length<2)continue;const pos=POLY_KINDS.includes(s.kind)&&s.coords.length>=3?polyCenter(s.coords):alongLine(s.coords,.5);const p=P(pos);
+  const vw=settings.view==='estr'?'estr':'terr';
+  const visM=m=>!(vw==='terr'&&scaleOf(m.kind)==='estr');
+  const drawM=m=>{const p=P(m.pos);if(!inView(p)||!visM(m))return;g.save();if(vw==='estr'&&scaleOf(m.kind)==='terr')g.globalAlpha=.38;drawMarkSnap(g,m,p[0],p[1]);g.restore();};
+  const order=['lado','texto','grifo','piscina','fuego','piton','victima'];
+  for(const k of order)for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
+  for(const s of state.shapes){if(!s.label||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&scaleOf(s.kind)==='estr')continue;const pos=POLY_KINDS.includes(s.kind)&&s.coords.length>=3?polyCenter(s.coords):alongLine(s.coords,.5);const p=P(pos);
     if(inView(p)){const fs=16*settings.tok;g.font=FONT(700,fs);const w=g.measureText(s.label).width+fs*.9,h=fs*1.3;rr(g,p[0]-w/2,p[1]-h/2,w,h,5);g.fillStyle='rgba(15,15,15,.84)';g.fill();centerText(g,s.label,p[0],p[1],FONT(700,fs),'#fff');}}
   const units=state.units.filter(u=>u.pos&&!(settings.hideRetired&&u.status==='retirado')).sort((a,b)=>(a.status==='retirado')-(b.status==='retirado')||0);
-  for(const u of [...units].reverse()){const p=P(u.pos);if(inView(p))drawUnitSnap(g,u,p[0],p[1]);}
-  for(const k of ['rit','pm','espera','acv','mayday'])for(const m of state.marks.filter(m=>m.kind===k)){const p=P(m.pos);if(inView(p))drawMarkSnap(g,m,p[0],p[1]);}
+  for(const u of [...units].reverse()){const p=P(u.pos);if(inView(p)){g.save();if(vw==='estr')g.globalAlpha=.55;drawUnitSnap(g,u,p[0],p[1]);g.restore();}}
+  for(const k of ['rit','pm','espera','acv','pap','pas','mayday'])for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
+  if(vw==='terr')for(const t of structSummaries()){const p=P(t.c);if(!inView(p))continue;const txt=t.txt.replace(/<[^>]+>/g,'');const fs=15*settings.tok;
+    const bx=pillBox(g,p[0],p[1]+26*settings.tok,txt,{fs,h:fs*1.55,padX:1.2,bg:'#fff',border:'#111',outer:'#fff',bw:2.5});centerText(g,txt,p[0],p[1]+26*settings.tok+fs*.03,FONT(800,fs),t.v?'#c00000':'#111');}
+  {const vt=vw==='estr'?'VISTA ESTRUCTURA':'VISTA TERRITORIO';g.font=FONT(800,15);const w=g.measureText(vt).width+20;rr(g,10,10,w,26,6);g.fillStyle='rgba(17,17,17,.85)';g.fill();centerText(g,vt,10+w/2,23,FONT(800,15),'#fff');}
   // norte y créditos
   const br=map.getBearing();g.save();g.translate(W-40,40);g.beginPath();g.arc(0,0,22,0,Math.PI*2);g.fillStyle='rgba(255,255,255,.92)';g.fill();g.lineWidth=1.5;g.strokeStyle='#111';g.stroke();
   g.rotate(-br*Math.PI/180);g.beginPath();g.moveTo(0,-15);g.lineTo(6,4);g.lineTo(0,1);g.lineTo(-6,4);g.closePath();g.fillStyle='#d62828';g.fill();centerText(g,'N',0,11,FONT(800,11),'#111');g.restore();
@@ -1520,7 +1668,7 @@ async function openExport(){
    parte "#" del enlace, que el navegador nunca envía al servidor.
    ========================================================= */
 const ST_KEYS=['lugar','trabajando','nocumple','retirandose','retirado'];
-const SH_KEYS=['estructura','fuego','colapso','ataque','trazo'];
+const SH_KEYS=['estructura','fuego','colapso','ataque','trazo','humo','abast','corte','muro'];
 const b64u={enc:u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');},
   dec:t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const b=atob(t);const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}};
 async function zip(u8,mode){const cs=mode==='c'?new CompressionStream('deflate-raw'):new DecompressionStream('deflate-raw');const r=new Response(new Blob([u8]).stream().pipeThrough(cs));return new Uint8Array(await r.arrayBuffer());}
@@ -1531,7 +1679,7 @@ async function packState(){
   const flat=cs=>{let a=[0,0],out=[];cs.forEach(c=>{const p=P(c);out.push(p[0]-a[0],p[1]-a[1]);a=p;});return out;};
   const o={v:1,t:state.title||'',a:state.address||'',s:state.startedAt,x:Date.now(),r:r0,b:map?Math.round(map.getBearing()):0,
     u:state.units.filter(u=>u.status!=='retirado').map(u=>{const a=[u.code,ST_KEYS.indexOf(u.status),u.fn||'',u.side||'',u.note||'',u.wave||''];if(u.pos)a.push(...P(u.pos));return a;}),
-    m:state.marks.map(m=>[m.kind,...P(m.pos),m.kind==='lado'?m.letter:(m.text||'')]),
+    m:state.marks.map(m=>{const a=[m.kind,...P(m.pos),m.kind==='lado'?m.letter:(m.text||'')];const x={};if(m.seco)x.s=1;if(m.ptype)x.t=m.ptype;if(m.rot)x.r=m.rot;if(m.n>1)x.n=m.n;if(m.vstate==='rescatada')x.v=1;if(Object.keys(x).length)a.push(x);return a;}),
     g:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map(s=>[SH_KEYS.indexOf(s.kind),s.kind==='ataque'?Math.max(0,LINE_COLORS.indexOf(s.color||LINE_COLORS[0])):(s.kind==='estructura'&&s.front!=null?s.front+1:0),s.label||'',...flat(s.coords)]),
     y:settings.types.map(t=>[t.prefix,t.color.replace('#','')])};
   return b64u.enc(await zip(new TextEncoder().encode(JSON.stringify(o)),'c'));
@@ -1541,7 +1689,8 @@ async function unpackState(txt){
   const r0=o.r,L=(x,y)=>[(r0[0]+x)/1e5,(r0[1]+y)/1e5];
   const st=newState();st.title=o.t;st.address=o.a;st.startedAt=o.s;st.center=L(0,0);
   st.units=o.u.map((a,i)=>({id:'u'+i,code:a[0],status:ST_KEYS[a[1]]||'lugar',fn:a[2],side:a[3],note:a[4],wave:a[5],pos:a.length>=8?L(a[6],a[7]):null,arrivedAt:a.length>=8?o.x:null,addedAt:i}));
-  st.marks=o.m.map((a,i)=>{const m={id:'m'+i,kind:a[0],pos:L(a[1],a[2]),text:''};if(a[0]==='lado')m.letter=a[3];else m.text=a[3];return m;});
+  st.marks=o.m.map((a,i)=>{const m={id:'m'+i,kind:a[0],pos:L(a[1],a[2]),text:''};if(a[0]==='lado')m.letter=a[3];else m.text=a[3];
+    const x=a[4]||{};if(x.s)m.seco=true;if(x.t)m.ptype=x.t;if(x.r)m.rot=x.r;if(m.kind==='victima'){m.n=x.n||1;m.vstate=x.v?'rescatada':'confirmada';}return m;});
   st.shapes=o.g.map((a,i)=>{const cs=[];let x=0,y=0;for(let k=3;k<a.length;k+=2){x+=a[k];y+=a[k+1];cs.push(L(x,y));}
     const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque')s.color=LINE_COLORS[a[1]]||LINE_COLORS[0];
     if(s.kind==='estructura'&&a[1]>0&&a[1]-1<cs.length){s.front=a[1]-1;s.azA=computeSides(cs,s.front).azA;}return s;});
@@ -1568,7 +1717,7 @@ function moveDesc(from,to){
   const dir=st?'hacia el lado '+'ABCD'[Math.round(((az-st.azA)+360)%360/90)%4]:'hacia el '+['norte','noreste','este','sureste','sur','suroeste','oeste','noroeste'][Math.round(az/45)%8];
   return {dist,dir};
 }
-const markName=m=>(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
+const markName=m=>(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):m.kind==='piton'?'Pitón '+(m.ptype||''):m.kind==='victima'?((m.n||1)>1?m.n+' víctimas':'Víctima')+(m.vstate==='rescatada'?' (rescatada)':''):(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
 function computeChanges(){
   if(!fork||!forkBase)return [];
   const out=[],MIN=3;const sameC=(a,b)=>a&&b&&moveDesc(a,b).dist<MIN;
@@ -1591,6 +1740,11 @@ function computeChanges(){
     if(!b){out.push({id:m.id,t:'mark',who:markName(m),txt:'agregado',pos:m.pos});continue;}
     const p=[];if(!sameC(b.pos,m.pos)){const d=moveDesc(b.pos,m.pos);p.push(`movido ${Math.round(d.dist)} m ${d.dir}`);}
     if((b.text||'')!==(m.text||''))p.push(`rótulo: “${m.text||''}”`);
+    if(!!b.seco!==!!m.seco)p.push(m.seco?'sin agua':'en uso');
+    if((b.ptype||'')!==(m.ptype||''))p.push(`tipo: ${m.ptype}`);
+    if((+b.rot||0)!==(+m.rot||0))p.push('cambió la dirección');
+    if((b.n||1)!==(m.n||1))p.push(`cantidad: ${b.n||1} → ${m.n||1}`);
+    if((b.vstate||'')!==(m.vstate||''))p.push(m.vstate==='rescatada'?'rescatada':'confirmada');
     if(p.length)out.push({id:m.id,t:'mark',who:markName(m),txt:p.join(' · '),pos:m.pos,from:b.pos});
   }
   for(const b of forkBase.marks)if(!cM.has(b.id))out.push({id:b.id,t:'mark',who:markName(b),txt:'eliminado en la copia',pos:b.pos,gone:true});
@@ -1819,6 +1973,7 @@ function openHelp(){
 function toggleSun(){settings.sun=!settings.sun;saveSettings();applySettings();toast(settings.sun?'Modo sol activado: alto contraste, piezas y líneas más grandes':'Modo sol desactivado');}
 const LINE_W={'ataque-line':[5,8],'ataque-casing':[9,13],'estructura-line':[3.5,5.5],'poly-casing':[6.5,10],'fuego-line':[3.5,5.5],'colapso-line':[3.5,5.5],'trazo-line':[3,5],'trazo-casing':[6,9],'ghost-line':[2.5,4],'ghost-casing':[5,7.5],'sel':[3,5]};
 function applySettings(){
+  applyView();
   const sun=!!settings.sun;
   document.body.dataset.theme=sun?'light':settings.theme;document.body.classList.toggle('sun',sun);
   document.documentElement.style.setProperty('--tok',settings.tok*(sun?1.25:1));
@@ -1904,6 +2059,7 @@ function bindUI(){
   $('#btnSide').onclick=()=>{if(isCompact()){document.body.classList.toggle('drawer');return;}document.body.classList.toggle('sb-hidden');setTimeout(()=>map&&map.resize(),60);};
   $('#btnFull').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){}};
   $('#elapsedBox').onclick=editStart;
+  $('#viewTabs').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b)setView(b.dataset.view,true);});
   $('#baseSeg').addEventListener('click',e=>{const b=e.target.closest('[data-base]');if(!b)return;settings.base=b.dataset.base;saveSettings();applySettings();});
   $('#chkLabels').onchange=e=>{settings.labels=e.target.checked;saveSettings();applySettings();};
   $('#chkGrifos').onchange=e=>{settings.grifos=e.target.checked;saveSettings();applySettings();if(settings.grifos&&mapReady)initGrifos();};
@@ -1928,7 +2084,8 @@ function onKey(e){
   if(e.key==='Backspace'&&isDrawing()){e.preventDefault();draft.pop();updateDraft();return;}
   if((e.key==='Delete'||e.key==='Backspace')&&selected){e.preventDefault();deleteSelected();return;}
   const k=e.key.toLowerCase();
-  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo','1':'mk:fuego','2':'mk:pm','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
+  if(e.key==='Tab'&&!isDrawing()){e.preventDefault();setView(settings.view==='estr'?'terr':'estr',true);return;}
+  const modes={v:'select',e:'poly:estructura',f:'poly:fuego',c:'poly:colapso',l:'line:ataque',k:'line:trazo',u:'poly:humo',m:'line:muro',i:'mk:piton',x:'mk:victima',b:'line:abast',q:'line:corte','1':'mk:fuego','2':'mk:pm','4':'mk:piscina','5':'mk:mayday','6':'mk:rit','7':'mk:espera','8':'mk:acv','9':'mk:pap','0':'mk:pas',t:'mk:texto'};
   if(modes[k]){if(k==='v')select(null);setMode(modes[k]);return;}
   if(k==='a')orientA();
   if(k==='s')toggleSun();
