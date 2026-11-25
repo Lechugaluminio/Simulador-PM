@@ -102,7 +102,7 @@ El mapa muestra la planta (el techo), así que los pisos se resuelven como en la
 |---|---|
 | Pisos de la estructura | En su panel: pisos (1–99) y subterráneos |
 | Piso de cada elemento | Víctimas, foco, MAYDAY, RIT, texto, fuego, humo, colapso, muro y líneas de ataque tienen botones de *Piso* (S1… P1, P2… Techo). En el mapa llevan la etiqueta `P2`, `S1` o `Techo` |
-| Columna de pisos | Junto al edificio, en la vista Estructura: una fila por piso con **íconos** de lo que pasa en él: llama (fuego), nube (humo), víctima con su cantidad, línea con flecha (líneas trabajando, con cantidad), triángulo (riesgo de colapso), pastilla RIT, víctimas rescatadas en verde, nota y pastilla MAYDAY. En edificios altos la lista se desplaza con la rueda del mouse y el botón ⤢ la abre completa; al abrirse muestra el piso con fuego. El botón del embudo deja solo los pisos con algo (los demás se resumen como `⋮ 5 pisos`) |
+| Columna de pisos | Junto al edificio, en la vista Estructura: una fila por piso con **íconos** de lo que pasa en él: llama (fuego), nube (humo), víctima con su cantidad, línea con flecha (líneas trabajando, con cantidad), ventilador azul (inyecta) o gris (extrae), exutorio, triángulo (riesgo de colapso), pastilla RIT, víctimas rescatadas en verde, el texto de las notas de ese piso (por ejemplo *Red seca rota*) y pastilla MAYDAY. El **piso fuego −2** se marca solo con la etiqueta `F−2`: ahí se conecta la línea que sube al piso del fuego y espera el RIT. En edificios altos la lista se desplaza con la rueda del mouse y el botón ⤢ la abre completa; al abrirse muestra el piso con fuego. El botón del embudo deja solo los pisos con algo (los demás se resumen como `⋮ 5 pisos`) |
 | Mover la columna | Se arrastra desde su encabezado negro y queda en ese lugar respecto del edificio, aunque se cambie de vista o de zoom; doble clic en el encabezado la devuelve a su lugar |
 | Ver un piso | Clic en una fila: lo de los otros pisos se atenúa y lo que se agregue dentro del edificio queda en ese piso. *Ver todos* vuelve a mostrar todo |
 
@@ -117,6 +117,7 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Área fuego | `F` | Estructura | Zona con fuego, achurada en rojo |
 | Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco) |
+| Ventilación | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
 | Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
 | Línea de ataque | `L` | ambas | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | Estructura | Llama en el punto de origen |
@@ -208,7 +209,7 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 | `Tab` | Cambiar entre vista Territorio y Estructura |
 | `V` | Mover / seleccionar |
 | `E` `F` `C` | Estructura / Área fuego / Colapso |
-| `U` `M` | Humo / Muro con riesgo |
+| `U` `M` `W` | Humo / Muro con riesgo / Ventilación |
 | `X` | Víctima |
 | `B` `Q` | Línea de abastecimiento / Calle cortada |
 | `L` `K` | Línea de ataque / Trazo |

@@ -100,7 +100,11 @@ with sync_playwright() as p:
         {'id': 'l3', 'kind': 'ataque', 'coords': [off(60, 60), off(10, 10)], 'label': '38 mm · Q-7', 'color': '#2f7bff', 'piso': '19'}],
       'marks': [{'id': 'v1', 'kind': 'victima', 'pos': off(5, 5), 'text': '', 'n': 3, 'vstate': 'confirmada', 'piso': '19'},
         {'id': 'v2', 'kind': 'victima', 'pos': off(-5, 10), 'text': '', 'n': 1, 'vstate': 'confirmada', 'piso': '25'},
-        {'id': 'my', 'kind': 'mayday', 'pos': off(10, -5), 'text': '', 'piso': '19'}]}
+        {'id': 'my', 'kind': 'mayday', 'pos': off(10, -5), 'text': '', 'piso': '19'},
+        {'id': 'f1', 'kind': 'vent', 'pos': off(0, -40), 'text': 'acceso', 'vt': 'iny', 'rot': 0, 'piso': '1'},
+        {'id': 'f2', 'kind': 'vent', 'pos': off(15, 18), 'text': '', 'vt': 'exu', 'piso': '37'},
+        {'id': 'n1', 'kind': 'texto', 'pos': off(-15, 15), 'text': 'Red seca rota', 'piso': '12'},
+        {'id': 'r1', 'kind': 'rit', 'pos': off(-12, -12), 'text': 'B-19', 'piso': '16'}]}
     pg.evaluate("([s,v])=>{localStorage.setItem('croquisPM.state.v1',s);localStorage.setItem('croquisPM.view.v1',v);}",
                 [json.dumps(torre), json.dumps({'center': c, 'zoom': 18.8, 'bearing': 0})])
     pg.reload(); pg.wait_for_timeout(7000)
