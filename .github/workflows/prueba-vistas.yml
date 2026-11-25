@@ -1,4 +1,6 @@
 name: Prueba visual
+permissions:
+  contents: write
 on:
   workflow_dispatch:
   push:
@@ -20,3 +22,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with: {name: capturas, path: capturas}
+      - name: Publicar capturas (release "pruebas")
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cd capturas && zip -q ../capturas.zip * && cd ..
+          gh release view pruebas >/dev/null 2>&1 || gh release create pruebas --prerelease --title "Capturas de prueba (automáticas)" --notes "Capturas generadas por la prueba visual. No es una versión para usar."
+          gh release upload pruebas capturas.zip --clobber
