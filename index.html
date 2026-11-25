@@ -67,6 +67,32 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke
 #side{width:300px;flex:0 0 300px;background:var(--panel);border-right:2px solid var(--line);display:flex;flex-direction:column;min-height:0;overflow:auto}
 body.sb-hidden #side{display:none}
 .sec{padding:12px 14px;border-bottom:1px solid var(--line)}
+#sideTabs{display:flex;gap:4px;padding:8px 10px 0;border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
+#sideTabs button{flex:1;border:0;border-radius:8px 8px 0 0;padding:8px 6px;font-family:var(--fc);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
+#sideTabs button.on{background:var(--ink);color:var(--panel)}
+#sideTabs .n{background:var(--line);color:var(--ink);border-radius:20px;padding:0 7px;font-size:13px}
+#sideTabs button.on .n{background:var(--panel);color:var(--ink)}
+#sideTabs button.alert .n{background:#e00000;color:#fff}
+#sideCarros{display:flex;flex-direction:column;flex:1;min-height:0}
+#sideLog{display:none;flex-direction:column;flex:1;min-height:0}
+body.side-log #sideCarros{display:none}body.side-log #sideLog{display:flex}
+.lgq{margin-top:8px}.lgq button{font-size:13px;padding:5px 8px}
+.lgsec{flex:1;display:flex;flex-direction:column;min-height:0}
+.lgf{margin-left:auto;display:flex;gap:3px;text-transform:none;letter-spacing:0}
+.lgf button{font-family:var(--fb);font-size:12px;font-weight:700;padding:3px 7px;border-radius:6px}
+.lgf button.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+#logList{flex:1;overflow:auto;min-height:120px;margin:0 -14px;border-top:1px solid var(--line)}
+.lg{display:flex;gap:9px;padding:7px 14px 7px 10px;border-bottom:1px solid var(--line);border-left:4px solid transparent;font-size:14px;line-height:1.25;cursor:default}
+.lg.pos{cursor:pointer}.lg.pos:hover{background:var(--hover)}
+.lg .lt{flex:0 0 auto;font-family:var(--fc);font-weight:800;font-size:15px;min-width:44px}
+.lg .lt small{display:block;font-family:var(--fb);font-weight:600;font-size:11px;color:var(--muted)}
+.lg .lx{flex:1;font-weight:600}
+.lg.c-crit{border-left-color:#e00000}.lg.c-crit .lx{color:#c00000;font-weight:800}
+.lg.c-esc{border-left-color:#0b84d8}.lg.c-carro{border-left-color:#8a8a8a}
+.lg.c-man{border-left-color:#e6b800;background:rgba(255,214,10,.08)}
+.lg.u .lx{text-decoration:line-through;opacity:.5}.lg.u .lt{opacity:.5}
+.lgx{display:flex;gap:6px;flex-wrap:wrap;padding-top:10px}.lgx button{font-size:13px;padding:6px 9px}
+.lgempty{padding:14px;color:var(--muted);font-size:14px}
 .sec h3{margin:0 0 8px;font-family:var(--fc);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
 .sec h3 .n{background:var(--ink);color:var(--panel);border-radius:20px;padding:1px 8px;font-size:14px}
 .help{color:var(--muted);font-size:12.5px;margin:6px 0 0;line-height:1.3}
@@ -446,6 +472,8 @@ body.present #exitPresent{display:inline-flex!important}
 
 <div id="main">
   <aside id="side">
+    <div id="sideTabs"><button data-st="carros" class="on">Carros</button><button data-st="log">Bitácora <span class="n" id="nLog">0</span></button></div>
+    <div id="sideCarros">
     <div class="sec">
       <h3>Carros despachados</h3>
       <div class="wvrow"><span class="wvl">Salida:</span><div class="seg" id="waveSeg" title="Salida a la que pertenecen los carros que vas a agregar"></div></div>
@@ -464,6 +492,19 @@ body.present #exitPresent{display:inline-flex!important}
     <div class="sec">
       <h3>Retirados <span class="n" id="nOut">0</span></h3>
       <div id="outList"></div>
+    </div>
+    </div>
+    <div id="sideLog">
+      <div class="sec">
+        <h3>Anotar</h3>
+        <div class="addrow"><input id="logInput" type="text" placeholder="ej: se solicita 2ª alarma" autocomplete="off"><button id="btnLog" class="pri">Anotar</button></div>
+        <div class="seg lgq" id="logQuick"></div>
+      </div>
+      <div class="sec lgsec">
+        <h3>Bitácora <span class="lgf" id="logFilter"></span></h3>
+        <div id="logList"></div>
+        <div class="lgx"><button data-lx="txt">Exportar .txt</button><button data-lx="csv">Exportar planilla .csv</button></div>
+      </div>
     </div>
   </aside>
 
@@ -656,7 +697,7 @@ function autoFloor(o){if(!floorSel||settings.view!=='estr'||!canFloor(o))return;
 function floorField(o){const sid=sidAt(posOf(o)),st=sid&&getShape(sid);const fl=(st?floorsOf(st):['T','3','2','1']).slice().reverse();
   if(fl.length<=9)return `<label class="l">Piso</label>${segBtns('piso',[['','—'],...fl.map(f=>[f,floorTag(f)])],o.piso||'')}`;
   return `<label class="l">Piso</label><div class="cnt"><button data-act="pisoStep" data-v="-1">−</button><b style="min-width:70px">${o.piso?floorTag(o.piso):'—'}</b><button data-act="pisoStep" data-v="1">+</button><button data-act="piso" data-v="" style="width:auto;font-size:14px;padding:6px 10px">Quitar</button></div>`;}
-const shapeText=x=>[FLOOR_SHAPES.has(x.kind)&&x.piso?floorTag(x.piso):'',x.label||''].filter(Boolean).join(' · ');
+const shapeText=(x,vw)=>[(vw||settings.view)==='estr'&&FLOOR_SHAPES.has(x.kind)&&x.piso?floorTag(x.piso):'',x.label||''].filter(Boolean).join(' · ');
 function withMM(label,v){label=(label||'').trim();const re=/\b\d{2,3}\s?mm\b/;if(re.test(label))return label.replace(re,v);return label?v+' · '+label:v;}
 const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
 const ABAST_COLOR='#0a3a8c';   // azul oscuro: se distingue del azul de las líneas de ataque
@@ -685,7 +726,85 @@ const FLAME_SVG='<svg viewBox="0 0 24 24"><path d="M12 1.8c.9 3.7 5.8 5.9 5.8 11
 /* =========================================================
    Estado
    ========================================================= */
-function newState(){return {v:1,title:'',address:'',startedAt:Date.now(),center:null,units:[],shapes:[],marks:[]};}
+function newState(){return {v:1,title:'',address:'',startedAt:Date.now(),center:null,units:[],shapes:[],marks:[],log:[]};}
+/* =========================================================
+   Bitácora: el croquis anota solo lo importante (llegadas, estados, MAYDAY, víctimas, fuego, humo, líneas…) con hora real y T+.
+   Un cambio dentro del primer minuto corrige la misma línea; lo que se deshace queda tachado.
+   ========================================================= */
+const LOG_JOIN=60000;
+function addLog(e,alt){const L=state.log||(state.log=[]);const now=Date.now();
+  if(e.k){for(let i=L.length-1;i>=0;i--){const x=L[i];if(x.k===e.k&&!x.u&&!x.m){if(now-x.t0<LOG_JOIN){x.x=e.x;if(e.p)x.p=e.p;if(e.c)x.c=e.c;return x;}break;}}}
+  const n={id:uid(),t:e.t||now,t0:now,c:e.c||'esc',x:alt||e.x};if(e.k)n.k=e.k;if(e.p)n.p=e.p;if(e.m)n.m=1;L.push(n);return n;}
+const fT=m=>m.piso?' · '+floorTag(m.piso):'';
+const INST_LOG={pm:'Puesto de Comando instalado',espera:'Zona de espera instalada',acv:'ACV instalada',pap:'PAP instalado',pas:'PAS instalado',piscina:'Piscina instalada'};
+function markLog(m){const t=m.text?' · '+m.text:'';
+  switch(m.kind){case 'fuego':return ['Foco del fuego'+fT(m)+t,'esc'];case 'humo':return ['Humo'+fT(m)+t,'esc'];
+    case 'victima':return [((m.n||1)>1?m.n+' víctimas confirmadas':'Víctima confirmada')+fT(m)+t,'crit'];
+    case 'mayday':return ['MAYDAY'+fT(m)+t,'crit'];case 'rit':return ['RIT'+(m.text?' '+m.text:'')+fT(m),'esc'];
+    case 'vent':return [({iny:'Ventilador inyectando aire',ext:'Ventilador extrayendo humo',exu:'Exutorio abierto'}[m.vt||'iny'])+fT(m)+t,'esc'];
+    case 'texto':return m.text?['Nota: '+m.text+fT(m),'man']:null;case 'grifo':return [m.seco?'Grifo sin agua':'Grifo en uso','esc'];
+    default:return INST_LOG[m.kind]?[INST_LOG[m.kind]+t,'esc']:null;}}
+function shapeLog(x){const l=x.label?' · '+x.label:'';
+  switch(x.kind){case 'estructura':return ['Estructura'+(x.label?': '+x.label:'')+((+x.pisos||1)>1?' · '+x.pisos+' pisos':'')+((+x.subt||0)?' + '+x.subt+' subt.':''),'esc'];
+    case 'fuego':return ['Área con fuego'+fT(x)+l,'esc'];case 'colapso':return ['Zona de colapso'+fT(x)+l,'crit'];case 'muro':return ['Muro con riesgo de colapso'+fT(x)+l,'crit'];
+    case 'ataque':return ['Línea de ataque'+l+fT(x)+(x.pt?' · pitón '+x.pt:''),'esc'];case 'abast':return ['Línea de abastecimiento'+l,'esc'];
+    case 'corte':return ['Calle cortada'+l,'esc'];case 'humo':return ['Humo'+fT(x)+l,'esc'];default:return null;}}
+const unitLog=u=>u.code+': '+(STATUS_LABEL[u.status]||u.status)+(u.fn&&u.status==='trabajando'?' · '+u.fn:'');
+function dropRecent(key){const L=state.log||[];for(let i=L.length-1;i>=0;i--){const x=L[i];if(x.k===key&&!x.m){if(Date.now()-x.t0<LOG_JOIN){L.splice(i,1);return true;}return false;}}return false;}
+let skipLog=false;   // al importar o empezar un incidente nuevo no se anota la diferencia
+function logDiff(a,b){if(!a||!b||a.startedAt!==b.startedAt)return;
+  // carros
+  const aU=new Map((a.units||[]).map(u=>[u.id,u])),bU=new Set(b.units.map(u=>u.id)),added=[];
+  for(const u of b.units){const o=aU.get(u.id);
+    if(!o){added.push(u);continue;}
+    if(!o.pos&&u.pos)addLog({c:'carro',k:'ua:'+u.id,x:u.code+(o.arrivedAt?' ubicado de nuevo en el mapa':' llegó a escena'),p:u.pos,t:u.arrivedAt&&!o.arrivedAt?u.arrivedAt:undefined});
+    else if(o.pos&&!u.pos)addLog({c:'carro',x:u.code+' quitado del mapa'});
+    if(o.status!==u.status||(o.fn||'')!==(u.fn||''))addLog({c:'carro',k:'us:'+u.id,x:unitLog(u),p:u.pos||undefined});
+    if(o.code!==u.code)addLog({c:'carro',k:'uc:'+u.id,x:o.code+' corregido a '+u.code});}
+  if(added.length){const byW={};for(const u of added)(byW[u.wave||'D']=byW[u.wave||'D']||[]).push(u.code);
+    for(const [w,cs] of Object.entries(byW)){const wn=(WAVES.find(x=>x[0]===w)||[,,''])[2];addLog({c:'carro',x:'Despachados'+(wn?' ('+wn+')':'')+': '+cs.join(', ')});}}
+  for(const o of a.units||[])if(!bU.has(o.id))addLog({c:'carro',x:o.code+' eliminado de la lista'});
+  // marcadores
+  const aM=new Map((a.marks||[]).map(m=>[m.id,m])),bM=new Set(b.marks.map(m=>m.id));
+  for(const m of b.marks){const o=aM.get(m.id),d=markLog(m);
+    if(!o){if(d)addLog({k:'m:'+m.id,x:d[0],c:d[1],p:m.pos});continue;}
+    if(m.kind==='victima'&&(o.vstate||'')!==(m.vstate||''))addLog({c:'crit',k:'mr:'+m.id,x:(m.vstate==='rescatada'?((m.n||1)>1?m.n+' víctimas rescatadas':'Víctima rescatada'):'Víctima confirmada otra vez')+fT(m),p:m.pos});
+    else if(m.kind==='mayday'&&(o.mstate||'')!==(m.mstate||'')){const dur=m.at?Math.round((Date.now()-m.at)/60000):null;
+      addLog({c:'crit',k:'mr:'+m.id,x:(m.mstate==='resuelto'?'MAYDAY resuelto'+fT(m)+(dur!=null?' · duró '+dur+' min':''):'MAYDAY activo otra vez'+fT(m)),p:m.pos});}
+    else{const od=markLog(o);if(d&&(!od||od[0]!==d[0]))addLog({k:'m:'+m.id,x:d[0],c:d[1],p:m.pos},(od?'Cambio: ':'')+d[0]);}}
+  for(const o of a.marks||[])if(!bM.has(o.id)){if(dropRecent('m:'+o.id))continue;const d=markLog(o);if(d)addLog({c:d[1]==='crit'?'crit':'esc',x:(o.kind==='grifo'?'Grifo desmarcado':'Se quitó: '+d[0])});}
+  // figuras
+  const aS=new Map((a.shapes||[]).map(x=>[x.id,x])),bS=new Set(b.shapes.map(x=>x.id));
+  for(const x of b.shapes){const o=aS.get(x.id),d=shapeLog(x);if(!d)continue;
+    if(!o){addLog({k:'s:'+x.id,x:d[0],c:d[1],p:posOf(x)});continue;}
+    const od=shapeLog(o);if(!od||od[0]!==d[0])addLog({k:'s:'+x.id,x:d[0],c:d[1],p:posOf(x)},'Cambio: '+d[0]);}
+  for(const o of a.shapes||[])if(!bS.has(o.id)){if(dropRecent('s:'+o.id))continue;const d=shapeLog(o);if(d)addLog({c:'esc',x:'Se quitó: '+d[0]});}
+  if((a.address||'')!==(b.address||'')&&b.address)addLog({c:'esc',k:'addr',x:'Dirección: '+b.address,p:b.center||undefined});
+}
+let logFilter='all';const LOG_QUICK=['Fuego controlado','Fuego extinguido','PAR realizado','Se solicita apoyo','Corte de gas','Corte de luz','Ventilación iniciada','Búsqueda primaria terminada'];
+function renderLog(){
+  const L=state.log||[];const n=L.filter(e=>!e.u).length;$('#nLog').textContent=n;
+  const f=logFilter,rows=L.filter(e=>f==='all'||(f==='crit'?e.c==='crit':f==='carro'?e.c==='carro':e.c==='man')).slice().sort((p,q)=>q.t-p.t);
+  const key=f+'|'+L.length+'|'+L.map(e=>e.id+e.x+(e.u?1:0)).join('').length+'|'+(L.length?L[L.length-1].x+L[L.length-1].t:'');
+  const lst=$('#logList');if(lst._k===key)return;lst._k=key;
+  $('#logFilter').innerHTML=[['all','Todo'],['crit','Críticos'],['carro','Carros'],['man','Notas']].map(([v,l])=>`<button data-lf="${v}" class="${f===v?'on':''}">${l}</button>`).join('');
+  lst.innerHTML=rows.length?rows.map(e=>{const d=new Date(e.t),tp=Math.max(0,e.t-state.startedAt);
+    return `<div class="lg c-${e.c}${e.u?' u':''}${e.p?' pos':''}" data-id="${e.id}" title="${e.u?'Deshecho · ':''}${esc(new Date(e.t).toLocaleString('es-CL'))}"><span class="lt">${pad(d.getHours())}:${pad(d.getMinutes())}<small>T+${hms(tp).slice(0,-3)}</small></span><span class="lx">${esc(e.x)}</span></div>`;}).join('')
+    :'<div class="lgempty">Aún no hay anotaciones. El croquis anota solo las llegadas, los cambios de estado, MAYDAY, víctimas, fuego, humo y líneas.</div>';
+}
+function logManual(txt){txt=(txt||'').trim();if(!txt)return;addLog({c:'man',x:txt,m:1});commit();if(txt==='PAR realizado')parShown=0;}
+function exportLog(kind){const L=(state.log||[]).slice().sort((p,q)=>p.t-q.t),d=new Date();
+  const tipo={crit:'Crítico',carro:'Carro',esc:'Escena',man:'Nota'};const hh=t=>{const x=new Date(t);return `${pad(x.getHours())}:${pad(x.getMinutes())}:${pad(x.getSeconds())}`;};
+  const head=`${state.title||'Croquis PM'}${state.address?' — '+state.address:''}\nInicio: ${new Date(state.startedAt).toLocaleString('es-CL')}\n`;
+  const data=kind==='csv'?'\ufeffhora;T+;tipo;evento;deshecho\n'+L.map(e=>[hh(e.t),hms(Math.max(0,e.t-state.startedAt)),tipo[e.c]||e.c,'"'+String(e.x).replace(/"/g,'""')+'"',e.u?'sí':''].join(';')).join('\n')
+    :head+'\n'+L.map(e=>`${hh(e.t)}  T+${hms(Math.max(0,e.t-state.startedAt))}  ${e.u?'[DESHECHO] ':''}${e.x}`).join('\n');
+  const name=`bitacora_${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.${kind}`;
+  try{const blob=new Blob([data],{type:kind==='csv'?'text/csv':'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);toast('Exportado: '+name);}
+  catch(e){openModal('Bitácora',`<textarea readonly style="width:100%;height:50vh">${esc(data)}</textarea>`);}}
+/* recordatorio de PAR (opcional, en Ajustes) */
+let parShown=0;
+function checkPAR(){const mins=+settings.parMin||0;if(!mins||fork)return;const L=state.log||[];let last=state.startedAt;for(const e of L)if(!e.u&&/^PAR realizado/i.test(e.x)&&e.t>last)last=e.t;
+  if(Date.now()-last>=mins*60000&&parShown!==last){parShown=last;toast('PAR: control de personal ('+mins+' min)',[{label:'PAR realizado',fn:()=>logManual('PAR realizado')}],120000,{key:'par'});}}
 function loadState(){
   try{const s=JSON.parse(LS.get(KEY_STATE)||'null');if(s&&Array.isArray(s.units)&&Array.isArray(s.shapes)&&Array.isArray(s.marks))return normState(s);}catch(e){}
   return newState();
@@ -721,13 +840,16 @@ const isCompact=()=>window.matchMedia('(max-width:900px)').matches;
 function saveFork(){LS.set(KEY_FORK,JSON.stringify({fid:forkFid,at:forkAt,base:forkBase,state,view:forkView,types:settings.types}));}
 function saveSettings(){LS.set(KEY_SET,JSON.stringify(settings));}
 function commit(opts){
-  const s=JSON.stringify(state);
-  if(s!==lastSaved){undoStack.push(lastSaved);if(undoStack.length>100)undoStack.shift();lastSaved=s;if(fork)saveFork();else if(!LS.set(KEY_STATE,s))console.warn('No se pudo guardar en este navegador');}
+  let s=JSON.stringify(state);
+  const sk=skipLog;skipLog=false;
+  if(s!==lastSaved){if(!sk)try{logDiff(JSON.parse(lastSaved),state);s=JSON.stringify(state);}catch(e){console.warn('bitácora',e);}
+    undoStack.push(lastSaved);if(undoStack.length>100)undoStack.shift();lastSaved=s;if(fork)saveFork();else if(!LS.set(KEY_STATE,s))console.warn('No se pudo guardar en este navegador');}
   render(opts);
 }
 function undo(){
   if(!undoStack.length){toast('Nada que deshacer');return;}
-  const prev=undoStack.pop();state=JSON.parse(prev);lastSaved=prev;LS.set(KEY_STATE,prev);
+  const prev=undoStack.pop();const cur=state.log||[];state=JSON.parse(prev);const old=new Map((state.log||[]).map(e=>[e.id,e]));
+  state.log=cur.map(e=>old.get(e.id)||Object.assign({},e,{u:1}));const sv=JSON.stringify(state);lastSaved=sv;if(fork)saveFork();else LS.set(KEY_STATE,sv);
   if(selected&&!getSel())selected=null;
   if(editingId&&!getShape(editingId))editingId=null;
   render();toast('Deshecho');
@@ -1438,10 +1560,10 @@ function deleteSelected(){
    ========================================================= */
 function render(){
   if(mapReady){syncUnits();syncMarks();pushShapes();syncLabels();syncCols();syncHandles();}
-  renderLists();renderPanel();renderSummary();renderLegend();renderForkUI();
+  renderLists();renderPanel();renderSummary();renderLegend();renderForkUI();renderLog();
   const ti=$('#title');if(document.activeElement!==ti)ti.value=state.title||'';
 }
-function renderMapOnly(){if(mapReady){syncUnits();syncMarks();pushShapes();syncLabels();syncCols();}renderLists();renderSummary();}
+function renderMapOnly(){if(mapReady){syncUnits();syncMarks();pushShapes();syncLabels();syncCols();}renderLists();renderSummary();renderLog();}
 function chipHTML(u){const t=typeOf(u.code);const x=u.pos&&XSTAT.includes(u.status);return `<span class="chip st-${u.status}" data-drag="${u.id}" style="--c:${t.color};--fg:${fg(t.color)}" title="${esc(t.name)}">${x?XSVG:''}<span class="cd">${esc(u.code)}</span></span>`;}
 function rowHTML(u){
   const extra=u.fn||'';
@@ -1671,7 +1793,7 @@ let lastVent='iny';
 function ventGuess(pos,vt){const sid=sidAt(pos)||(()=>{let b=null,bd=80;for(const s of state.shapes){if(s.kind!=='estructura'||!s.coords||s.coords.length<3)continue;const d=distM(pos,polyCenter(s.coords));if(d<bd){bd=d;b=s.id;}}return b;})();
   const st=sid&&getShape(sid);if(!st)return 0;const c=polyCenter(st.coords);if(distM(pos,c)<3)return 0;const az=azimuth(pos,c);return (Math.round(((vt==='ext'?az+180:az)%360)/45)*45)%360;}
 function placeMark(k,pos){
-  const m={id:uid(),kind:k,pos,text:''};if(k==='victima'){m.n=1;m.vstate='confirmada';}if(k==='vent'){m.vt=lastVent;m.rot=ventGuess(pos,m.vt);}autoFloor(m);
+  const m={id:uid(),kind:k,pos,text:'',at:Date.now()};if(k==='victima'){m.n=1;m.vstate='confirmada';}if(k==='vent'){m.vt=lastVent;m.rot=ventGuess(pos,m.vt);}autoFloor(m);
   state.marks.push(m);selected={type:'mark',id:m.id};setMode('select');commit();
   if(k==='texto'||k==='rit')focusPanel('#pnText');}
 /* Los botones de marcadores (foco, humo, víctima, MAYDAY, instalaciones…) también se pueden arrastrar al mapa, como los carros */
@@ -1892,7 +2014,7 @@ async function renderSnapshot(scale){
   const order=['lado','texto','grifo','piscina','humo','fuego','vent','piton','victima'];
   for(const k of order)for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
   const boxAt=(sp,w,h)=>{const [x,y]=sp.p,t=settings.tok;switch(sp.a){case 'b':return [x-w/2,y-7-h];case 'tl':return [x+6,y+6];case 'l':return [x+9,y-h/2];case 'bb':return [x-w/2,y-11-21*t-h];case 't':return [x-w/2,y+12*t];default:return [x-w/2,y-h/2];}};
-  for(const s of state.shapes){const lt=shapeText(s);if(!lt||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&(scaleOf(s.kind)==='estr'||s.kind==='ataque'))continue;const sp=labelSpot(s,P);if(!inView(sp.p))continue;
+  for(const s of state.shapes){const lt=shapeText(s,vw);if(!lt||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&(scaleOf(s.kind)==='estr'||s.kind==='ataque'))continue;const sp=labelSpot(s,P);if(!inView(sp.p))continue;
     g.save();if(vw==='estr'&&scaleOf(s.kind)==='terr')g.globalAlpha=.38;if(isDim(s))g.globalAlpha=.16;
     const fs=(sp.z?13:16)*settings.tok,fw=sp.z?600:700,bar=sp.z?4:0;g.font=FONT(fw,fs);const w=g.measureText(lt).width+fs*.9+bar,h=fs*1.3;const [bx,by]=boxAt(sp,w,h);
     rr(g,bx,by,w,h,sp.z?3:5);g.fillStyle=sp.z?'rgba(15,15,15,.74)':'rgba(15,15,15,.84)';g.fill();if(bar){g.fillStyle=sp.z;g.fillRect(bx,by,bar,h);}
@@ -2187,7 +2309,7 @@ function importJSON(file){
   const r=new FileReader();
   r.onload=()=>{try{const j=JSON.parse(r.result);const s=j.state||j;
     if(!Array.isArray(s.units)||!Array.isArray(s.shapes)||!Array.isArray(s.marks))throw new Error('formato');
-    state=normState(Object.assign(newState(),s));selected=null;editingId=null;commit();setTimeout(fitAll,100);toast('Croquis importado');}
+    state=normState(Object.assign(newState(),s));selected=null;editingId=null;skipLog=true;commit();setTimeout(fitAll,100);toast('Croquis importado');}
     catch(e){toast('El archivo no es un croquis válido');}};
   r.readAsText(file);
 }
@@ -2197,7 +2319,7 @@ function newIncident(){
     {label:'Exportar y empezar nuevo',fn:()=>{exportJSON();resetState();}},
     {label:'Empezar nuevo sin guardar',cls:'danger',fn:resetState}]);
 }
-function resetState(){state=newState();selected=null;editingId=null;pendingFront=null;setMode('select');commit();undoStack=[];toast('Nuevo incidente iniciado');}
+function resetState(){state=newState();state.log.push({id:uid(),t:state.startedAt,t0:state.startedAt,c:'esc',x:'Inicio del incidente'});selected=null;editingId=null;pendingFront=null;setMode('select');skipLog=true;commit();undoStack=[];toast('Nuevo incidente iniciado');}
 function editStart(){
   const d=new Date(state.startedAt);
   openModal('Inicio del incidente',`<p>El contador “Tiempo” corre desde esta hora.</p><div class="row2"><input id="mStart" type="time" value="${pad(d.getHours())}:${pad(d.getMinutes())}"><button id="mNow">Ahora</button></div>`,[
@@ -2209,6 +2331,7 @@ function openSettings(){
   openModal('Ajustes',`
     <div class="row2"><label>Tamaño de las piezas <input id="sTok" type="range" min="0.7" max="2" step="0.05" value="${settings.tok}"></label>
     <label><input id="sHide" type="checkbox" ${settings.hideRetired?'checked':''}> Ocultar retirados del mapa</label>
+    <label>Recordatorio de PAR <select id="sPar">${[[0,'No'],[10,'cada 10 min'],[15,'cada 15 min'],[20,'cada 20 min'],[30,'cada 30 min']].map(([v,l])=>`<option value="${v}" ${(+settings.parMin||0)===v?'selected':''}>${l}</option>`).join('')}</select></label>
 </div>
     <h4>Tipos de carro (por prefijo del código)</h4>
     <p class="help" style="margin-top:0">El color se asigna por las letras iniciales: “BX-22” usa BX; si no existe, usa B. También puedes poner un código exacto (ej: K-3) para darle color propio.</p>
@@ -2218,7 +2341,7 @@ function openSettings(){
     <textarea id="sFns">${esc(settings.functions.join('\n'))}</textarea>
     <p class="help">Restaurar valores originales: <button id="sReset" style="padding:3px 8px">Restaurar</button></p>`,
     [{label:'Cancelar'},{label:'Guardar',cls:'pri',fn:()=>{
-      settings.tok=+$('#sTok').value;settings.hideRetired=$('#sHide').checked;
+      settings.tok=+$('#sTok').value;settings.hideRetired=$('#sHide').checked;settings.parMin=+$('#sPar').value||0;
       const normP=v=>{v=v.trim().toUpperCase();return /\d/.test(v)?(parseCodes(v)[0]||''):v.replace(/[^A-ZÑ]/g,'');};
       settings.types=$$('#sTypes tr').map(tr=>({prefix:normP($('.tp',tr).value),name:$('.tn',tr).value.trim(),color:$('.tc',tr).value})).filter(t=>t.prefix).map(t=>({...t,name:t.name||t.prefix}));
       settings.functions=$('#sFns').value.split('\n').map(s=>s.trim()).filter(Boolean);
@@ -2259,6 +2382,7 @@ function openHelp(){
     <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
     <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). El <b>MAYDAY</b> se marca <b>resuelto</b> en su panel cuando el bombero ya salió: queda como una pastilla verde chica. <b>Humo</b> (U) es un marcador como el foco; <b>Ventilación</b> (W) marca un ventilador que inyecta aire o extrae humo (la flecha es hacia donde va el aire) o un exutorio abierto; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
     <li><b>Pisos:</b> en el panel de la estructura indica cuántos pisos y subterráneos tiene. Al lado del edificio aparece la <b>columna de pisos</b> con íconos de lo que pasa en cada uno (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se desplaza con la rueda del mouse y ⤢ la abre completa; el embudo deja solo los pisos con algo. El <b>piso fuego −2</b> se marca solo con <b>F−2</b> (conexión de la línea que sube y RIT). Las notas de texto de un piso (ej: <i>Red seca rota</i>) se leen en su fila. Se mueve arrastrándola desde su encabezado negro (doble clic la devuelve junto al edificio). Clic en un piso para ver solo lo de ese piso; mientras está elegido, lo que agregues dentro del edificio queda en ese piso. Cada víctima, zona o línea también tiene botones de <b>Piso</b> en su panel, y en el mapa lleva la etiqueta (P2, S1, Techo).</li>
+    <li><b>Bitácora:</b> la pestaña junto a <i>Carros</i> anota sola, con hora y T+, las llegadas, estados de los carros, MAYDAY, víctimas, fuego, humo, ventilación y líneas. Anota a mano con la caja o los botones rápidos (<i>Fuego controlado</i>, <i>PAR realizado</i>…). Lo que se deshace queda tachado. Se exporta en .txt o .csv. En <i>Ajustes</i> puedes activar un recordatorio de PAR.</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
   <p>Todo se guarda solo en este navegador. Al terminar, usa <b>Menú → Exportar</b> para respaldar el croquis.</p>
@@ -2322,6 +2446,15 @@ function bindUI(){
     const a=b.dataset.act;if(!map&&a!=='undo')return;
     if(a==='orient')orientA();if(a==='rotl')map.easeTo({bearing:map.getBearing()-15});if(a==='rotr')map.easeTo({bearing:map.getBearing()+15});
     if(a==='north')map.easeTo({bearing:0});if(a==='fit')fitAll();if(a==='undo')undo();};
+  $('#sideTabs').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(!b)return;const lg=b.dataset.st==='log';document.body.classList.toggle('side-log',lg);
+    $$('#sideTabs [data-st]').forEach(x=>x.classList.toggle('on',x===b));if(lg)renderLog();});
+  $('#btnLog').addEventListener('click',()=>{logManual($('#logInput').value);$('#logInput').value='';});
+  $('#logInput').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){logManual(e.target.value);e.target.value='';}});
+  $('#logQuick').innerHTML=LOG_QUICK.map(q=>`<button data-lq="${q}">${q}</button>`).join('');
+  $('#logQuick').addEventListener('click',e=>{const b=e.target.closest('[data-lq]');if(b)logManual(b.dataset.lq);});
+  $('#sideLog').addEventListener('click',e=>{const f=e.target.closest('[data-lf]');if(f){logFilter=f.dataset.lf;renderLog();return;}
+    const x=e.target.closest('[data-lx]');if(x){exportLog(x.dataset.lx);return;}
+    const r=e.target.closest('.lg.pos');if(r&&map){const en=(state.log||[]).find(q=>q.id===r.dataset.id);if(en&&en.p)map.flyTo({center:en.p,zoom:Math.max(map.getZoom(),18)});}});
   $('#tools').addEventListener('click',onToolClick);$('#tools').addEventListener('pointerdown',toolDrag);$('#flyInst').addEventListener('pointerdown',toolDrag);$('#viewbar').addEventListener('click',onToolClick);
   // menú desplegable "Instalaciones": se abre al pasar el mouse (o con clic) y se cierra al salir
   const fly=$('#flyInst'),bi=$('#btnInst');let flyT=null;
@@ -2409,7 +2542,7 @@ function onKey(e){
   if(k==='?'||k==='h')openHelp();
 }
 
-function tick(){$('#clock').textContent=new Date().toLocaleTimeString('es-CL',{hour12:false});$('#elapsed').textContent=hms(Date.now()-state.startedAt);}
+function tick(){checkPAR();$('#clock').textContent=new Date().toLocaleTimeString('es-CL',{hour12:false});$('#elapsed').textContent=hms(Date.now()-state.startedAt);}
 
 /* =========================================================
    Arranque

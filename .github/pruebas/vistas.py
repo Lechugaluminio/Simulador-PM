@@ -120,6 +120,28 @@ with sync_playwright() as p:
     pg.screenshot(path=f'{OUT}/8b_torre_solo_con_algo.png')
     pg.click('#btnShare'); pg.wait_for_timeout(400); pg.click('[data-share="snap"]'); pg.wait_for_timeout(8000)
     pg.screenshot(path=f'{OUT}/9_torre_imagen.png')
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
+    # bitácora: despacho, llegada, MAYDAY declarado y resuelto, notas a mano y deshacer
+    import time
+    casa = {'v': 1, 'title': 'Prueba bitácora', 'address': 'Prueba', 'startedAt': int(time.time() * 1000) - 30 * 60000, 'center': c, 'units': [],
+      'shapes': [{'id': 'e1', 'kind': 'estructura', 'coords': sq, 'label': 'Casa', 'pisos': 2}], 'marks': []}
+    pg.evaluate("([s,v])=>{localStorage.setItem('croquisPM.state.v1',s);localStorage.setItem('croquisPM.view.v1',v);}",
+                [json.dumps(casa), json.dumps({'center': c, 'zoom': 18.6, 'bearing': 0})])
+    pg.reload(); pg.wait_for_timeout(6000)
+    pg.fill('#unitInput', 'B-21 Q-7'); pg.press('#unitInput', 'Enter'); pg.wait_for_timeout(400)
+    ch = pg.locator('#tray [data-drag]').first.bounding_box()
+    pg.mouse.move(ch['x'] + ch['width'] / 2, ch['y'] + ch['height'] / 2); pg.mouse.down(); pg.mouse.move(700, 600, steps=6); pg.mouse.move(760, 640, steps=6); pg.mouse.up(); pg.wait_for_timeout(500)
+    pg.evaluate("document.activeElement&&document.activeElement.blur()")
+    pg.keyboard.press('5'); pg.wait_for_timeout(2500); pg.mouse.click(833, 414); pg.wait_for_timeout(600)
+    pg.click('#panel [data-act="mstate"][data-v="resuelto"]'); pg.wait_for_timeout(400)
+    pg.click('#sideTabs [data-st="log"]'); pg.wait_for_timeout(300)
+    pg.fill('#logInput', 'Se solicita 2ª alarma'); pg.press('#logInput', 'Enter'); pg.wait_for_timeout(300)
+    pg.click('[data-lq="Fuego controlado"]'); pg.wait_for_timeout(300)
+    pg.evaluate("document.activeElement&&document.activeElement.blur()")
+    pg.keyboard.press('Control+z'); pg.wait_for_timeout(500)
+    pg.screenshot(path=f'{OUT}/10_bitacora.png')
+    lg = pg.evaluate("(JSON.parse(localStorage.getItem('croquisPM.state.v1')).log||[]).map(e=>(e.u?'[tachado] ':'')+e.c+': '+e.x)")
+    errs.append('info: bitácora -> ' + ' | '.join(lg))
     b.close()
 open(f'{OUT}/errores.txt', 'w').write('\n'.join(errs) or 'sin errores')
 print('\n'.join(errs) or 'sin errores')

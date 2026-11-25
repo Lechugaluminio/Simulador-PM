@@ -154,7 +154,25 @@ Clic en un grifo de Aguas Andinas para marcarlo **en uso** o **sin agua** (gris 
 
 El control *Atenuar* oscurece el mapa para que las piezas resalten.
 
-### 3.6 Compartir y respaldar
+### 3.6 Bitácora
+
+La pestaña **Bitácora** (junto a *Carros*, arriba de la columna izquierda) es la línea de tiempo del incidente, con hora real y tiempo desde el inicio (T+). Se llena sola; nadie tiene que escribir más.
+
+| Se anota sola | Ejemplo |
+|---|---|
+| Despacho y llegada de carros | `Despachados (1ª alarma): B-21, Q-7` · `B-21 llegó a escena` |
+| Estado y función de cada carro | `B-21: Trabajando · Ataque` · `Q-7: Retirándose` |
+| MAYDAY y víctimas | `MAYDAY · P19` · `MAYDAY resuelto · P19 · duró 12 min` · `2 víctimas rescatadas · P19` |
+| Fuego, humo, ventilación, RIT, líneas e instalaciones | `Humo · P20` · `Ventilador inyectando aire · P1` · `Línea de ataque · 52 mm · B-1 · P18` |
+| Notas de piso | `Nota: Red seca rota · P12` |
+
+- **Anotar a mano:** una caja de texto y botones rápidos (*Fuego controlado*, *Fuego extinguido*, *PAR realizado*, *Se solicita apoyo*, *Corte de gas/luz*…).
+- **Correcciones:** un cambio dentro del primer minuto corrige la misma línea (por ejemplo, elegir el piso justo después de poner el marcador). Lo que se **deshace** queda **tachado**, no se borra.
+- **Filtros:** Todo, Críticos (MAYDAY, víctimas, riesgos), Carros y Notas. Clic en una línea lleva el mapa a ese lugar.
+- **Exportar:** `.txt` para el parte o informe, o planilla `.csv`. La bitácora también va dentro del respaldo `.json`.
+- **Recordatorio de PAR** (opcional, en *Ajustes*): cada 10, 15, 20 o 30 min aparece un aviso; *PAR realizado* lo anota y reinicia el plazo.
+
+### 3.7 Compartir y respaldar
 
 | Función | Qué hace |
 |---|---|
