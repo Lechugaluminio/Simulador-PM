@@ -255,7 +255,7 @@ body:not(.view-terr) .sumb{display:none}
 .m-side{width:calc(38px * var(--tok));height:calc(38px * var(--tok));border-radius:50%;background:#fff;color:#111;border:3px solid #111;display:grid;place-items:center;font-family:var(--fc);font-weight:800;font-size:calc(24px * var(--tok));box-shadow:0 2px 8px rgba(0,0,0,.45)}
 .mw.sel>*:not(.pz){outline:4px solid var(--sel);outline-offset:3px}
 .lblw{width:0;height:0;pointer-events:none}
-body.view-terr .lblw.k-ataque{display:none}
+body.view-terr .lblw.k-ataque,body.view-terr .lblw.k-estr{display:none}
 .a-r0{transform:translate(10px,0)}.a-tl0{transform:none}
 .dimf{opacity:.16!important}
 .pz{position:absolute;left:-9px;top:-11px;z-index:3;background:#111;color:#fff;font-family:var(--fc);font-weight:800;font-size:calc(11px * var(--tok));line-height:1;padding:.2em .34em;border-radius:4px;border:1.5px solid #fff;pointer-events:none;white-space:nowrap}
@@ -1295,7 +1295,7 @@ function syncLabels(){
     const txt=shapeText(s);if(!txt||!s.coords||s.coords.length<2)continue;
     seen.add(s.id);let r=mkLabels.get(s.id);
     if(!r){const el=document.createElement('div');el.className='lblw';const inn=document.createElement('div');el.appendChild(inn);const m=new maplibregl.Marker({element:el}).setLngLat(s.coords[0]).addTo(map);el.style.zIndex=1;r={m,el,in:inn};mkLabels.set(s.id,r);}
-    setSpot(r,labelSpot(s,mapP),'lbl');if(r.in.textContent!==txt)r.in.textContent=txt;r.el.classList.toggle('k-ataque',s.kind==='ataque');r.el.classList.toggle('dimf',isDim(s));
+    setSpot(r,labelSpot(s,mapP),'lbl');if(r.in.textContent!==txt)r.in.textContent=txt;r.el.classList.toggle('k-ataque',s.kind==='ataque');r.el.classList.toggle('k-estr',s.kind==='estructura');r.el.classList.toggle('dimf',isDim(s));
     const sc=scaleOf(s.kind);r.el.classList.toggle('sc-terr',sc==='terr');r.el.classList.toggle('sc-estr',sc==='estr');
   }
   for(const [id,r] of mkLabels)if(!seen.has(id)){r.m.remove();mkLabels.delete(id);}
@@ -1359,7 +1359,7 @@ function structSummaries(){
   if(loose.pts.length){loose.c=[loose.pts.reduce((a,p)=>a+p[0],0)/loose.pts.length,loose.pts.reduce((a,p)=>a+p[1],0)/loose.pts.length];sts.push(loose);}
   return sts.filter(t=>t.v||t.h||t.f||t.r).map(t=>({...t,txt:[t.f?'fuego':'',t.v?`<b>${t.v} víctima${t.v>1?'s':''}</b>`:'',t.h?'humo':'',t.r?'RIT':''].filter(Boolean).join(' · ')}));
 }
-function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[(b.x0+b.x1)/2,b.y0],a:t.lab?'bb':'b'};}
+function sumSpot(t,P){if(!t.coords)return {p:P(t.c),a:'t'};const b=bboxScr(t.coords,P);return {p:[(b.x0+b.x1)/2,b.y0],a:'b'};}
 function distM(a,b){const P=localProj(a);const q=P.to(b);return Math.hypot(q[0],q[1]);}
 function syncSummaries(){
   if(!mapReady)return;const seen=new Set();
@@ -2073,7 +2073,7 @@ async function renderSnapshot(scale){
   const order=['lado','texto','grifo','piscina','humo','fuego','vent','piton','victima'];
   for(const k of order)for(const m of state.marks.filter(m=>m.kind===k))drawM(m);
   const boxAt=(sp,w,h)=>{const [x,y]=sp.p,t=settings.tok;switch(sp.a){case 'b':return [x-w/2,y-7-h];case 'tl':return [x+6,y+6];case 'l':return [x+9,y-h/2];case 'bb':return [x-w/2,y-11-21*t-h];case 't':return [x-w/2,y+12*t];default:return [x-w/2,y-h/2];}};
-  for(const s of state.shapes){const lt=shapeText(s,vw);if(!lt||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&(scaleOf(s.kind)==='estr'||s.kind==='ataque'))continue;const sp=labelSpot(s,P);if(!inView(sp.p))continue;
+  for(const s of state.shapes){const lt=shapeText(s,vw);if(!lt||!s.coords||s.coords.length<2)continue;if(vw==='terr'&&(scaleOf(s.kind)==='estr'||s.kind==='ataque'||s.kind==='estructura'))continue;const sp=labelSpot(s,P);if(!inView(sp.p))continue;
     g.save();if(vw==='estr'&&scaleOf(s.kind)==='terr')g.globalAlpha=.38;if(isDim(s))g.globalAlpha=.16;
     const fs=(sp.z?13:16)*settings.tok,fw=sp.z?600:700,bar=sp.z?4:0;g.font=FONT(fw,fs);const w=g.measureText(lt).width+fs*.9+bar,h=fs*1.3;const [bx,by]=boxAt(sp,w,h);
     rr(g,bx,by,w,h,sp.z?3:5);g.fillStyle=sp.z?'rgba(15,15,15,.74)':'rgba(15,15,15,.84)';g.fill();if(bar){g.fillStyle=sp.z;g.fillRect(bx,by,bar,h);}
