@@ -122,7 +122,7 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Línea de ataque | `L` | ambas | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | Estructura | Llama en el punto de origen |
 | Víctima | `X` | Estructura | Víctima confirmada con cantidad; al marcarla *rescatada* queda como un punto verde chico |
-| MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero |
+| MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero. Al marcarlo *resuelto* (bombero fuera) queda como una pastilla verde chica `✓ MAYDAY`, sin pulso |
 | RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
 | Puesto de Comando | `2` | Territorio | Rectángulo naranja con **PC** (estándar SCI) |
 | Piscina | `4` | Territorio | Piscina de abastecimiento |

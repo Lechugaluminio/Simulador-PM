@@ -26,6 +26,7 @@ state = {'v': 1, 'title': 'Prueba vistas', 'address': 'Las Enredaderas & Fermín
     {'id': 'm5', 'kind': 'grifo', 'pos': off(-130, -60), 'text': ''},
     {'id': 'm6', 'kind': 'pap', 'pos': off(-110, -30), 'text': ''},
     {'id': 'm8', 'kind': 'victima', 'pos': off(-22, 12), 'text': 'piso 1', 'n': 1, 'vstate': 'rescatada'},
+    {'id': 'm9', 'kind': 'mayday', 'pos': off(-5, -12), 'text': 'lado A', 'piso': '1', 'mstate': 'resuelto'},
     {'id': 'm7', 'kind': 'mayday', 'pos': off(20, -10), 'text': '', 'piso': '2'}]}
 errs = []
 with sync_playwright() as p:

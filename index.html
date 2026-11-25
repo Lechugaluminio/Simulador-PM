@@ -220,6 +220,8 @@ body:not(.view-terr) .sumb{display:none}
 .wvl{font-size:12.5px;font-weight:700;color:var(--muted)}
 #waveSeg button{padding:4px 8px;font-size:13px}
 .m-mayday{position:relative;font-family:var(--fc);font-weight:800;font-size:calc(19px * var(--tok));line-height:1;background:#e00000;color:#fff;padding:.28em .75em .22em;border-radius:999px;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 3px 8px rgba(0,0,0,.45);letter-spacing:.06em;white-space:nowrap}
+.m-mayday.ok{font-size:calc(11px * var(--tok));background:#16a34a;border-width:1.5px;box-shadow:0 0 0 1px #000,0 1px 3px rgba(0,0,0,.4);padding:.25em .55em .2em;opacity:.9}
+.m-mayday.ok::before{display:none}
 .m-mayday::before{content:"";position:absolute;inset:-8px;border:3px solid #ff2020;border-radius:999px;animation:pulse 1.2s ease-out infinite;pointer-events:none}
 .m-mayday .t{position:absolute;top:calc(100% + .45em);left:50%;transform:translateX(-50%);font-size:.6em;font-weight:700;letter-spacing:.02em;background:rgba(17,17,17,.9);color:#fff;padding:.25em .5em;border-radius:.3em;white-space:nowrap}
 @keyframes pulse{0%{opacity:1;transform:scale(.92)}100%{opacity:0;transform:scale(1.45)}}
@@ -610,7 +612,7 @@ function floorCols(){const out=[];
   for(const st of state.shapes){if(st.kind!=='estructura'||!st.coords||st.coords.length<3)continue;
     const els=floorEls(st.id);if(!((+st.pisos||0)>=2||(+st.subt||0)>0||els.length))continue;
     const rows=floorsOf(st,els).map(f=>{const e=els.filter(o=>o.piso===f);
-      const r={f,name:floorTag(f),fire:e.some(o=>o.kind==='fuego'),smoke:e.some(o=>o.kind==='humo'),may:e.some(o=>o.kind==='mayday'),risk:e.some(o=>o.kind==='colapso'||o.kind==='muro'),
+      const r={f,name:floorTag(f),fire:e.some(o=>o.kind==='fuego'),smoke:e.some(o=>o.kind==='humo'),may:e.some(o=>o.kind==='mayday'&&o.mstate!=='resuelto'),mayok:e.some(o=>o.kind==='mayday'&&o.mstate==='resuelto'),risk:e.some(o=>o.kind==='colapso'||o.kind==='muro'),
         v:e.filter(o=>o.kind==='victima'&&o.vstate!=='rescatada').reduce((a,o)=>a+(o.n||1),0),ln:e.filter(o=>o.kind==='ataque').length,
         ok:e.filter(o=>o.kind==='victima'&&o.vstate==='rescatada').reduce((a,o)=>a+(o.n||1),0),rit:e.some(o=>o.kind==='rit'),
         viny:e.filter(o=>o.kind==='vent'&&(o.vt||'iny')==='iny').length,vext:e.filter(o=>o.kind==='vent'&&o.vt==='ext').length,exu:e.some(o=>o.kind==='vent'&&o.vt==='exu'),
@@ -635,8 +637,8 @@ const ficSVG=k=>'<svg viewBox="0 0 24 24">'+FIC[k].map(q=>q.c?`<circle cx="${q.c
 function ficDraw(g,k,x,y,sz){g.save();g.translate(x,y);g.scale(sz/24,sz/24);g.lineCap='round';g.lineJoin='round';
   for(const q of FIC[k]){g.save();if(q.r){g.translate(12,12);g.rotate(q.r*Math.PI/180);g.translate(-12,-12);}const pth=q.c?(()=>{const P=new Path2D();P.arc(q.c[0],q.c[1],q.c[2],0,Math.PI*2);return P;})():new Path2D(q.d);if(q.f){g.fillStyle=q.f;g.fill(pth);}if(q.s){g.strokeStyle=q.s;g.lineWidth=q.w;g.stroke(pth);}g.restore();}g.restore();}
 /* íconos de una fila: [tipo, cantidad] en orden fijo */
-const rowIcons=r=>[r.may&&['mayday'],r.fire&&['fuego'],r.smoke&&['humo'],r.v&&['victima',r.v],r.ln&&['linea',r.ln],r.viny&&['vent_iny',r.viny],r.vext&&['vent_ext',r.vext],r.exu&&['exu'],r.risk&&['riesgo'],r.rit&&['rit'],r.ok&&['victimaok',r.ok],r.nota&&!(r.notes&&r.notes.length)&&['nota']].filter(Boolean);
-const rowTitle=r=>r.name+': '+([r.fire?'fuego':'',r.smoke?'humo':'',r.v?r.v+(r.v>1?' víctimas':' víctima'):'',r.ln?r.ln+(r.ln>1?' líneas':' línea'):'',r.viny?'ventilador inyectando aire':'',r.vext?'ventilador extrayendo humo':'',r.exu?'exutorio abierto':'',r.risk?'riesgo de colapso':'',r.rit?'RIT':'',r.ok?r.ok+(r.ok>1?' rescatadas':' rescatada'):'',...(r.notes||[]),r.may?'MAYDAY':''].filter(Boolean).join(', ')+(r.base?' · piso fuego −2: conexión de la línea de ataque y RIT':'')||'sin novedad');
+const rowIcons=r=>[r.may&&['mayday'],r.fire&&['fuego'],r.smoke&&['humo'],r.v&&['victima',r.v],r.ln&&['linea',r.ln],r.viny&&['vent_iny',r.viny],r.vext&&['vent_ext',r.vext],r.exu&&['exu'],r.risk&&['riesgo'],r.rit&&['rit'],r.ok&&['victimaok',r.ok],r.mayok&&['mayok'],r.nota&&!(r.notes&&r.notes.length)&&['nota']].filter(Boolean);
+const rowTitle=r=>r.name+': '+([r.fire?'fuego':'',r.smoke?'humo':'',r.v?r.v+(r.v>1?' víctimas':' víctima'):'',r.ln?r.ln+(r.ln>1?' líneas':' línea'):'',r.viny?'ventilador inyectando aire':'',r.vext?'ventilador extrayendo humo':'',r.exu?'exutorio abierto':'',r.risk?'riesgo de colapso':'',r.rit?'RIT':'',r.ok?r.ok+(r.ok>1?' rescatadas':' rescatada'):'',r.mayok?'MAYDAY resuelto':'',...(r.notes||[]),r.may?'MAYDAY':''].filter(Boolean).join(', ')+(r.base?' · piso fuego −2: conexión de la línea de ataque y RIT':'')||'sin novedad');
 /* filas visibles: todas, o solo los pisos con algo (con separadores ⋮ n) */
 function colRows(rows,collapsed,sel){if(!collapsed)return rows;const out=[];let n=0;for(const r of rows){if(!r.empty||r.base||sel===r.f){if(n&&out.length)out.push({gap:n});n=0;out.push(r);}else n++;}return out;}
 /* Posición de la columna respecto del edificio (no del mapa): a la derecha/izquierda/arriba/abajo a tantos px, o dentro en proporción.
@@ -1084,7 +1086,7 @@ function markHTML(m){
     case 'pas':return `<div class="m-circ acv">PAS</div>`;
     case 'grifo':return `<div class="m-grifo${m.seco?' seco':''}" title="${m.seco?'Grifo sin agua':'Grifo en uso'}">G</div>`;
     case 'piscina':return `<div class="m-pisc"><svg viewBox="0 0 24 14"><path d="M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>`;
-    case 'mayday':return `<div class="m-mayday">MAYDAY${m.text?`<span class="t">${esc(m.text)}</span>`:''}</div>`;
+    case 'mayday':return m.mstate==='resuelto'?`<div class="m-mayday ok" title="MAYDAY resuelto">✓ MAYDAY</div>`:`<div class="m-mayday">MAYDAY${m.text?`<span class="t">${esc(m.text)}</span>`:''}</div>`;
     case 'rit':return `<div class="m-rit">RIT${m.text?`<span class="rt">${esc(m.text)}</span>`:''}</div>`;
     case 'texto':return `<div class="m-text">${esc(m.text||'TEXTO')}</div>`;
     case 'lado':return `<div class="m-side">${esc(m.letter)}</div>`;
@@ -1187,7 +1189,7 @@ function syncCols(){
     const fl0=r.in.querySelector('.fl'),keep=fl0?fl0.scrollTop:0;
     const h=`<div class="fh"><span title="Arrastra para mover · doble clic para volver junto al edificio">Pisos</span><span class="hb">${sel?'<button data-f="">Ver todos</button>':''}${anyEmpty||col?`<button data-c="1" class="${col?'act':''}" title="${col?'Mostrar todos los pisos':'Mostrar solo los pisos con algo'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg></button>`:''}${tall||exp?`<button data-x="1" title="${exp?'Achicar':'Ver el edificio completo'}">${exp?'⤡':'⤢'}</button>`:''}</span></div>`+
       '<div class="fl">'+(rows.length?'':'<div class="fgap" style="padding:.4em .55em">Sin novedades aún</div>')+rows.map(x=>x.gap?`<div class="fgap">⋮ ${x.gap} piso${x.gap>1?'s':''}</div>`:`<div class="fr${x.fire?' fire':''}${x.base?' base':''}${sel===x.f?' on':''}${sel&&sel!==x.f?' off':''}" data-f="${x.f}" title="${esc(rowTitle(x))}"><b class="fn">${x.name}</b><span class="ics">${x.base?'<span class="fbase">F−2</span>':''}${
-        rowIcons(x).map(([k,n])=>k==='mayday'?'<span class="fmay">MAYDAY</span>':k==='rit'?'<span class="fpill">RIT</span>':`<i class="fi${k==='victima'?' v':k==='victimaok'?' ok':''}">${ficSVG(k)}${n>1||k==='victima'||k==='victimaok'?'<b>'+n+'</b>':''}</i>`).join('')}${x.notes&&x.notes.length?`<span class="fnote">${esc(x.notes.join(' · '))}</span>`:''}${!x.base&&x.empty?'<span class="fnone">·</span>':''}</span></div>`).join('')+'</div>';
+        rowIcons(x).map(([k,n])=>k==='mayday'?'<span class="fmay">MAYDAY</span>':k==='rit'?'<span class="fpill">RIT</span>':k==='mayok'?'<span class="fpill" title="MAYDAY resuelto">✓ MAYDAY</span>':`<i class="fi${k==='victima'?' v':k==='victimaok'?' ok':''}">${ficSVG(k)}${n>1||k==='victima'||k==='victimaok'?'<b>'+n+'</b>':''}</i>`).join('')}${x.notes&&x.notes.length?`<span class="fnote">${esc(x.notes.join(' · '))}</span>`:''}${!x.base&&x.empty?'<span class="fnone">·</span>':''}</span></div>`).join('')+'</div>';
     if(r.in._h!==h){r.in.innerHTML=h;r.in._h=h;const fl=r.in.querySelector('.fl');
       const target=(r.el._scrollSel&&sel)?r.in.querySelector('.fr.on'):null;
       if(fl){fl.scrollTop=keep;if(target&&fl.scrollHeight>fl.clientHeight)fl.scrollTop=Math.max(0,target.offsetTop-fl.offsetTop-fl.clientHeight/2+target.offsetHeight/2);}
@@ -1482,6 +1484,7 @@ function renderPanel(){
     h=`<div class="pn-h"><span class="ttl">${esc(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):MARK_LABEL[m.kind])}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">`;
     if(m.kind==='texto'){h+=`<label class="l">Texto</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: red seca rota · RIT (19)">`;
       if(sidAt(m.pos))h+=`<div class="seg" style="margin-top:6px">${['Red seca rota','Red seca operativa','Puerta cortafuego abierta','Ascensor bloqueado'].map(q=>`<button data-act="qtext" data-v="${q}" class="${m.text===q?'on':''}">${q}</button>`).join('')}</div>`;}
+    if(m.kind==='mayday')h+=`<label class="l">Estado</label>${segBtns('mstate',[['activo','Activo'],['resuelto','✓ Resuelto (bombero fuera)']],m.mstate||'activo')}`;
     if(m.kind==='mayday')h+=`<label class="l">Rótulo bajo la pastilla (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: piso 2 · lado C">`;
     if(m.kind==='pm')h+=`<label class="l">Rótulo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="PC">`;
     if(m.kind==='rit'){const sc=state.units.filter(u=>u.pos&&u.status!=='retirado').sort((a,b)=>a.code.localeCompare(b.code,'es',{numeric:true}));
@@ -1537,6 +1540,7 @@ function onPanelClick(ev){
     case 'prot':o.rot=+v;commit();break;
     case 'vn':o.n=Math.max(1,(o.n||1)+(+v));commit();break;
     case 'vstate':o.vstate=v;commit();break;
+    case 'mstate':if(v==='resuelto')o.mstate=v;else delete o.mstate;commit();break;
     case 'lpt':if(v)o.pt=v;else delete o.pt;commit();break;
     case 'vt':{const a=o.vt||'iny';if(a!==v&&a!=='exu'&&v!=='exu')o.rot=((+o.rot||0)+180)%360;o.vt=v;lastVent=v;commit();break;}
     case 'piso':if(v)o.piso=v;else delete o.piso;commit();break;
@@ -1832,7 +1836,8 @@ function drawMarkSnap(g,m,x,y){
       break;}
     case 'piscina':{const w=40*tok,h=26*tok;rr(g,x-w/2-1.5,y-h/2-1.5,w+3,h+3,7);g.fillStyle='#000';g.fill();rr(g,x-w/2,y-h/2,w,h,6);g.fillStyle='#fff';g.fill();rr(g,x-w/2+2.5,y-h/2+2.5,w-5,h-5,4);g.fillStyle='#0b84d8';g.fill();
       g.save();g.translate(x-w*.4,y-h*.27);g.scale(w*.8/24,w*.8/24);g.strokeStyle='#fff';g.lineWidth=2;g.lineCap='round';g.stroke(new Path2D('M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0'));g.restore();break;}
-    case 'mayday':{const fs=19*tok;const bx=pillBox(g,x,y,'MAYDAY',{fs,h:fs*1.5,padX:1.6,bg:'#e00000',border:'#fff',outer:'#000',extraW:fs*.35});
+    case 'mayday':if(m.mstate==='resuelto'){const fs=11*tok;pillBox(g,x,y,'✓ MAYDAY',{fs,h:fs*1.5,padX:1.1,bg:'#16a34a',border:'#16a34a',outer:'#000'});centerText(g,'✓ MAYDAY',x,y+fs*.03,FONT(800,fs),'#fff');break;}
+    {const fs=19*tok;const bx=pillBox(g,x,y,'MAYDAY',{fs,h:fs*1.5,padX:1.6,bg:'#e00000',border:'#fff',outer:'#000',extraW:fs*.35});
       centerText(g,'MAYDAY',x,y+fs*.03,FONT(800,fs),'#fff');if(m.text)darkLabel(g,[m.text],x,bx.y+bx.h+fs*.45,fs*.6);break;}
     case 'rit':{const fs=19*tok;g.font=FONT(800,fs);const t2=m.text||'';const w2=t2?g.measureText(t2).width+fs*.9:0;
       const bx=pillBox(g,x,y,'RIT',{fs,h:fs*1.5,padX:1.6,bg:'#66ff1a',border:'#0b0b0b',outer:'#fff',extraW:w2});
@@ -1891,9 +1896,9 @@ async function renderSnapshot(scale){
   if(vw==='estr')for(const c of floorCols()){const b=bboxScr(c.coords,P),t=settings.tok,fs=13*t,rh=fs*1.95,hh=fs*1.5,nw=fs*3.3,isz=fs*1.4,gap=fs*.5,sel=floorSel&&floorSel.sid===c.sid?floorSel.f:null;
     // edificio alto: en la imagen van los pisos con algo, el P1 y el techo; el resto se resume
     let rows=colCol.has(c.sid)?colRows(c.rows,true,sel):c.rows;if(!colCol.has(c.sid)&&rows.length>12){rows=[];let n=0;for(const r of c.rows){if(!r.empty||r.base||r.f==='1'||r.f==='T'||sel===r.f){if(n){rows.push({gap:n});n=0;}rows.push(r);}else n++;}if(n)rows.push({gap:n});}
-    g.font=FONT(800,fs*.72);const mayW=g.measureText('MAYDAY').width+fs*.9,ritW=g.measureText('RIT').width+fs*.9,baseW=g.measureText('F−2').width+fs*.8;
+    g.font=FONT(800,fs*.72);const mayW=g.measureText('MAYDAY').width+fs*.9,ritW=g.measureText('RIT').width+fs*.9,mokW=g.measureText('✓ MAYDAY').width+fs*.9,baseW=g.measureText('F−2').width+fs*.8;
     const noteTxt=r=>{const t=(r.notes||[]).join(' · ');return t.length>26?t.slice(0,25)+'…':t;};
-    const rw=r=>{if(r.gap)return nw*1.6;g.font=FONT(700,fs*.8);return nw+(r.base?baseW+gap:0)+rowIcons(r).reduce((a,[k])=>a+(k==='mayday'?mayW:k==='rit'?ritW:isz)+gap,0)+(noteTxt(r)?g.measureText(noteTxt(r)).width+fs*.8:0)+fs*.6;};
+    const rw=r=>{if(r.gap)return nw*1.6;g.font=FONT(700,fs*.8);return nw+(r.base?baseW+gap:0)+rowIcons(r).reduce((a,[k])=>a+(k==='mayday'?mayW:k==='mayok'?mokW:k==='rit'?ritW:isz)+gap,0)+(noteTxt(r)?g.measureText(noteTxt(r)).width+fs*.8:0)+fs*.6;};
     const w=Math.max(118*t,...rows.map(rw)),H=hh+rows.reduce((a,r)=>a+(r.gap?rh*.65:rh),0);const [x,y]=colXY(c,b,w,H);
     g.save();rr(g,x-2,y-2,w+4,H+4,8);g.fillStyle='#111';g.fill();rr(g,x,y,w,H,6);g.fillStyle='#fff';g.fill();g.fillStyle='#111';g.fillRect(x,y,w,hh);
     g.textBaseline='middle';g.textAlign='left';g.font=FONT(800,fs*.85);g.fillStyle='#fff';g.fillText('PISOS',x+fs*.55,y+hh/2);let yy=y+hh;
@@ -1902,7 +1907,8 @@ async function renderSnapshot(scale){
       if(r.gap){g.font=FONT(600,fs*.85);g.fillStyle='#777';g.fillText('⋮ '+r.gap+(r.gap>1?' pisos':' piso'),x+fs*.55,yy+h/2);}
       else{if(r.base){g.fillStyle='#0b3d91';g.fillRect(x,yy,4,h);}g.font=FONT(800,fs);g.fillStyle='#111';g.fillText(r.name,x+fs*.55,yy+h/2);let ix=x+nw;
         if(r.base){rr(g,ix,yy+h/2-fs*.55,baseW,fs*1.1,4);g.fillStyle='#0b3d91';g.fill();centerText(g,'F−2',ix+baseW/2,yy+h/2,FONT(800,fs*.72),'#fff');ix+=baseW+gap;}
-        for(const [k,n] of rowIcons(r)){if(k==='rit'){rr(g,ix,yy+h/2-fs*.55,ritW,fs*1.1,fs*.55);g.fillStyle='#16a34a';g.fill();centerText(g,'RIT',ix+ritW/2,yy+h/2,FONT(800,fs*.72),'#fff');ix+=ritW+gap;continue;}
+        for(const [k,n] of rowIcons(r)){if(k==='mayok'){rr(g,ix,yy+h/2-fs*.55,mokW,fs*1.1,fs*.55);g.fillStyle='#16a34a';g.fill();centerText(g,'✓ MAYDAY',ix+mokW/2,yy+h/2,FONT(800,fs*.72),'#fff');ix+=mokW+gap;continue;}
+          if(k==='rit'){rr(g,ix,yy+h/2-fs*.55,ritW,fs*1.1,fs*.55);g.fillStyle='#16a34a';g.fill();centerText(g,'RIT',ix+ritW/2,yy+h/2,FONT(800,fs*.72),'#fff');ix+=ritW+gap;continue;}
           if(k==='mayday'){rr(g,ix,yy+h/2-fs*.55,mayW,fs*1.1,fs*.55);g.fillStyle='#e00000';g.fill();centerText(g,'MAYDAY',ix+mayW/2,yy+h/2,FONT(800,fs*.72),'#fff');ix+=mayW+gap;continue;}
           ficDraw(g,k,ix,yy+(h-isz)/2,isz);
           if(n>1||k==='victima'||k==='victimaok'){const bx=ix+isz-fs*.1,by=yy+(h+isz)/2-fs*.2,br=fs*.42;g.beginPath();g.arc(bx,by,br+1,0,Math.PI*2);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(bx,by,br,0,Math.PI*2);g.fillStyle=k==='victima'?'#e00000':k==='victimaok'?'#16a34a':'#111';g.fill();centerText(g,String(n),bx,by,FONT(800,fs*.62),'#fff');}
@@ -1964,7 +1970,7 @@ async function packState(){
   const flat=cs=>{let a=[0,0],out=[];cs.forEach(c=>{const p=P(c);out.push(p[0]-a[0],p[1]-a[1]);a=p;});return out;};
   const o={v:1,t:state.title||'',a:state.address||'',s:state.startedAt,x:Date.now(),r:r0,b:map?Math.round(map.getBearing()):0,
     u:state.units.filter(u=>u.status!=='retirado').map(u=>{const a=[u.code,ST_KEYS.indexOf(u.status),u.fn||'',u.side||'',u.note||'',u.wave||''];if(u.pos)a.push(...P(u.pos));return a;}),
-    m:state.marks.map(m=>{const a=[m.kind,...P(m.pos),m.kind==='lado'?m.letter:(m.text||'')];const x={};if(m.seco)x.s=1;if(m.ptype)x.t=m.ptype;if(m.rot)x.r=m.rot;if(m.n>1)x.n=m.n;if(m.vstate==='rescatada')x.v=1;if(m.piso)x.f=m.piso;if(m.vt)x.w=m.vt;if(Object.keys(x).length)a.push(x);return a;}),
+    m:state.marks.map(m=>{const a=[m.kind,...P(m.pos),m.kind==='lado'?m.letter:(m.text||'')];const x={};if(m.seco)x.s=1;if(m.ptype)x.t=m.ptype;if(m.rot)x.r=m.rot;if(m.n>1)x.n=m.n;if(m.vstate==='rescatada')x.v=1;if(m.piso)x.f=m.piso;if(m.vt)x.w=m.vt;if(m.mstate==='resuelto')x.q=1;if(Object.keys(x).length)a.push(x);return a;}),
     g:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map(s=>[SH_KEYS.indexOf(s.kind),s.kind==='ataque'?Math.max(0,LINE_COLORS.indexOf(s.color||LINE_COLORS[0]))+10*(s.pt==='monitor'?1:s.pt==='espuma'?2:0):(s.kind==='estructura'&&s.front!=null?s.front+1:0),s.label||'',...flat(s.coords)]),
     e:state.shapes.filter(s=>s.coords&&s.coords.length>=2).map((s,i)=>[i,s.piso||'',+s.pisos||0,+s.subt||0]).filter(a=>a[1]||a[2]||a[3]),
     y:settings.types.map(t=>[t.prefix,t.color.replace('#','')])};
@@ -1976,7 +1982,7 @@ async function unpackState(txt){
   const st=newState();st.title=o.t;st.address=o.a;st.startedAt=o.s;st.center=L(0,0);
   st.units=o.u.map((a,i)=>({id:'u'+i,code:a[0],status:ST_KEYS[a[1]]||'lugar',fn:a[2],side:a[3],note:a[4],wave:a[5],pos:a.length>=8?L(a[6],a[7]):null,arrivedAt:a.length>=8?o.x:null,addedAt:i}));
   st.marks=o.m.map((a,i)=>{const m={id:'m'+i,kind:a[0],pos:L(a[1],a[2]),text:''};if(a[0]==='lado')m.letter=a[3];else m.text=a[3];
-    const x=a[4]||{};if(x.s)m.seco=true;if(x.t)m.ptype=x.t;if(x.r)m.rot=x.r;if(x.f)m.piso=x.f;if(x.w)m.vt=x.w;if(m.kind==='victima'){m.n=x.n||1;m.vstate=x.v?'rescatada':'confirmada';}return m;});
+    const x=a[4]||{};if(x.s)m.seco=true;if(x.t)m.ptype=x.t;if(x.r)m.rot=x.r;if(x.f)m.piso=x.f;if(x.w)m.vt=x.w;if(x.q)m.mstate='resuelto';if(m.kind==='victima'){m.n=x.n||1;m.vstate=x.v?'rescatada':'confirmada';}return m;});
   st.shapes=o.g.map((a,i)=>{const cs=[];let x=0,y=0;for(let k=3;k<a.length;k+=2){x+=a[k];y+=a[k+1];cs.push(L(x,y));}
     const s={id:'s'+i,kind:SH_KEYS[a[0]]||'trazo',coords:cs,label:a[2]};if(s.kind==='ataque'){s.color=LINE_COLORS[a[1]%10]||LINE_COLORS[0];const q=Math.floor(a[1]/10);if(q===1)s.pt='monitor';if(q===2)s.pt='espuma';}
     if(s.kind==='estructura'&&a[1]>0&&a[1]-1<cs.length){s.front=a[1]-1;s.azA=computeSides(cs,s.front).azA;}return s;});
@@ -2005,7 +2011,7 @@ function moveDesc(from,to){
   const dir=st?'hacia el lado '+'ABCD'[Math.round(((az-st.azA)+360)%360/90)%4]:'hacia el '+['norte','noreste','este','sureste','sur','suroeste','oeste','noroeste'][Math.round(az/45)%8];
   return {dist,dir};
 }
-const markName=m=>(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):m.kind==='piton'?'Pitón '+(m.ptype||''):m.kind==='victima'?((m.n||1)>1?m.n+' víctimas':'Víctima')+(m.vstate==='rescatada'?' (rescatada)':''):(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
+const markName=m=>(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):m.kind==='piton'?'Pitón '+(m.ptype||''):m.kind==='victima'?((m.n||1)>1?m.n+' víctimas':'Víctima')+(m.vstate==='rescatada'?' (rescatada)':''):m.kind==='mayday'&&m.mstate==='resuelto'?'MAYDAY (resuelto)':(MARK_LABEL[m.kind]||m.kind))+(m.text?' “'+m.text+'”':'');
 function computeChanges(){
   if(!fork||!forkBase)return [];
   const out=[],MIN=3;const sameC=(a,b)=>a&&b&&moveDesc(a,b).dist<MIN;
@@ -2034,6 +2040,7 @@ function computeChanges(){
     if((b.n||1)!==(m.n||1))p.push(`cantidad: ${b.n||1} → ${m.n||1}`);
     if((b.vstate||'')!==(m.vstate||''))p.push(m.vstate==='rescatada'?'rescatada':'confirmada');
     if((b.piso||'')!==(m.piso||''))p.push('piso: '+(floorTag(m.piso)||'—'));
+    if((b.mstate||'')!==(m.mstate||''))p.push(m.mstate==='resuelto'?'resuelto':'activo otra vez');
     if((b.vt||'')!==(m.vt||''))p.push({iny:'inyecta aire',ext:'extrae humo',exu:'exutorio abierto'}[m.vt]||'');
     if(p.length)out.push({id:m.id,t:'mark',who:markName(m),txt:p.join(' · '),pos:m.pos,from:b.pos});
   }
@@ -2246,7 +2253,7 @@ function openHelp(){
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
     <li><b>Líneas de ataque</b> (L): clic en el carro, luego en cada quiebre y doble clic donde está el pitón. <b>La punta de la línea es el pitón</b> y apunta hacia donde va el chorro. En su panel eliges el diámetro (38, 45, 52 o 70 mm), el pitón (chorro, monitor o espuma) y el color. En Territorio se ven sin rótulo ni tipo de pitón, solo el recorrido: de un vistazo se sabe dónde hay líneas y cuántas.</li>
     <li><b>Territorio:</b> la <b>línea de abastecimiento</b> (B, azul oscuro) se dibuja del grifo a la bomba pasando por el Z o la piscina; la <b>calle cortada</b> (Q) se dibuja sobre la calle.</li>
-    <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). <b>Humo</b> (U) es un marcador como el foco; <b>Ventilación</b> (W) marca un ventilador que inyecta aire o extrae humo (la flecha es hacia donde va el aire) o un exutorio abierto; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
+    <li><b>Estructura:</b> la <b>víctima confirmada</b> (X) lleva cantidad y se marca <b>rescatada</b> cuando sale (queda como un punto verde chico). El <b>MAYDAY</b> se marca <b>resuelto</b> en su panel cuando el bombero ya salió: queda como una pastilla verde chica. <b>Humo</b> (U) es un marcador como el foco; <b>Ventilación</b> (W) marca un ventilador que inyecta aire o extrae humo (la flecha es hacia donde va el aire) o un exutorio abierto; <b>muro con riesgo</b> (M) se dibuja encima del muro.</li>
     <li><b>Pisos:</b> en el panel de la estructura indica cuántos pisos y subterráneos tiene. Al lado del edificio aparece la <b>columna de pisos</b> con íconos de lo que pasa en cada uno (fuego, humo, víctimas, líneas, riesgo, MAYDAY). En edificios altos se desplaza con la rueda del mouse y ⤢ la abre completa; el embudo deja solo los pisos con algo. El <b>piso fuego −2</b> se marca solo con <b>F−2</b> (conexión de la línea que sube y RIT). Las notas de texto de un piso (ej: <i>Red seca rota</i>) se leen en su fila. Se mueve arrastrándola desde su encabezado negro (doble clic la devuelve junto al edificio). Clic en un piso para ver solo lo de ese piso; mientras está elegido, lo que agregues dentro del edificio queda en ese piso. Cada víctima, zona o línea también tiene botones de <b>Piso</b> en su panel, y en el mapa lleva la etiqueta (P2, S1, Techo).</li>
   </ol>
   <p>Todo se puede hacer con el mouse: mientras dibujas aparecen los botones <b>Terminar</b> y <b>Cancelar</b> abajo del mapa; para cerrar una selección usa la ✕ o haz clic en un espacio vacío del mapa. El teclado es opcional.</p>
