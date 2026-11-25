@@ -88,7 +88,7 @@ La barra superior resume la escena: cuántos están en escena, trabajando, sin f
 | | Territorio (escala urbana) | Estructura (escala del edificio) |
 |---|---|---|
 | Para qué | Despliegue en la manzana: dónde está cada carro y cómo llega el agua | Qué pasa dentro del edificio afectado |
-| Herramientas | Instalaciones (PC, E, ACV, PAP, PAS), línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
+| Herramientas | Área fuego, instalaciones (PC, E, ACV, PAP, PAS), línea de abastecimiento, calle cortada | Área fuego, colapso, humo, muro con riesgo, foco, víctima, RIT, MAYDAY |
 | Lo de la otra vista | Oculto, incluidos el foco, el RIT, las notas y el MAYDAY resuelto que están dentro del edificio o asignados a un piso (afuera se siguen viendo; el MAYDAY activo y las víctimas confirmadas se ven siempre); cada estructura muestra un **resumen** (fuego, víctimas, humo, RIT) que lleva a la vista Estructura con un clic | Atenuado (carros e instalaciones al fondo) |
 | Zoom | Se aleja solo para ver la manzana | Se acerca solo a la estructura |
 
@@ -114,7 +114,7 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 |---|---|---|---|
 | Mover | `V` | ambas | Seleccionar y mover piezas y marcadores |
 | Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
-| Área fuego | `F` | Estructura | Zona con fuego, achurada en rojo |
+| Área fuego | `F` | ambas | Zona con fuego, achurada en rojo |
 | Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco) |
 | Ventilación | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
