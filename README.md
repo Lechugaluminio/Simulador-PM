@@ -40,7 +40,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
    En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo* y *Víctima* (cantidad; al marcarla rescatada queda como un punto verde chico).
    *Línea de ataque*: del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). En Territorio se ve solo el recorrido, sin rótulo.
    *Pisos*: en el panel de la estructura se indican pisos y subterráneos; aparece la columna de pisos junto al edificio (ver 3.4).
-4. **Cargar el despacho.** Elegir la salida (despacho inicial o 1ª a 6ª alarma), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
+4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª a 6ª alarma, o *Sin alarma* para carros que salen solos al incidente), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
 6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z, PAP o PAS → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
 7. **Mostrar.** *Presentación* para la pantalla grande del PM, o *Imagen* para copiar o descargar el croquis.
@@ -69,7 +69,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 | `S` | Ambulancia | blanco |
 
 - **Carros de apoyo de otros cuerpos:** se aceptan con sufijo (`Z-3Ñ` = 3ª Cía. de Ñuñoa, `B-4QN` = Quinta Normal).
-- **Salida:** cada pieza indica si llegó en el **despacho inicial o en la 1ª a 6ª alarma**.
+- **Salida:** cada pieza indica si llegó en el **despacho inicial**, en la **1ª a 6ª alarma** o **sin alarma** (salida individual).
 - **Colores y funciones:** se editan en *Ajustes*.
 
 ### 3.2 Estados
