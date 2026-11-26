@@ -241,11 +241,15 @@ body:not(.view-terr) .sumb{display:none}
 .wv.w-1{background:#fff3bf;border-color:#e0b400;color:#5c4400}
 .wv.w-2{background:#ffd8a8;border-color:#e8590c;color:#6b2600}
 .wv.w-3{background:#ffc9c9;border-color:#c92a2a;color:#6b0000}
+.wv.w-4{background:#fcc2d7;border-color:#a61e4d;color:#5c0d2a}
+.wv.w-5{background:#e5dbff;border-color:#6741d9;color:#2b1a66}
+.wv.w-6{background:#212529;border-color:#000;color:#fff}
 .wv.w-n{opacity:.55}
 .trayit{display:inline-flex;align-items:center;gap:4px}
-.wvrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.wvl{font-size:12.5px;font-weight:700;color:var(--muted)}
-#waveSeg button{padding:4px 8px;font-size:13px}
+.wvrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-bottom:8px}
+.wvl{flex:1 0 100%;font-size:12.5px;font-weight:700;color:var(--muted)}
+#waveSeg button{padding:4px 6px;font-size:13px;min-width:28px}
+#waveSeg{gap:3px}
 .m-mayday{position:relative;font-family:var(--fc);font-weight:800;font-size:calc(19px * var(--tok));line-height:1;background:#e00000;color:#fff;padding:.28em .75em .22em;border-radius:999px;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 3px 8px rgba(0,0,0,.45);letter-spacing:.06em;white-space:nowrap}
 .m-mayday.ok{font-size:calc(11px * var(--tok));background:#16a34a;border-width:1.5px;box-shadow:0 0 0 1px #000,0 1px 3px rgba(0,0,0,.4);padding:.25em .55em .2em;opacity:.9}
 .m-mayday.ok::before{display:none}
@@ -609,10 +613,10 @@ const KEY_STATE='croquisPM.state.v1',KEY_SET='croquisPM.settings.v1',KEY_VIEW='c
 const LINE_COLORS=['#2f7bff','#ff2d2d','#ffd60a','#ffffff','#22c55e','#ff8c1a'];
 const STATUS_LABEL={lugar:'Sin función',trabajando:'Trabajando',nocumple:'No puede cumplir',retirandose:'Retirándose',retirado:'Retirado'};
 const XSTAT=['lugar','nocumple'];
-const WAVES=[['D','D','Despacho inicial'],['1','1ª','1ª alarma'],['2','2ª','2ª alarma'],['3','3ª','3ª alarma']];
+const WAVES=[['D','D','Despacho inicial'],['1','1ª','1ª alarma'],['2','2ª','2ª alarma'],['3','3ª','3ª alarma'],['4','4ª','4ª alarma'],['5','5ª','5ª alarma'],['6','6ª','6ª alarma']];
 const waveOf=w=>WAVES.find(x=>x[0]===w);
 function waveTag(u){const w=waveOf(u.wave);return `<span class="wv w-${w?w[0]:'n'}" data-wave-uid="${u.id}" title="${w?w[2]:'Sin salida asignada'} · clic para cambiar">${w?w[1]:'·'}</span>`;}
-function renderWaveSeg(){const cur=state.addWave||'D';$('#waveSeg').innerHTML=WAVES.map(([v,t,l])=>`<button data-addwave="${v}" class="${v===cur?'on':''}" title="${l}">${v==='D'?'Despacho':t}</button>`).join('');}
+function renderWaveSeg(){const cur=state.addWave||'D';$('#waveSeg').innerHTML=WAVES.map(([v,t,l])=>`<button data-addwave="${v}" class="${v===cur?'on':''}" title="${l}">${v==='D'?'Desp.':t}</button>`).join('');}
 const XSVG='<svg class="xx" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M3 3L97 97M97 3L3 97" stroke="#000" stroke-opacity=".8" stroke-width="5" vector-effect="non-scaling-stroke"/><path d="M3 3L97 97M97 3L3 97" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>';
 const MARK_LABEL={vent:'Ventilación',humo:'Humo',piton:'Pitón',victima:'Víctima',fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',pap:'Puesto de abastecimiento primario (PAP)',pas:'Puesto de abastecimiento secundario (PAS)',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
 const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona de colapso',ataque:'Línea',trazo:'Trazo',humo:'Zona con humo',abast:'Línea de abastecimiento',corte:'Calle cortada',muro:'Muro con riesgo de colapso'};
@@ -2512,7 +2516,7 @@ function openHelp(){
     <li>En <b>Instalaciones</b> (pasa el mouse sobre el botón) están el <b>Puesto de Comando</b>, la <b>Zona de espera</b> y el <b>ACV</b>, con los símbolos del SCI.</li>
     <li>Los marcadores se ponen con clic en el botón y clic en el mapa, o arrastrando el botón al mapa como los carros. Marca el <b>foco</b>, <b>grifos</b>, el <b>área con fuego</b> y, si ocurre, la ubicación de un <b>MAYDAY</b>.</li>
     <li><b>Carros:</b> escribe o pega los despachados en la columna izquierda y arrástralos al mapa cuando lleguen. Clic en un carro para asignar estado, función, lado y nota. Como en la pizarra: <b>✕</b> = sin función o no puede cumplirla, <b>◯</b> = se está retirando.</li>
-    <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª, 2ª o 3ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª, 2ª, 3ª) de un carro para cambiarla.</li>
+    <li><b>Salidas:</b> antes de agregar carros elige si vienen del <b>despacho inicial</b> o de la <b>1ª a 6ª alarma</b>. En las listas, clic en la etiqueta (D, 1ª… 6ª) de un carro para cambiarla.</li>
     <li><b>RIT:</b> la pastilla verde marca dónde está el equipo de intervención rápida; en su panel escribe o elige qué compañía lo tiene a cargo.</li>
     <li><b>Grifos:</b> se cargan solos desde el mapa público de Aguas Andinas (Aguas Andinas, Cordillera y Manquehue) al acercar el mapa. Clic en un grifo para marcarlo <b>en uso</b> o <b>sin agua</b>; clic en un grifo marcado para cambiar su estado o desmarcarlo.</li>
     <li><b>Líneas de ataque</b> (L): clic en el carro, luego en cada quiebre y doble clic donde está el pitón. <b>La punta de la línea es el pitón</b> y apunta hacia donde va el chorro. En su panel eliges el diámetro (38, 45, 52 o 70 mm), el pitón (chorro, monitor o espuma) y el color. En Territorio se ven sin rótulo ni tipo de pitón, solo el recorrido: de un vistazo se sabe dónde hay líneas y cuántas.</li>
