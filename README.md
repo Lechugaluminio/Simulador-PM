@@ -45,6 +45,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z, PAP o PAS → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
 7. **Mostrar.** *Presentación* para la pantalla grande del PM, o *Imagen* para copiar o descargar el croquis.
 8. **Llevar a terreno.** Un ayudante escanea el QR y se lleva una copia editable al celular. Al volver, *Cambios* muestra qué se modificó.
+9. **Enviar un escenario.** *Compartir → Enlace para seguir editando* genera un link con el escenario completo para mandarlo por correo o mensajería; quien lo abre lo ve tal cual y sigue editándolo en su computador.
 
 ---
 
@@ -184,6 +185,7 @@ La pestaña **Bitácora** (junto a *Carros*, arriba de la columna izquierda) es 
 | **Imagen** | Croquis en alta resolución (doble de la pantalla) con encabezado del incidente, hora y resumen; se copia para pegar o se descarga en `.jpg` |
 | **Copia de terreno** | QR con una copia editable para el celular. Los datos viajan dentro del QR, en la parte `#` del enlace, que el navegador no envía a ningún servidor. La copia nunca modifica el croquis principal |
 | **Cambios** | Al volver de terreno, lista lo modificado y muestra con líneas punteadas las posiciones originales |
+| **Enlace para seguir editando** | Link con el escenario completo (carros, formas, instalaciones, pisos, bitácora y vista del mapa) para enviarlo a otra persona, que lo abre en su navegador y sigue editándolo. No es edición simultánea: para devolver cambios se envía un enlace nuevo. Si quien lo abre ya tiene un croquis, se le pregunta antes de reemplazarlo. Los datos van dentro del enlace, en la parte `#`, y no se guardan en ningún servidor |
 | **Exportar croquis (.json)** | Respaldo completo del incidente |
 | **Modo sol** (`S`) | Alto contraste para uso al exterior: piezas más grandes, líneas más gruesas y mapa con más contraste |
 
@@ -282,5 +284,6 @@ Para el computador del puesto de mando o del K-3: **Menú ⋯ → Descargar vers
 ## Datos y privacidad
 
 - Todo se guarda **solo en el navegador del equipo** (localStorage). Nada del incidente se sube a GitHub ni a otro servidor propio.
+- El **enlace para seguir editando** y la **copia de terreno** llevan el escenario dentro del propio enlace (después del `#`, parte que el navegador no envía al servidor). Quien tenga el enlace puede ver el escenario, así que conviene enviarlo solo a quien corresponde. Desde la versión sin conexión, estos enlaces apuntan a la versión publicada, porque `127.0.0.1` no se puede abrir desde otro equipo.
 - Para respaldar: *Menú → Exportar croquis (.json)*.
 - La aplicación sí consulta servicios públicos para el mapa, la búsqueda, los grifos y el viento (sección 3.5). Esas consultas llevan la zona del mapa o el texto buscado, no el croquis.
