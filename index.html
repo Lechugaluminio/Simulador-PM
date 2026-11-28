@@ -232,6 +232,9 @@ body:not(.view-terr) .sumb{display:none}
 #tools .grp{position:relative}
 #tools .grp .chev{position:absolute;right:3px;top:12px;font-size:10px;opacity:.7}
 .m-grifo{width:calc(30px * var(--tok));height:calc(30px * var(--tok));border-radius:50%;background:#ffd60a;color:#111;font-family:var(--fc);font-weight:800;display:grid;place-items:center;font-size:calc(18px * var(--tok));border:2.5px solid #111;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.45)}
+.m-eq{position:relative;width:calc(38px * var(--tok));height:calc(38px * var(--tok));border-radius:7px;background:#f1f3f5;border:2.5px solid #111;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.45);display:grid;place-items:center}
+.m-eq.k-escala{background:#ced4da}.m-eq>svg{width:86%;height:86%}
+.m-eq .pt{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%);font-family:var(--fc);font-weight:800;font-size:calc(13px * var(--tok));line-height:1;background:rgba(17,17,17,.9);color:#fff;padding:3px 6px;border-radius:4px;white-space:nowrap}
 .m-pisc{width:calc(40px * var(--tok));height:calc(26px * var(--tok));border-radius:6px;background:#0b84d8;border:2.5px solid #fff;box-shadow:0 0 0 1.5px #000,0 2px 6px rgba(0,0,0,.4);display:grid;place-items:center}
 .m-pisc svg{width:80%;height:auto}
 .m-rit{display:inline-flex;align-items:center;gap:.4em;font-family:var(--fc);font-weight:800;font-size:calc(19px * var(--tok));line-height:1;background:#66ff1a;color:#0b0b0b;padding:.28em .75em .22em;border-radius:999px;border:2.5px solid #0b0b0b;box-shadow:0 0 0 2px #fff,0 3px 8px rgba(0,0,0,.45);letter-spacing:.06em;white-space:nowrap}
@@ -373,7 +376,9 @@ body.sun #btnSun{background:#ffd60a;border-color:#000;color:#000}
 #flyZonas .zn svg{width:70%;height:70%}
 #flyZonas .zn:hover{background:#fff3bf}
 #flyZonas .zn.on{background:var(--acc);border-color:var(--acc)}
-#flyZonas .zl{position:absolute;top:50%;left:calc(100% + 7px);transform:translateY(-50%);white-space:nowrap;background:rgba(15,15,15,.88);color:#fff;font:700 12.5px/1 var(--fb,Arial);padding:4px 7px;border-radius:6px;pointer-events:none}
+#flyZonas .zl{z-index:2;position:absolute;top:50%;left:calc(100% + 7px);transform:translateY(-50%);white-space:nowrap;background:rgba(15,15,15,.88);color:#fff;font:700 12.5px/1 var(--fb,Arial);padding:4px 7px;border-radius:6px;pointer-events:none}
+#flyZonas.up .zl{top:auto;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%)}
+#flyZonas .zn.on .zl{background:var(--acc);color:var(--accInk)}
 #flyZonas .zn.zx{width:calc(30px * var(--tok));height:calc(30px * var(--tok));border-width:2.5px}
 #flyZonas .zn.zx svg{width:62%;height:62%}
 body.sun #flyZonas .zn{border-width:4px}
@@ -578,16 +583,14 @@ body.sun #wind{border:3px solid #000;box-shadow:none}
       <button data-mode="poly:colapso" data-sc="estr" title="Zona de colapso / peligro (C)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 2.5"/><path d="M12 9v4M12 16v.5"/></svg>Colapso</button>
       <button data-mode="mk:humo" data-sc="estr" title="Humo: clic o arrastra al mapa (U)"><svg class="i" viewBox="0 0 24 24"><path d="M5 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15.6 8 3.5 3.5 0 0 1 19 14.5"/><path d="M4 20h15M7 13.5h9"/></svg>Humo</button>
       <button data-mode="line:muro" data-sc="estr" title="Muro con riesgo de colapso: dibújalo sobre el muro (M)"><svg class="i" viewBox="0 0 24 24"><path d="M3 19h18M4 19V9l4-2 4 2v10M12 19v-6l4-2 4 2v6"/><path d="M8 11v3M16 14v2"/></svg>Muro riesgo</button>
-      <button data-mode="line:ataque" title="Línea de ataque: la punta es el pitón (L)"><svg class="i" viewBox="0 0 24 24"><path d="M4 20c3-7 7-11 14-13"/><path d="M13 5l5.5 2-3 5"/></svg>Línea</button>
       <button data-mode="line:trazo" title="Trazo discontinuo libre (K)"><svg class="i" viewBox="0 0 24 24"><path d="M3 17L21 7" stroke-dasharray="3.5 3"/></svg>Trazo</button>
       <div class="sep"></div>
       <button data-mode="mk:fuego" data-sc="estr" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
-      <button data-mode="mk:vent" data-sc="estr" title="Ventilación: ventilador que inyecta aire, extrae humo o exutorio abierto (W)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 12c-.5-3 .4-5.6 2.8-6.3M12 12c2.6 1.5 4 4 3.2 6.4M12 12c-2.2 1.6-5 1.8-6.8.1"/><circle cx="12" cy="12" r="1.3"/></svg>Ventilación</button>
+      <button class="grp" id="btnEquipos" data-sc="estr" title="Equipos: agua, RIT, ventiladores, escalas, búsqueda y rescate, remoción"><svg class="i" viewBox="0 0 24 24"><path d="M6 3v18M12 3v18M6 7h6M6 12h6M6 17h6"/><path d="M15 21l6-9M19 9l2.5-2.5"/><path d="M17.5 13l-3-1.5"/></svg>Equipos <span class="chev">▸</span></button>
       <button data-mode="mk:victima" data-sc="estr" title="Víctima confirmada (X)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><path d="M12 9.5v6M8 12h8M9 21l3-5.5 3 5.5"/></svg>Víctima</button>
       <button class="grp" id="btnInst" data-sc="terr" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
       <button data-mode="line:abast" data-sc="terr" title="Línea de abastecimiento: grifo → Z → PAP/PAS → bomba (B)"><svg class="i" viewBox="0 0 24 24"><path d="M3 18c4 0 4-6 9-6s5-6 9-6" stroke-width="3"/><path d="M17 3.5l4 2.5-3.5 3"/></svg>Abastec.</button>
       <button data-mode="line:corte" data-sc="terr" title="Calle cortada (Q)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9l-3 6M12 9l-3 6M17 9l-3 6M21 10l-2 5"/><path d="M6 15v5M18 15v5"/></svg>Calle cortada</button>
-      <button data-mode="mk:rit" data-sc="estr" title="Pastilla RIT: equipo de intervención rápida (6)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M8 15v-5h2.2a1.4 1.4 0 0 1 0 2.8H8M10.2 12.8l1.3 2.2M14 10v5M16.5 10h3M18 10v5"/></svg>RIT</button>
       <button data-mode="mk:mayday" data-sc="estr" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
       <button data-mode="mk:texto" title="Texto libre (T)"><svg class="i" viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>Texto</button>
       <button data-mode="sides" title="Ubicar lados A, B, C, D a mano"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 16l3-8 3 8M10 13.5h4"/></svg>Lados A–D</button>
@@ -658,12 +661,12 @@ function waveTag(u){const w=waveOf(u.wave);return `<span class="wv w-${w?w[0]:'n
 function renderWaveSeg(){const cur=state.addWave||'D';const b=([v,t,l],lab)=>`<button data-addwave="${v}" class="${v===cur?'on':''}" title="${v==='0'?'Sin alarma: carro que sale solo al incidente, fuera de una alarma':l}">${lab||t}</button>`;
   $('#waveSeg').innerHTML=`<div class="wvg">${b(WAVES[0],'Despacho')}${b(WAVES[1],'Sin alarma')}</div><div class="wvg"><span class="wvl2">Alarma</span>${WAVES.slice(2).map(w=>b(w)).join('')}</div>`;}
 const XSVG='<svg class="xx" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M3 3L97 97M97 3L3 97" stroke="#000" stroke-opacity=".8" stroke-width="5" vector-effect="non-scaling-stroke"/><path d="M3 3L97 97M97 3L3 97" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>';
-const MARK_LABEL={vent:'Ventilación',humo:'Humo',piton:'Pitón',victima:'Víctima',fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',pap:'Puesto de abastecimiento primario (PAP)',pas:'Puesto de abastecimiento secundario (PAS)',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',texto:'Texto',lado:'Lado'};
+const MARK_LABEL={vent:'Ventilación',humo:'Humo',piton:'Pitón',victima:'Víctima',fuego:'Foco de fuego',pm:'Puesto de Comando (PC)',espera:'Zona de espera',acv:'Área de concentración de víctimas',pap:'Puesto de abastecimiento primario (PAP)',pas:'Puesto de abastecimiento secundario (PAS)',grifo:'Grifo',piscina:'Piscina (estanque)',mayday:'MAYDAY',rit:'RIT (Rapid Intervention Team)',escala:'Escala',byr:'Búsqueda y rescate (ByR)',remocion:'Remoción',texto:'Texto',lado:'Lado'};
 const SHAPE_LABEL={estructura:'Estructura',fuego:'Área con fuego',colapso:'Zona de colapso',ataque:'Línea',trazo:'Trazo',humo:'Zona con humo',abast:'Línea de abastecimiento',corte:'Calle cortada',muro:'Muro con riesgo de colapso',zrm:'ZRM · Zona de resguardo de material mayor'};
 const POLY_KINDS=['estructura','fuego','colapso','humo','zrm'];
 /* escala de cada elemento: 'terr' (urbana), 'estr' (edificio) o ambas */
 const SC_TERR=new Set(['pm','espera','acv','pap','pas','piscina','grifo','abast','corte']);
-const SC_ESTR=new Set(['piton','humo','muro','vent']);
+const SC_ESTR=new Set(['piton','humo','muro','vent','escala','byr','remocion']);
 const scaleOf=k=>SC_TERR.has(k)?'terr':SC_ESTR.has(k)?'estr':'both';
 const PITON_TYPES=['38 mm','45 mm','52 mm','70 mm','Monitor','Espuma'];
 const ATAQUE_MM=['38 mm','45 mm','52 mm','70 mm'],ABAST_MM=['75 mm','110 mm'];
@@ -694,7 +697,7 @@ function normState(st){if(!st)return st;
 function distPolyM(p,cs){const P=localProj(p);let best=Infinity;for(let i=0;i<cs.length-1;i++){const a=P.to(cs[i]),b=P.to(cs[i+1]);const dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy;
   let u=L?-(a[0]*dx+a[1]*dy)/L:0;u=Math.max(0,Math.min(1,u));best=Math.min(best,Math.hypot(a[0]+u*dx,a[1]+u*dy));}return best;}
 /* ---- pisos: cada elemento de la vista Estructura puede llevar su piso ('1','2'…, 'S1'… subterráneos, 'T' techo) ---- */
-const FLOOR_MARKS=new Set(['victima','fuego','humo','vent','mayday','rit','texto']),FLOOR_SHAPES=new Set(['fuego','humo','colapso','muro','ataque']);
+const FLOOR_MARKS=new Set(['victima','fuego','humo','vent','mayday','rit','texto','escala','byr','remocion']),FLOOR_SHAPES=new Set(['fuego','humo','colapso','muro','ataque']);
 const floorTag=f=>!f?'':f==='T'?'Techo':/^S/.test(f)?f:'P'+f;
 let floorSel=null;   // {sid, f}: piso elegido en la columna de pisos
 function inRing(pt,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if((yi>pt[1])!==(yj>pt[1])&&pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi)c=!c;}return c;}
@@ -803,6 +806,7 @@ function markLog(m){const t=m.text?' · '+m.text:'';
     case 'victima':return [((m.n||1)>1?m.n+' víctimas confirmadas':'Víctima confirmada')+fT(m)+t,'crit'];
     case 'mayday':return ['MAYDAY'+fT(m)+t,'crit'];case 'rit':return ['RIT'+(m.text?' '+m.text:'')+fT(m),'esc'];
     case 'vent':return [({iny:'Ventilador inyectando aire',ext:'Ventilador extrayendo humo',exu:'Exutorio abierto'}[m.vt||'iny'])+fT(m)+t,'esc'];
+    case 'escala':case 'byr':case 'remocion':return [{escala:'Escala',byr:'Búsqueda y rescate',remocion:'Remoción'}[m.kind]+(m.text?' '+m.text:'')+fT(m),'esc'];
     case 'texto':return m.text?['Nota: '+m.text+fT(m),'man']:null;case 'grifo':return [m.seco?'Grifo sin agua':'Grifo en uso','esc'];
     default:return INST_LOG[m.kind]?[INST_LOG[m.kind]+t,'esc']:null;}}
 function shapeLog(x){const l=x.label?' · '+x.label:'';
@@ -1285,44 +1289,74 @@ function zrmClick(ll){
 }
 
 /* ---- menú "Zonas": nodos que salen del botón de la barra lateral ---- */
+const RADIAL={};
 const ZONE_MODES=['poly:estructura','poly:fuego','zrm'];
 const ZI={
   'poly:estructura':'<svg viewBox="0 0 32 32"><path d="M5 11l10-6 12 5-2.5 14L7 26z" fill="#ffd166" fill-opacity=".55" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg>',
   'poly:fuego':'<svg viewBox="0 0 32 32"><defs><clipPath id="zic"><rect x="5" y="5" width="22" height="22" rx="1.5"/></clipPath></defs><rect x="5" y="5" width="22" height="22" rx="1.5" fill="#ff3b30" fill-opacity=".28"/><g clip-path="url(#zic)" stroke="#e00000" stroke-width="2.2"><path d="M-2 16L16-2M-2 26L26-2M4 32L32 4M14 32L32 14M24 32L32 24"/></g><rect x="5" y="5" width="22" height="22" rx="1.5" fill="none" stroke="#e00000" stroke-width="2.6"/></svg>',
   'zrm':'<svg viewBox="0 0 32 32"><rect x="9" y="3" width="14" height="9" fill="#dee2e6" stroke="#111" stroke-width="1.8"/><path d="M9 12h14l7 15H2z" fill="#ff2a2a" fill-opacity=".3" stroke="#e00000" stroke-width="2.2" stroke-dasharray="3 2" stroke-linejoin="round"/><text x="16" y="23.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="8" fill="#e00000">ZRM</text></svg>'};
+RADIAL.zonas={btn:'#btnZonas',icons:null,items:null};
 const ZN=[['poly:estructura','Estructura','Estructura / manzana afectada (E)'],['poly:fuego','Área fuego','Área con fuego, achurada (F)'],['zrm','ZRM','ZRM: zona de resguardo de material mayor. Riesgo de colapso: nadie en la proyección de escombros (R)']];
-let zonasAt=0,zonasT=null;
-function openZonas(){clearTimeout(zonasT);const fz=$('#flyZonas'),b=$('#btnZonas');if(fz.classList.contains('open'))return;
+RADIAL.zonas.icons=ZI;RADIAL.zonas.items=ZN;
+/* Equipos (escala Estructura): agua, RIT, ventiladores, escalas, búsqueda y rescate, remoción */
+const EQ_SVG={
+  escala:'<path d="M11 2.5v27M21 2.5v27" stroke="#111" stroke-width="3.2" stroke-linecap="round"/><path d="M11 7.5h10M11 13h10M11 18.5h10M11 24h10" stroke="#111" stroke-width="2.6"/>',
+  byr:'<path d="M24.5 28.5L8.5 6" stroke="#111" stroke-width="4.6" stroke-linecap="round"/><path d="M24.5 28.5L8.5 6" stroke="#adb5bd" stroke-width="2.2" stroke-linecap="round"/><path d="M5 9.5l2.8-6.8 3.4 2.6zM9.6 3.2l4.6 1.4-3.3 3.2z" fill="#495057" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/><path d="M23.4 30.5l-.6-4.2M26.7 29.6l-2.3-3.6" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>'+
+      '<path d="M7.5 29L22.5 8" stroke="#111" stroke-width="4.4" stroke-linecap="round"/><path d="M7.5 29L22.5 8" stroke="#c98a3e" stroke-width="2.2" stroke-linecap="round"/><path d="M20 5.2l3.4-3 6.6 7.3-3.6 2.4q-1.4-4-6.4-6.7z" fill="#e03131" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/><path d="M20.6 6.6l-4.4-1.7 2.2 4z" fill="#495057" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/>',
+  remocion:'<path d="M7 29.5L22 7" stroke="#111" stroke-width="4.4" stroke-linecap="round"/><path d="M7 29.5L22 7" stroke="#c98a3e" stroke-width="2.2" stroke-linecap="round"/><path d="M21.5 7.8l4.3-6" stroke="#111" stroke-width="2.6" stroke-linecap="round"/><path d="M23.6 4.9c3.4-.3 5.6 2 4.4 5.6l-2.6-1.3" fill="none" stroke="#111" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="21.3" cy="8.2" r="1.7" fill="#495057" stroke="#111" stroke-width="1"/>'};
+const eqIcon=k=>`<svg viewBox="0 0 32 32" fill="none">${EQ_SVG[k]}</svg>`;
+const EQ_KINDS=['escala','byr','remocion'];
+const EQ_IMG={};function eqImg(k){if(!EQ_IMG[k]){const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64" fill="none">${EQ_SVG[k]}</svg>`);EQ_IMG[k]=im;}return EQ_IMG[k];}
+EQ_KINDS.forEach(eqImg);
+const EI={
+  'line:ataque':'<svg viewBox="0 0 32 32"><path d="M4 27c4-9 9-14 19-17" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M4 27c4-9 9-14 19-17" fill="none" stroke="#1c7ed6" stroke-width="4" stroke-linecap="round"/><path d="M17 6.5l9.5 2.8-5.4 7.6z" fill="#1c7ed6" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+  'mk:rit':'<svg viewBox="0 0 32 32"><rect x="2" y="9" width="28" height="14" rx="7" fill="#66ff1a" stroke="#111" stroke-width="2"/><text x="16" y="20.3" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="9.5" fill="#111">RIT</text></svg>',
+  'mk:vent':'<svg viewBox="0 0 32 32" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"><circle cx="16" cy="16" r="12.5" fill="#e7f5ff"/><path d="M16 16c-.7-4 .5-7.5 3.7-8.4M16 16c3.5 2 5.3 5.3 4.3 8.5M16 16c-3 2.1-6.7 2.4-9 .1"/><circle cx="16" cy="16" r="1.8" fill="#111"/></svg>',
+  'mk:escala':`<svg viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" rx="6" fill="#ced4da"/>${EQ_SVG.escala}</svg>`,
+  'mk:byr':`<svg viewBox="0 0 32 32" fill="none">${EQ_SVG.byr}</svg>`,
+  'mk:remocion':`<svg viewBox="0 0 32 32" fill="none">${EQ_SVG.remocion}</svg>`};
+const EQN=[['line:ataque','Agua','Agua: línea con pitón (L)'],['mk:rit','RIT','Equipo de intervención rápida (6)'],['mk:vent','Ventiladores','Ventilador o exutorio (W)'],
+  ['mk:escala','Escalas','Escala (de mano o del material mayor) apoyada en la estructura'],['mk:byr','ByR','Búsqueda y rescate'],['mk:remocion','Remoción','Remoción de escombros y desarme (gancho)']];
+const EQ_MODES=EQN.map(x=>x[0]);
+RADIAL.equipos={btn:'#btnEquipos',icons:EI,items:EQN};
+let zonasT=null;
+/* menús radiales de la barra lateral (Zonas, Equipos): nodos que salen del botón */
+let radCur=null,zonasAt=0;
+function openRadial(key){clearTimeout(zonasT);const fz=$('#flyZonas'),M=RADIAL[key],b=$(M.btn);if(fz.classList.contains('open')&&radCur===key)return;
+  if(fz.classList.contains('open')){fz.classList.remove('show','open');}
+  radCur=key;const items=M.items,n=items.length;
   const w=$('#mapwrap').getBoundingClientRect(),r=b.getBoundingClientRect(),H=w.height,W=w.width;
   const up=isCompact();const ox=up?r.left+r.width/2-w.left:r.right-w.left+4,oy=up?r.top-w.top-4:r.top+r.height/2-w.top;
   const tok=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tok'))||1.15;
   const nr=32*tok,base=up?-90:0;
   // los nodos no deben tapar la barra de herramientas ni salir del mapa; cerca del borde se giran y se juntan
-  const fits=(x,y)=>y>=nr+4&&y<=H-nr-22&&x>=nr&&x<=W-nr&&(up?y<=oy-nr*.6:x>=ox+nr*.6);
+  const fits=(x,y,c)=>y>=nr+4&&y<=H-nr-22&&x>=nr&&x<=W-nr&&(up?y<=oy-(c||nr+6):x>=ox+(c||nr+6));
   const at=(a,r)=>{const t=a*Math.PI/180;return [ox+Math.cos(t)*r,oy+Math.sin(t)*r];};
-  let R=Math.round(96*Math.max(1,tok*.9)),SP=52,off=0;
-  found:for(const sp of [52,44,38])for(const r of [R,R+16])for(const o of [0,8,-8,16,-16,24,-24,32,-32,40,-40,48,-48]){if([-sp,0,sp].every(a=>fits(...at(base+a+o,r)))){R=r;SP=sp;off=o;break found;}}
-  let lines='',btns='';
-  ZN.forEach(([m,lab,t],i)=>{const a=(base+(i-1)*SP+off)*Math.PI/180,x=Math.round(Math.cos(a)*R),y=Math.round(Math.sin(a)*R);
+  const angs=(sp,o)=>items.map((_,i)=>base+(i-(n-1)/2)*sp+o);
+  const R0=Math.round((n<=3?96:122)*Math.max(1,tok*.9));let R=R0,SP=n<=3?52:34,off=0;
+  found:for(const sp of n<=3?[52,44,38]:up?[30,27,24,33,36]:[36,32,29,26])for(const rr of n<=3?[R0,R0+18,R0+36]:up?[R0+80,R0+60,R0+40,R0+100]:[R0+40,R0+60,R0+20,R0])for(const o of [0,8,-8,16,-16,24,-24,32,-32,40,-40,48,-48,56,-56]){if(angs(sp,o).every(a=>fits(...at(a,rr)))){R=rr;SP=sp;off=o;break found;}}
+  let lines='',btns='';const A=angs(SP,off);
+  items.forEach(([m,lab,t],i)=>{const a=A[i]*Math.PI/180,x=Math.round(Math.cos(a)*R),y=Math.round(Math.sin(a)*R);
     lines+=`<line x1="0" y1="0" x2="${x}" y2="${y}"/>`;
-    btns+=`<button class="zn${mode===m?' on':''}" data-zmode="${m}" title="${t}" style="left:${x}px;top:${y}px;transition-delay:${i*25}ms">${ZI[m]}<span class="zl">${lab}</span></button>`;});
-  // burbuja de cierre: junto al último nodo, o junto al primero si no cabe
-  let xp=null;for(const [a,k] of [[base+off-SP/2,.52],[base+off+SP/2,.52],[base+SP+off+34,.7],[base-SP+off-34,.7]]){const q=at(a,R*k);if(fits(...q)){xp=q;break;}}if(!xp)xp=at(base+off,R*.45);
+    btns+=`<button class="zn${mode===m?' on':''}" data-zmode="${m}" title="${t}" style="left:${x}px;top:${y}px;transition-delay:${i*22}ms">${M.icons[m]}<span class="zl">${lab}</span></button>`;});
+  // burbuja de cierre: entre los primeros nodos, cerca del botón
+  let xp=null;for(const [a,k] of [[A[0]+SP/2,.5],[A[n-1]-SP/2,.5],[A[n-1]+34,.7],[A[0]-34,.7]]){const q=at(a,R*k);if(fits(...q,16*tok+6)){xp=q;break;}}if(!xp)xp=at(base+off,R*.45);
   btns+=`<button class="zn zx" data-zmode="x" title="Cerrar" style="left:${Math.round(xp[0]-ox)}px;top:${Math.round(xp[1]-oy)}px">${GI.x}</button>`;
-  fz.style.left=ox+'px';fz.style.top=oy+'px';
+  fz.style.left=ox+'px';fz.style.top=oy+'px';fz.dataset.k=key;fz.classList.toggle('up',up);
   fz.innerHTML=`<svg class="glines" viewBox="-200 -200 400 400"><g class="gl-out">${lines}</g><g class="gl-in">${lines}</g></svg><span class="zo"></span>${btns}`;
   fz.classList.add('open');zonasAt=Date.now();requestAnimationFrame(()=>requestAnimationFrame(()=>fz.classList.add('show')));}
 function closeZonas(now){clearTimeout(zonasT);const fz=$('#flyZonas');if(!fz||!fz.classList.contains('open'))return;
   const go=()=>{fz.classList.remove('show');setTimeout(()=>{if(!fz.classList.contains('show'))fz.classList.remove('open');},140);};
   if(now===true)go();else zonasT=setTimeout(go,350);}
-function initZonas(){const fz=$('#flyZonas'),b=$('#btnZonas');
+function initZonas(){const fz=$('#flyZonas');
   const busy=e=>(e&&(e.buttons&1))||document.body.classList.contains('dragging-unit')||document.body.classList.contains('dragging-mark');
-  b.addEventListener('mouseenter',e=>{if(!busy(e)&&!isCompact())openZonas();});b.addEventListener('mouseleave',()=>closeZonas());
+  for(const [key,M] of Object.entries(RADIAL)){const b=$(M.btn);
+    b.addEventListener('mouseenter',e=>{if(!busy(e)&&!isCompact())openRadial(key);});b.addEventListener('mouseleave',()=>closeZonas());
+    b.addEventListener('click',e=>{e.stopPropagation();if(fz.classList.contains('open')&&radCur===key&&Date.now()-zonasAt>450)closeZonas(true);else openRadial(key);});}
   fz.addEventListener('mouseenter',()=>clearTimeout(zonasT));fz.addEventListener('mouseleave',()=>closeZonas());
-  b.addEventListener('click',e=>{e.stopPropagation();if(fz.classList.contains('open')&&Date.now()-zonasAt>450)closeZonas(true);else openZonas();});
   fz.addEventListener('click',e=>{e.stopPropagation();const n=e.target.closest('[data-zmode]');if(!n)return;const m=n.dataset.zmode;closeZonas(true);if(m==='x')return;
     select(null);setMode(m===mode?'select':m);});
-  document.addEventListener('pointerdown',e=>{if(fz.classList.contains('open')&&!e.target.closest('#flyZonas,#btnZonas'))closeZonas(true);},true);
+  document.addEventListener('pointerdown',e=>{if(fz.classList.contains('open')&&!e.target.closest('#flyZonas,#btnZonas,#btnEquipos'))closeZonas(true);},true);
 }
 
 /* ---- menú radial del grifo: nodos que salen del grifo seleccionado ---- */
@@ -1401,12 +1435,13 @@ function markHTML(m){
     case 'piscina':return `<div class="m-pisc"><svg viewBox="0 0 24 14"><path d="M3 5c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>`;
     case 'mayday':return m.mstate==='resuelto'?`<div class="m-mayday ok" title="MAYDAY resuelto">✓ MAYDAY</div>`:`<div class="m-mayday">MAYDAY${m.text?`<span class="t">${esc(m.text)}</span>`:''}</div>`;
     case 'rit':return `<div class="m-rit">RIT${m.text?`<span class="rt">${esc(m.text)}</span>`:''}</div>`;
+    case 'escala':case 'byr':case 'remocion':return `<div class="m-eq k-${m.kind}" title="${MARK_LABEL[m.kind]}">${eqIcon(m.kind)}${m.text?`<span class="pt">${esc(m.text)}</span>`:''}</div>`;
     case 'texto':return `<div class="m-text">${esc(m.text||'TEXTO')}</div>`;
     case 'lado':return `<div class="m-side">${esc(m.letter)}</div>`;
   }
   return '<div>?</div>';
 }
-const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,humo:4,fuego:5,vent:6,piton:20,victima:40,rit:30,pm:50,espera:50,acv:50,pap:50,pas:50,mayday:60};
+const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,humo:4,fuego:5,vent:6,piton:20,victima:40,rit:30,escala:25,byr:25,remocion:25,pm:50,espera:50,acv:50,pap:50,pas:50,mayday:60};
 function draftFromMarker(pos){if(isDrawing()){draft.push(pos);updateDraft();return true;}return false;}
 function makeDraggable(kind,id,el,m){
   m.on('dragstart',()=>{if(gMenu&&gMenu.markId===id)closeGrifoMenu();el.classList.add('dragging');el._drag=true;document.body.classList.add('dragging-mark');$('#flyInst').classList.remove('open');});
@@ -1621,6 +1656,9 @@ const HINTS={
   'mk:piscina':'Clic en el mapa para ubicar una <b>piscina</b> (estanque)',
   'mk:mayday':'Clic en el mapa donde está el <b>MAYDAY</b>',
   'mk:rit':'Clic en el mapa donde se ubica el <b>RIT</b>',
+  'mk:escala':'Clic donde está apoyada la <b>escala</b> (o arrastra el botón al mapa)',
+  'mk:byr':'Clic donde trabaja el equipo de <b>búsqueda y rescate</b>',
+  'mk:remocion':'Clic donde se hace <b>remoción</b>',
   'mk:texto':'Clic en el mapa para poner un <b>texto</b>',
   'zrm':'',
   'pickA':'Haz clic en el borde de la estructura que es el <b>FRENTE (lado A)</b>'
@@ -1654,6 +1692,7 @@ function setMode(m){
   $$('#tools [data-mode],#flyInst [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m||(m==='pickA'&&b.dataset.mode==='poly:estructura')));
   $('#btnInst').classList.toggle('on',INST_MODES.includes(m));
   $('#btnZonas').classList.toggle('on',ZONE_MODES.includes(m)||m==='pickA');
+  $('#btnEquipos').classList.toggle('on',EQ_MODES.includes(m));
   renderHint();
   if(map){map.getCanvas().style.cursor=m==='select'?'':'crosshair';
     if(isDrawing()||m==='zrm')map.doubleClickZoom.disable();else map.doubleClickZoom.enable();}
@@ -1814,6 +1853,9 @@ function renderPanel(){
     if(m.kind==='mayday')h+=`<label class="l">Estado</label>${segBtns('mstate',[['activo','Activo'],['resuelto','✓ Resuelto (bombero fuera)']],m.mstate||'activo')}`;
     if(m.kind==='mayday')h+=`<label class="l">Rótulo bajo la pastilla (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: piso 2 · lado C">`;
     if(m.kind==='pm')h+=`<label class="l">Rótulo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="PC">`;
+    if(EQ_KINDS.includes(m.kind)){const sc=state.units.filter(u=>u.pos&&u.status!=='retirado').sort((a,b)=>a.code.localeCompare(b.code,'es',{numeric:true}));
+      h+=`<label class="l">Compañía / carro (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="${m.kind==='escala'?'ej: Q-7 · escala de 10 m lado B':'ej: 7ª Cía. · piso 2'}">`+
+        (sc.length?`<div class="seg" style="margin-top:6px">${sc.map(u=>`<button data-act="qtext" data-v="${esc(u.code)}" class="${m.text===u.code?'on':''}">${esc(u.code)}</button>`).join('')}</div>`:'');}
     if(m.kind==='rit'){const sc=state.units.filter(u=>u.pos&&u.status!=='retirado').sort((a,b)=>a.code.localeCompare(b.code,'es',{numeric:true}));
       h+=`<label class="l">Compañía / carro a cargo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: 19ª Cía. · B-19">`+
         (sc.length?`<div class="seg" style="margin-top:6px">${sc.map(u=>`<button data-act="qtext" data-v="${esc(u.code)}" class="${m.text===u.code?'on':''}">${esc(u.code)}</button>`).join('')}</div>`:'');}
@@ -2223,6 +2265,9 @@ function drawMarkSnap(g,m,x,y){
       const bx=pillBox(g,x,y,'RIT',{fs,h:fs*1.5,padX:1.6,bg:'#66ff1a',border:'#0b0b0b',outer:'#fff',extraW:w2});
       const rx=bx.x+fs*.8;g.textAlign='left';g.textBaseline='middle';g.fillStyle='#0b0b0b';g.font=FONT(800,fs);g.fillText('RIT',rx,y+fs*.05);
       if(t2){const sx=rx+g.measureText('RIT').width+fs*.4;g.fillStyle='rgba(0,0,0,.55)';g.fillRect(sx,y-fs*.5,2,fs);g.fillStyle='#0b0b0b';g.fillText(t2,sx+fs*.4,y+fs*.05);}break;}
+    case 'escala':case 'byr':case 'remocion':{const d=38*tok;rr(g,x-d/2-2,y-d/2-2,d+4,d+4,9);g.fillStyle='#fff';g.fill();rr(g,x-d/2,y-d/2,d,d,7);g.fillStyle='#111';g.fill();
+      rr(g,x-d/2+2.5,y-d/2+2.5,d-5,d-5,5);g.fillStyle=m.kind==='escala'?'#ced4da':'#f1f3f5';g.fill();const im=eqImg(m.kind);if(im.complete&&im.naturalWidth)g.drawImage(im,x-d*.42,y-d*.42,d*.84,d*.84);
+      if(m.text)darkLabel(g,[m.text],x,y+d/2+4,13*tok);break;}
     case 'texto':{const fs=20*tok;centerText(g,(m.text||'TEXTO').toUpperCase(),x,y,FONT(800,fs),'#fff',{w:4,c:'#000'});break;}
   }
 }

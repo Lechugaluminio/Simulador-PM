@@ -38,7 +38,8 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 2. **Dibujar la estructura.** Botón **Zonas** → *Estructura* (los nodos se abren junto al botón): clic en las esquinas. Los lados **A–D** se ponen solos; el botón **A abajo** orienta el mapa como en la pizarra.
 3. **Marcar el fuego.** *Zonas → Área fuego* (achurada), *Colapso*, *Foco*. Si hay riesgo de colapso, *Zonas → ZRM* marca la zona de resguardo de material mayor.
    En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo* y *Víctima* (cantidad; al marcarla rescatada queda como un punto verde chico).
-   *Línea de ataque*: del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). En Territorio se ve solo el recorrido, sin rótulo.
+   El botón **Equipos** abre en nodos *Agua*, *RIT*, *Ventiladores*, *Escalas*, *ByR* (búsqueda y rescate) y *Remoción*.
+   *Agua* (línea de ataque): del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). En Territorio se ve solo el recorrido, sin rótulo.
    *Pisos*: en el panel de la estructura se indican pisos y subterráneos; aparece la columna de pisos junto al edificio (ver 3.4).
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª a 6ª alarma, o *Sin alarma* para carros que salen solos al incidente), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
@@ -119,13 +120,16 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Zonas → ZRM | `R` | ambas | Zona de resguardo de material mayor (ODD 093/2021, POE PMMA): roja semitransparente con borde rojo segmentado. Clic en los dos extremos de la fachada con riesgo de colapso y un tercer clic hacia la calle: la zona sale 1,5 veces la altura de la fachada y 45° hacia los costados. La altura y el lado se ajustan en el panel |
 | Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco). Al marcarlo *ventilado* queda como un ícono chico de viento |
-| Ventilación | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
+| Equipos → Ventiladores | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
 | Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
-| Línea de ataque | `L` | ambas | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
+| Equipos → Agua (línea de ataque) | `L` | ambas (el botón está en Estructura) | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | ambas | Llama en el punto de origen. Al marcarlo *extinto* queda como un ícono chico de mecha recién apagada |
 | Víctima | `X` | Estructura | Víctima confirmada con cantidad; al marcarla *rescatada* queda como un punto verde chico |
 | MAYDAY | `5` | Estructura | Pastilla roja de MAYDAY en el lugar del bombero. Al marcarlo *resuelto* (bombero fuera) queda como una pastilla verde chica `✓ MAYDAY`, sin pulso |
-| RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
+| Equipos → RIT | `6` | Estructura | Pastilla verde con la compañía a cargo |
+| Equipos → Escalas | — | Estructura | Escala negra sobre fondo gris donde está apoyada; lleva compañía o carro y piso |
+| Equipos → ByR | — | Estructura | Búsqueda y rescate: hacha y halligan cruzados; lleva compañía y piso |
+| Equipos → Remoción | — | Estructura | Remoción (gancho tipo New York hook); lleva compañía y piso |
 | Puesto de Comando | `2` | Territorio | Rectángulo naranja con **PC** (estándar SCI) |
 | Zona de espera | `7` | Territorio | Círculo amarillo con **E** |
 | ACV | `8` | Territorio | Círculo amarillo: área de concentración de víctimas |
