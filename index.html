@@ -356,6 +356,22 @@ body.sun #btnSun{background:#ffd60a;border-color:#000;color:#000}
   #title{min-width:140px}
   body.sun .clock b{font-size:22px}body.sun #summary{font-size:14px}body.sun #summary b{font-size:18px}body.sun #title{min-width:150px}
 }
+
+/* menú radial del grifo */
+.gmenu{width:0;height:0;position:relative}
+.gmenu .glines{position:absolute;left:-200px;top:-200px;width:400px;height:400px;overflow:visible;pointer-events:none;opacity:0;transition:opacity .14s}
+.gmenu.open .glines{opacity:1}
+.gmenu .gl-out line{stroke:#fff;stroke-width:7;stroke-linecap:round}
+.gmenu .gl-in line{stroke:#111;stroke-width:3;stroke-linecap:round}
+.gmenu .gring{position:absolute;left:0;top:0;width:calc(40px * var(--tok));height:calc(40px * var(--tok));transform:translate(-50%,-50%);border-radius:50%;border:4px solid var(--sel);box-shadow:0 0 0 2px #fff,0 0 12px rgba(0,213,255,.7);pointer-events:none}
+.gmenu .gn{position:absolute;width:calc(54px * var(--tok));height:calc(54px * var(--tok));padding:0;border-radius:50%;background:#fff;border:3px solid #111;box-shadow:0 0 0 2.5px #fff,0 4px 12px rgba(0,0,0,.5);display:grid;place-items:center;cursor:pointer;
+  transform:translate(-50%,-50%) scale(.3);opacity:0;transition:transform .16s cubic-bezier(.2,1.4,.4,1),opacity .14s}
+.gmenu.open .gn{transform:translate(-50%,-50%) scale(1);opacity:1}
+.gmenu .gn svg{width:72%;height:72%}
+.gmenu .gn:hover{background:#fff3bf}
+.gmenu .gn.on{background:#ffe3e3;border-color:#e03131}
+.gmenu .gn.gx{width:calc(30px * var(--tok));height:calc(30px * var(--tok));border-width:2.5px}
+.gmenu .gn.gx svg{width:62%;height:62%}
 /* ---------- copia de terreno (fork en el celular) ---------- */
 #forkInfo{display:none;flex-direction:column;align-items:flex-start;line-height:1.05;background:#7c3aed;color:#fff;border-radius:8px;padding:4px 9px;font-family:var(--fc)}
 #forkInfo small{font-family:var(--fb);font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
@@ -1212,6 +1228,55 @@ async function initGrifos(force){
   }
 }
 
+/* ---- menú radial del grifo: nodos que salen del grifo seleccionado ---- */
+const GI={
+  conn:'<svg viewBox="0 0 32 32"><path d="M8 8.5a4 4 0 0 1 8 0z" fill="#ffd60a" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/><rect x="9" y="8.5" width="6" height="15" fill="#ffd60a" stroke="#111" stroke-width="1.6"/><rect x="6.5" y="23.5" width="11" height="3.5" rx="1" fill="#ffd60a" stroke="#111" stroke-width="1.6"/><rect x="15" y="13" width="3" height="4.5" fill="#ffd60a" stroke="#111" stroke-width="1.6"/><path d="M18 15.2c5 0 6.5 2.5 6.5 6s2 6.3 6 6.3" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><path d="M18 15.2c5 0 6.5 2.5 6.5 6s2 6.3 6 6.3" fill="none" stroke="#1c7ed6" stroke-width="3" stroke-linecap="round"/></svg>',
+  disc:'<svg viewBox="0 0 32 32"><path d="M6 8.5a4 4 0 0 1 8 0z" fill="#ffd60a" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/><rect x="7" y="8.5" width="6" height="15" fill="#ffd60a" stroke="#111" stroke-width="1.6"/><rect x="4.5" y="23.5" width="11" height="3.5" rx="1" fill="#ffd60a" stroke="#111" stroke-width="1.6"/><rect x="13" y="13" width="3" height="4.5" fill="#ffd60a" stroke="#111" stroke-width="1.6"/><path d="M18.5 15.2h10M25 11.2l4 4-4 4" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 15.2h10M25 11.2l4 4-4 4" fill="none" stroke="#e03131" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  dry:'<svg viewBox="0 0 32 32"><path d="M16 3.5c4.2 6.2 8.5 10.4 8.5 15.6a8.5 8.5 0 0 1-17 0c0-5.2 4.3-9.4 8.5-15.6z" fill="#74c0fc" stroke="#1864ab" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 9.5l15 15M23.5 9.5l-15 15" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M8.5 9.5l15 15M23.5 9.5l-15 15" stroke="#e03131" stroke-width="3.4" stroke-linecap="round"/></svg>',
+  sv:'<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.7" fill="#fab005" stroke="#111" stroke-width="1.5"/><path d="M9 21l1-7-2-1 1-4h6l1 4-2 1 1 7z" fill="#fab005" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+  x:'<svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" stroke="#111" stroke-width="3" stroke-linecap="round"/></svg>'
+};
+let gMenu=null;
+// cualquier clic fuera del menú (mapa, otro carro o marca, paneles, barra) lo cierra
+document.addEventListener('pointerdown',e=>{if(gMenu&&!(e.target.closest&&e.target.closest('.gmenu')))closeGrifoMenu();},true);
+function closeGrifoMenu(){if(!gMenu)return;const g=gMenu;gMenu=null;g.el.classList.remove('open');setTimeout(()=>g.mk.remove(),140);}
+function openGrifoMenu(pos,markId){
+  closeGrifoMenu();if(!map)return;
+  const m=markId?getMark(markId):null;const st=m?(m.seco?'seco':'uso'):'nada';
+  const p=map.project(pos),c=map.getContainer(),W=c.clientWidth,H=c.clientHeight;
+  // los nodos se abren hacia el centro del mapa para no quedar fuera de la pantalla
+  let base=Math.atan2(H/2-p.y,W/2-p.x);if(Math.hypot(W/2-p.x,H/2-p.y)<140)base=-Math.PI/2;
+  const tok=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tok'))||1.15;
+  const R=Math.round(86*tok),SPREAD=0.95;
+  const nodes=[
+    st==='uso'?{k:'disc',t:'Desconectar manguera (quitar grifo en uso)'}:{k:'conn',t:'Conectar manguera: grifo en uso'},
+    {k:'dry',t:st==='seco'?'Quitar “sin agua”':'Grifo sin agua',on:st==='seco'},
+    {k:'sv',t:'Ver en Street View'}];
+  const el=document.createElement('div');el.className='gmenu';
+  let lines='',btns='';
+  nodes.forEach((n,i)=>{const a=base+(i-1)*SPREAD,x=Math.round(Math.cos(a)*R),y=Math.round(Math.sin(a)*R);
+    lines+=`<line x1="0" y1="0" x2="${x}" y2="${y}"/>`;
+    btns+=`<button class="gn${n.on?' on':''}" data-g="${n.k}" title="${n.t}" aria-label="${n.t}" style="left:${x}px;top:${y}px;transition-delay:${i*25}ms">${GI[n.k]}</button>`;});
+  const ax=base+Math.PI*0.62,xr=R*0.62;
+  btns+=`<button class="gn gx" data-g="x" title="Cerrar" aria-label="Cerrar" style="left:${Math.round(Math.cos(ax)*xr)}px;top:${Math.round(Math.sin(ax)*xr)}px">${GI.x}</button>`;
+  el.innerHTML=`<svg class="glines" viewBox="-200 -200 400 400"><g class="gl-out">${lines}</g><g class="gl-in">${lines}</g></svg><div class="gring"></div>${btns}`;
+  const mk=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(pos).addTo(map);el.style.zIndex=400;
+  el.addEventListener('mousedown',e=>e.stopPropagation());
+  el.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-g]');if(b)grifoAction(b.dataset.g);});
+  gMenu={mk,el,pos,markId};
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('open')));
+}
+function grifoAction(k){
+  if(!gMenu)return;const {pos,markId}=gMenu;const m=markId?getMark(markId):null;
+  if(k==='x'){closeGrifoMenu();return;}
+  if(k==='sv'){window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pos[1].toFixed(6)},${pos[0].toFixed(6)}`,'_blank','noopener');closeGrifoMenu();return;}
+  const drop=()=>{state.marks=state.marks.filter(x=>x.id!==markId);};
+  if(k==='conn'){if(m)m.seco=false;else state.marks.push({id:uid(),kind:'grifo',pos:pos.slice(),text:''});}
+  else if(k==='disc'){drop();toast('Grifo desconectado',[{label:'Deshacer',fn:undo}],5000);}
+  else if(k==='dry'){if(m&&m.seco)drop();else if(m)m.seco=true;else state.marks.push({id:uid(),kind:'grifo',pos:pos.slice(),text:'',seco:true});}
+  closeGrifoMenu();commit();
+}
+
 /* ---- marcadores HTML (carros, marcas, etiquetas) ---- */
 const mkUnits=new Map(),mkMarks=new Map(),mkLabels=new Map();let vHandles=[];
 function tokenHTML(u,mini){
@@ -1247,7 +1312,7 @@ function markHTML(m){
 const MARK_Z={lado:3,texto:2,grifo:2,piscina:2,humo:4,fuego:5,vent:6,piton:20,victima:40,rit:30,pm:50,espera:50,acv:50,pap:50,pas:50,mayday:60};
 function draftFromMarker(pos){if(isDrawing()){draft.push(pos);updateDraft();return true;}return false;}
 function makeDraggable(kind,id,el,m){
-  m.on('dragstart',()=>{el.classList.add('dragging');el._drag=true;document.body.classList.add('dragging-mark');$('#flyInst').classList.remove('open');});
+  m.on('dragstart',()=>{if(gMenu&&gMenu.markId===id)closeGrifoMenu();el.classList.add('dragging');el._drag=true;document.body.classList.add('dragging-mark');$('#flyInst').classList.remove('open');});
   m.on('dragend',()=>{el.classList.remove('dragging');el._drag=false;document.body.classList.remove('dragging-mark');el._dragEnd=Date.now();const ll=m.getLngLat();
     const o=kind==='unit'?getUnit(id):getMark(id);if(o){o.pos=[ll.lng,ll.lat];commit();}});
   el.addEventListener('click',ev=>{
@@ -1255,6 +1320,7 @@ function makeDraggable(kind,id,el,m){
     if(Date.now()-(el._dragEnd||0)<300)return;
     const o=kind==='unit'?getUnit(id):getMark(id);
     if(o&&draftFromMarker(o.pos))return;
+    if(o&&mode==='select'&&kind==='mark'&&o.kind==='grifo'){select(null);openGrifoMenu(o.pos,o.id);return;}
     if(o&&mode==='select'){select({type:kind,id});}
   });
 }
@@ -1478,6 +1544,7 @@ function onHintClick(e){
   if(a==='cancel'){if(mode==='pickA')pendingFront=null;setMode('select');}
 }
 function setMode(m){
+  closeGrifoMenu();
   {const sm=(m.startsWith('mk:')||m.startsWith('poly:')||m.startsWith('line:'))?scaleOf(m.split(':')[1]):(INST_MODES.includes(m)?'terr':'both');
    if(sm!=='both'&&sm!==(settings.view==='estr'?'estr':'terr')){settings.view=sm;saveSettings();applyView();}}
   if(isDrawing()&&m!==mode){draft=[];updateDraft();}
@@ -1518,6 +1585,7 @@ function pitonGuess(pos){
 function onMapClick(e){
   const t=e.originalEvent&&e.originalEvent.target;
   if(t&&t.closest&&t.closest('.maplibregl-marker'))return;
+  closeGrifoMenu();
   const ll=[e.lngLat.lng,e.lngLat.lat];
   if(isDrawing()){
     if(mode.startsWith('poly:')&&draft.length>=3){const p0=map.project(draft[0]);if(Math.hypot(p0.x-e.point.x,p0.y-e.point.y)<12){finishDraft();return;}}
@@ -1536,7 +1604,7 @@ function onMapClick(e){
   const fs=map.queryRenderedFeatures(b,{layers:PICK_LAYERS.filter(l=>map.getLayer(l))});
   if(!fs.length&&map.getLayer('grifos')){const g=map.queryRenderedFeatures([[e.point.x-10,e.point.y-10],[e.point.x+10,e.point.y+10]],{layers:['grifos']});
     if(g.length){const pos=g[0].geometry.coordinates.slice();const emp=['','Aguas Andinas','Aguas Cordillera','Aguas Manquehue'][g[0].properties.e]||'';
-      select(null);toast('Grifo '+emp,[{label:'Marcar en uso',fn:()=>{const m={id:uid(),kind:'grifo',pos,text:''};state.marks.push(m);commit();}},{label:'Marcar sin agua',fn:()=>{const m={id:uid(),kind:'grifo',pos,text:'',seco:true};state.marks.push(m);commit();}},{label:'Street View',fn:()=>window.open(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pos[1].toFixed(6)},${pos[0].toFixed(6)}`,'_blank','noopener')}],8000,{key:'grifo',corner:true});return;}}
+      select(null);openGrifoMenu(pos,null);return;}}
   select(fs.length?{type:'shape',id:fs[0].properties.id}:null);
 }
 function onMapMove(e){if(isDrawing()&&draft.length)updateDraft([e.lngLat.lng,e.lngLat.lat]);}
@@ -2667,6 +2735,7 @@ function onKey(e){
   const tag=(e.target.tagName||'').toLowerCase();const typing=tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
   if(e.key==='Escape'){
     if($('#modal').classList.contains('open')){closeModal();return;}
+    if(gMenu){closeGrifoMenu();return;}
     if(typing){e.target.blur();return;}
     if(mode==='pickA'){pendingFront=null;}
     if(mode!=='select')setMode('select');else select(null);
@@ -2716,7 +2785,7 @@ function tick(){checkPAR();$('#clock').textContent=new Date().toLocaleTimeString
       applySettings();}
     return loadMapLib();}).then(initMap).catch(err=>showMapError('No se pudo cargar el mapa: '+err.message+'. Revisa la conexión a internet y recarga la página.'));
 })();
-window.__croquis={commit:()=>commit(),changes:()=>computeChanges(),get state(){return state;},get map(){return map;},setMode,select,orientA,snap:()=>renderSnapshot(2).then(cv=>cv.toDataURL('image/jpeg',.92)),pack:()=>packState(),packFull:()=>packFull()};
+window.__croquis={commit:()=>commit(),changes:()=>computeChanges(),get state(){return state;},get map(){return map;},setMode,select,orientA,snap:()=>renderSnapshot(2).then(cv=>cv.toDataURL('image/jpeg',.92)),pack:()=>packState(),packFull:()=>packFull(),grifoMenu:(p,id)=>openGrifoMenu(p,id)};
 })();
 </script>
 </body>

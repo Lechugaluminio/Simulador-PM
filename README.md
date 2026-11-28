@@ -42,7 +42,7 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
    *Pisos*: en el panel de la estructura se indican pisos y subterráneos; aparece la columna de pisos junto al edificio (ver 3.4).
 4. **Cargar el despacho.** Elegir la salida (despacho inicial, 1ª a 6ª alarma, o *Sin alarma* para carros que salen solos al incidente), pegar los códigos (`B-21 BX-22 Q-7 RX-6…`) y pulsar *Agregar*. Quedan en **Por ubicar**.
 5. **Ubicar los carros al llegar.** Arrastrarlos al mapa: queda registrada la hora de llegada. Clic en la pieza para asignar estado, función, lado y nota.
-6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z, PAP o PAS → bomba) y *Calle cortada*. Los grifos se marcan en uso o sin agua con un clic. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
+6. **Instalaciones y avisos.** En la vista **Territorio**: PC, zona de espera (E), ACV, PAP, PAS, *Línea de abastecimiento* (grifo → Z, PAP o PAS → bomba) y *Calle cortada*. Clic en un grifo abre un menú de íconos alrededor de él: conectar manguera (en uso) o desconectar, sin agua y Street View. RIT con la compañía a cargo y MAYDAY van en la vista Estructura.
 7. **Mostrar.** *Presentación* para la pantalla grande del PM, o *Imagen* para copiar o descargar el croquis.
 8. **Llevar a terreno.** Un ayudante escanea el QR y se lleva una copia editable al celular. Al volver, *Cambios* muestra qué se modificó.
 9. **Enviar un escenario.** *Compartir → Enlace para seguir editando* genera un link con el escenario completo para mandarlo por correo o mensajería; quien lo abre lo ve tal cual y sigue editándolo en su computador.
@@ -151,7 +151,7 @@ Las medidas de mangueras y pitones van en milímetros, como en las guías de la 
 | Aguas Andinas · *Ubicación de grifos* | Grifos de Aguas Andinas, Aguas Cordillera y Aguas Manquehue | Una vez por semana o desde *Menú → Actualizar grifos*; quedan guardados en el navegador |
 | [Open-Meteo](https://open-meteo.com/) | Viento: velocidad, dirección y ráfagas a 10 m, y a 80, 120 y 180 m para edificios altos (pronóstico de modelos meteorológicos) | Al ubicar el incidente y cada 15 min; se pide con coordenadas redondeadas a ~1 km |
 
-Clic en un grifo de Aguas Andinas para marcarlo **en uso** o **sin agua** (gris con una raya roja). Clic en un grifo marcado para cambiar su estado o desmarcarlo.
+Clic en un grifo (de Aguas Andinas o ya marcado) y se abren alrededor de él, como nodos, cuatro botones grandes: **grifo con manguera** para marcarlo en uso (si ya está en uso pasa a **grifo con flecha**, que lo desconecta), **gota tachada** para marcarlo sin agua (gris con una raya roja; otro clic lo quita), **monito de Street View** para ver la esquina, y una **✕** pequeña para cerrar. También se cierra con Esc o con un clic en cualquier otra parte.
 
 El control *Atenuar* oscurece el mapa para que las piezas resalten.
 
