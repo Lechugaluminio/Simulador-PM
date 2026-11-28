@@ -757,8 +757,8 @@ function colAnchor(c,b){if(!c.colRel)return {p:[b.x1,b.y0],tr:'translate(10px,0)
 function colXY(c,b,w,h){return c.colRel?[absAxis(c.colRel.x,w,b.x0,b.x1),absAxis(c.colRel.y,h,b.y0,b.y1)]:[b.x1+10,b.y0];}
 function autoFloor(o){if(!floorSel||settings.view!=='estr'||!canFloor(o))return;if(sidAt(posOf(o))===floorSel.sid)o.piso=floorSel.f;}
 function floorField(o){const sid=sidAt(posOf(o)),st=sid&&getShape(sid);const fl=(st?floorsOf(st):['T','3','2','1']).slice().reverse();
-  if(fl.length<=9)return `<label class="l">Piso</label>${segBtns('piso',fl.map(f=>[f,floorTag(f)]),o.piso||'')}`;
-  return `<label class="l">Piso</label><div class="cnt"><button data-act="pisoStep" data-v="-1">−</button><b style="min-width:70px">${o.piso?floorTag(o.piso):'—'}</b><button data-act="pisoStep" data-v="1">+</button></div>`;}
+  if(fl.length<=9)return `<label class="l">Piso</label>${segBtns('piso',[['','Sin piso'],...fl.map(f=>[f,floorTag(f)])],o.piso||'')}`;
+  return `<label class="l">Piso</label><div class="cnt"><button data-act="pisoStep" data-v="-1">−</button><b style="min-width:70px">${o.piso?floorTag(o.piso):'Sin piso'}</b><button data-act="pisoStep" data-v="1">+</button><button data-act="piso" data-v="" style="width:auto;font-size:14px;padding:6px 10px">Sin piso</button></div>`;}
 const shapeText=(x,vw)=>x.kind==='zrm'?['ZRM',x.label||''].filter(Boolean).join(' · '):[(vw||settings.view)==='estr'&&FLOOR_SHAPES.has(x.kind)&&x.piso?floorTag(x.piso):'',x.label||''].filter(Boolean).join(' · ');
 function withMM(label,v){label=(label||'').trim();const re=/\b\d{2,3}\s?mm\b/;if(re.test(label))return label.replace(re,v);return label?v+' · '+label:v;}
 const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
