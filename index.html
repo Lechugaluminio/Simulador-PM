@@ -1683,6 +1683,9 @@ function onHintClick(e){
 }
 function setMode(m){
   closeGrifoMenu();
+  // al tomar otra herramienta se cierran el panel de lo seleccionado y los menús abiertos
+  if(m!=='select'&&!m.startsWith('place:')&&selected){selected=null;editingId=null;render();}
+  ['#flyInst','#menu','#shareMenu'].forEach(q=>{const e=$(q);if(e)e.classList.remove('open');});
   {const sm=(m.startsWith('mk:')||m.startsWith('poly:')||m.startsWith('line:'))?scaleOf(m.split(':')[1]):(INST_MODES.includes(m)?'terr':'both');
    if(sm!=='both'&&sm!==(settings.view==='estr'?'estr':'terr')){settings.view=sm;saveSettings();applyView();}}
   if(isDrawing()&&m!==mode){draft=[];updateDraft();}
