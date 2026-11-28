@@ -118,10 +118,10 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Zonas → Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
 | Zonas → Área fuego | `F` | ambas | Zona con fuego, achurada en rojo |
 | Zonas → ZRM | `R` | ambas | Zona de resguardo de material mayor (ODD 093/2021, POE PMMA): roja semitransparente con borde rojo segmentado. Clic en los dos extremos de la fachada con riesgo de colapso y un tercer clic hacia la calle: la zona sale 1,5 veces la altura de la fachada y 45° hacia los costados. La altura y el lado se ajustan en el panel |
-| Colapso | `C` | Estructura | Zona de colapso |
+| Zonas → Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco). Al marcarlo *ventilado* queda como un ícono chico de viento |
 | Equipos → Ventiladores | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
-| Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
+| Zonas → Muro con riesgo | `M` | Estructura | Franja amarilla y negra sobre el muro con riesgo de colapso |
 | Equipos → Agua (línea de ataque) | `L` | ambas (el botón está en Estructura) | Del carro al pitón. La punta es el pitón: flecha llena (chorro), doble (monitor) o hueca (espuma). Diámetro de 38, 45, 52 o 70 mm y color a elegir |
 | Foco | `1` | ambas | Llama en el punto de origen. Al marcarlo *extinto* queda como un ícono chico de mecha recién apagada |
 | Víctima | `X` | Estructura | Víctima confirmada con cantidad; al marcarla *rescatada* queda como un punto verde chico |

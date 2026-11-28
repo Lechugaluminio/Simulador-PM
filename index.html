@@ -579,10 +579,8 @@ body.sun #wind{border:3px solid #000;box-shadow:none}
     <nav id="tools">
       <button data-mode="select" title="Seleccionar y mover (V / Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6 3l13 8-6 1.5L10 19z"/></svg>Mover</button>
       <div class="sep"></div>
-      <button class="grp" id="btnZonas" title="Zonas: estructura, área con fuego y ZRM (zona de resguardo de material mayor)"><svg class="i" viewBox="0 0 24 24"><path d="M3 9l6-4 7 3-1.5 8-9 1z"/><path d="M11 21l2-6h7l2 6z" stroke-dasharray="2.4 1.8"/></svg>Zonas <span class="chev">▸</span></button>
-      <button data-mode="poly:colapso" data-sc="estr" title="Zona de colapso / peligro (C)"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 2.5"/><path d="M12 9v4M12 16v.5"/></svg>Colapso</button>
+      <button class="grp" id="btnZonas" title="Zonas: estructura, área con fuego, ZRM, colapso y muro con riesgo"><svg class="i" viewBox="0 0 24 24"><path d="M3 9l6-4 7 3-1.5 8-9 1z"/><path d="M11 21l2-6h7l2 6z" stroke-dasharray="2.4 1.8"/></svg>Zonas <span class="chev">▸</span></button>
       <button data-mode="mk:humo" data-sc="estr" title="Humo: clic o arrastra al mapa (U)"><svg class="i" viewBox="0 0 24 24"><path d="M5 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15.6 8 3.5 3.5 0 0 1 19 14.5"/><path d="M4 20h15M7 13.5h9"/></svg>Humo</button>
-      <button data-mode="line:muro" data-sc="estr" title="Muro con riesgo de colapso: dibújalo sobre el muro (M)"><svg class="i" viewBox="0 0 24 24"><path d="M3 19h18M4 19V9l4-2 4 2v10M12 19v-6l4-2 4 2v6"/><path d="M8 11v3M16 14v2"/></svg>Muro riesgo</button>
       <button data-mode="line:trazo" title="Trazo discontinuo libre (K)"><svg class="i" viewBox="0 0 24 24"><path d="M3 17L21 7" stroke-dasharray="3.5 3"/></svg>Trazo</button>
       <div class="sep"></div>
       <button data-mode="mk:fuego" data-sc="estr" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
@@ -1290,13 +1288,15 @@ function zrmClick(ll){
 
 /* ---- menú "Zonas": nodos que salen del botón de la barra lateral ---- */
 const RADIAL={};
-const ZONE_MODES=['poly:estructura','poly:fuego','zrm'];
+const ZONE_MODES=['poly:estructura','poly:fuego','zrm','poly:colapso','line:muro'];
 const ZI={
   'poly:estructura':'<svg viewBox="0 0 32 32"><path d="M5 11l10-6 12 5-2.5 14L7 26z" fill="#ffd166" fill-opacity=".55" stroke="#111" stroke-width="2.4" stroke-linejoin="round"/></svg>',
   'poly:fuego':'<svg viewBox="0 0 32 32"><defs><clipPath id="zic"><rect x="5" y="5" width="22" height="22" rx="1.5"/></clipPath></defs><rect x="5" y="5" width="22" height="22" rx="1.5" fill="#ff3b30" fill-opacity=".28"/><g clip-path="url(#zic)" stroke="#e00000" stroke-width="2.2"><path d="M-2 16L16-2M-2 26L26-2M4 32L32 4M14 32L32 14M24 32L32 24"/></g><rect x="5" y="5" width="22" height="22" rx="1.5" fill="none" stroke="#e00000" stroke-width="2.6"/></svg>',
+  'poly:colapso':'<svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="2" fill="#ffd60a" fill-opacity=".35" stroke="#111" stroke-width="2.4" stroke-dasharray="4 3"/><path d="M16 10v8" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="22.5" r="1.8" fill="#111"/></svg>',
+  'line:muro':'<svg viewBox="0 0 32 32"><path d="M3 24h26" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M3 24h26" stroke="#ffd60a" stroke-width="5" stroke-linecap="butt"/><path d="M6 24h3M13 24h3M20 24h3" stroke="#111" stroke-width="5"/><path d="M8 20V9l5-3 5 3v11M18 20v-7l5-3 5 3v7" fill="none" stroke="#111" stroke-width="2" stroke-linejoin="round"/></svg>',
   'zrm':'<svg viewBox="0 0 32 32"><rect x="9" y="3" width="14" height="9" fill="#dee2e6" stroke="#111" stroke-width="1.8"/><path d="M9 12h14l7 15H2z" fill="#ff2a2a" fill-opacity=".3" stroke="#e00000" stroke-width="2.2" stroke-dasharray="3 2" stroke-linejoin="round"/><text x="16" y="23.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="8" fill="#e00000">ZRM</text></svg>'};
 RADIAL.zonas={btn:'#btnZonas',icons:null,items:null};
-const ZN=[['poly:estructura','Estructura','Estructura / manzana afectada (E)'],['poly:fuego','Área fuego','Área con fuego, achurada (F)'],['zrm','ZRM','ZRM: zona de resguardo de material mayor. Riesgo de colapso: nadie en la proyección de escombros (R)']];
+const ZN=[['poly:estructura','Estructura','Estructura / manzana afectada (E)'],['poly:fuego','Área fuego','Área con fuego, achurada (F)'],['zrm','ZRM','ZRM: zona de resguardo de material mayor. Riesgo de colapso: nadie en la proyección de escombros (R)'],['poly:colapso','Colapso','Zona de colapso / peligro (C)'],['line:muro','Muro riesgo','Muro con riesgo de colapso: dibújalo sobre el muro (M)']];
 RADIAL.zonas.icons=ZI;RADIAL.zonas.items=ZN;
 /* Equipos (escala Estructura): agua, RIT, ventiladores, escalas, búsqueda y rescate, remoción */
 const EQ_SVG={
@@ -1333,14 +1333,21 @@ function openRadial(key){clearTimeout(zonasT);const fz=$('#flyZonas'),M=RADIAL[k
   const fits=(x,y,c)=>y>=nr+4&&y<=H-nr-22&&x>=nr&&x<=W-nr&&(up?y<=oy-(c||nr+6):x>=ox+(c||nr+6));
   const at=(a,r)=>{const t=a*Math.PI/180;return [ox+Math.cos(t)*r,oy+Math.sin(t)*r];};
   const angs=(sp,o)=>items.map((_,i)=>base+(i-(n-1)/2)*sp+o);
-  const R0=Math.round((n<=3?96:122)*Math.max(1,tok*.9));let R=R0,SP=n<=3?52:34,off=0;
-  found:for(const sp of n<=3?[52,44,38]:up?[30,27,24,33,36]:[36,32,29,26])for(const rr of n<=3?[R0,R0+18,R0+36]:up?[R0+80,R0+60,R0+40,R0+100]:[R0+40,R0+60,R0+20,R0])for(const o of [0,8,-8,16,-16,24,-24,32,-32,40,-40,48,-48,56,-56]){if(angs(sp,o).every(a=>fits(...at(a,rr)))){R=rr;SP=sp;off=o;break found;}}
+  const R0=Math.round((n<=3?96:122)*Math.max(1,tok*.9));let R=R0,SP=n<=3?52:34,off=0,ok=false;
+  found:for(const sp of n<=3?[52,44,38]:up?[30,27,24,33,36]:[36,32,29,26,23,20])for(const rr of n<=3?[R0,R0+18,R0+36]:up?[R0+80,R0+60,R0+40,R0+100]:[R0+40,R0+60,R0+20,R0,R0+80,R0+100])for(const o of [0,8,-8,16,-16,24,-24,32,-32,40,-40,48,-48,56,-56,64,-64,72,-72]){if(2*rr*Math.sin(sp*Math.PI/360)>=2*nr+12&&angs(sp,o).every(a=>fits(...at(a,rr)))){R=rr;SP=sp;off=o;ok=true;break found;}}
   let lines='',btns='';const A=angs(SP,off);
-  items.forEach(([m,lab,t],i)=>{const a=A[i]*Math.PI/180,x=Math.round(Math.cos(a)*R),y=Math.round(Math.sin(a)*R);
+  // si el abanico no cabe (botón pegado a un borde), los nodos van en columna junto a la barra
+  let pos=A.map(a=>[Math.cos(a*Math.PI/180)*R,Math.sin(a*Math.PI/180)*R]);
+  if(up&&n>3)ok=false;
+  if(!ok){const gap=2*nr+14,h=(n-1)*gap,c=(n-1)/2;
+    if(up){const cols=n>3?Math.ceil(n/2):n,w2=(cols-1)*gap,x0=Math.max(nr+6,Math.min(W-nr-6-w2,ox-w2/2));pos=items.map((_,i)=>{const r=n>3?(i<cols?1:0):0,j=n>3?i%cols:i;return [x0+j*gap-ox,-(R0*.8+r*(2*nr+30))];});}
+    else{const y0=Math.max(nr+6,Math.min(H-nr-24-h,oy-h/2));pos=items.map((_,i)=>{const k=(i-c)/(c||1);return [R0*.95-R0*.25*k*k,y0+i*gap-oy];});}}
+  items.forEach(([m,lab,t],i)=>{const x=Math.round(pos[i][0]),y=Math.round(pos[i][1]);
     lines+=`<line x1="0" y1="0" x2="${x}" y2="${y}"/>`;
     btns+=`<button class="zn${mode===m?' on':''}" data-zmode="${m}" title="${t}" style="left:${x}px;top:${y}px;transition-delay:${i*22}ms">${M.icons[m]}<span class="zl">${lab}</span></button>`;});
   // burbuja de cierre: entre los primeros nodos, cerca del botón
-  let xp=null;for(const [a,k] of [[A[0]+SP/2,.5],[A[n-1]-SP/2,.5],[A[n-1]+34,.7],[A[0]-34,.7]]){const q=at(a,R*k);if(fits(...q,16*tok+6)){xp=q;break;}}if(!xp)xp=at(base+off,R*.45);
+  let xp=null;if(!ok){const q=up?[ox+nr*1.6,oy-nr*1.3]:[ox+nr*1.3,oy+(pos[0][1]<-nr?-1:1)*nr*1.6];if(fits(...q,16*tok+6))xp=q;}
+  if(!xp)for(const [a,k] of [[A[0]+SP/2,.5],[A[n-1]-SP/2,.5],[A[n-1]+34,.7],[A[0]-34,.7]]){const q=at(a,R*k);if(fits(...q,16*tok+6)){xp=q;break;}}if(!xp)xp=at(base+off,R*.45);
   btns+=`<button class="zn zx" data-zmode="x" title="Cerrar" style="left:${Math.round(xp[0]-ox)}px;top:${Math.round(xp[1]-oy)}px">${GI.x}</button>`;
   fz.style.left=ox+'px';fz.style.top=oy+'px';fz.dataset.k=key;fz.classList.toggle('up',up);
   fz.innerHTML=`<svg class="glines" viewBox="-200 -200 400 400"><g class="gl-out">${lines}</g><g class="gl-in">${lines}</g></svg><span class="zo"></span>${btns}`;
@@ -2895,6 +2902,7 @@ function onKey(e){
   if(e.key==='Escape'){
     if($('#modal').classList.contains('open')){closeModal();return;}
     if(gMenu){closeGrifoMenu();return;}
+    if($('#flyZonas').classList.contains('open')){closeZonas(true);return;}
     if(typing){e.target.blur();return;}
     if(mode==='pickA'){pendingFront=null;}
     if(mode!=='select')setMode('select');else select(null);
