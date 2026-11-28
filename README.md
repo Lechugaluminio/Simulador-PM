@@ -35,8 +35,8 @@ Croquis PM propone que **el croquis sea un tablero vivo**:
 ## 2. Cómo se usa
 
 1. **Buscar el lugar.** Escribir la dirección o el cruce del despacho (por ejemplo `Las Enredaderas & Avenida Fermín Vivaceta, Independencia`) y pulsar *Buscar*.
-2. **Dibujar la estructura.** Herramienta *Estructura*: clic en las esquinas. Los lados **A–D** se ponen solos; el botón **A abajo** orienta el mapa como en la pizarra.
-3. **Marcar el fuego.** *Área fuego* (achurada), *Colapso*, *Foco*.
+2. **Dibujar la estructura.** Botón **Zonas** → *Estructura* (los nodos se abren junto al botón): clic en las esquinas. Los lados **A–D** se ponen solos; el botón **A abajo** orienta el mapa como en la pizarra.
+3. **Marcar el fuego.** *Zonas → Área fuego* (achurada), *Colapso*, *Foco*. Si hay riesgo de colapso, *Zonas → ZRM* marca la zona de resguardo de material mayor.
    En la vista **Estructura** (`Tab`) se agregan *Humo*, *Muro con riesgo* y *Víctima* (cantidad; al marcarla rescatada queda como un punto verde chico).
    *Línea de ataque*: del carro al pitón; **la punta de la línea es el pitón** (chorro, monitor o espuma) y lleva el diámetro (38, 45, 52 o 70 mm). En Territorio se ve solo el recorrido, sin rótulo.
    *Pisos*: en el panel de la estructura se indican pisos y subterráneos; aparece la columna de pisos junto al edificio (ver 3.4).
@@ -114,8 +114,9 @@ La copia de terreno por QR, el respaldo `.json` y la imagen exportada incluyen l
 | Herramienta | Tecla | Vista | Qué dibuja |
 |---|---|---|---|
 | Mover | `V` | ambas | Seleccionar y mover piezas y marcadores |
-| Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
-| Área fuego | `F` | ambas | Zona con fuego, achurada en rojo |
+| Zonas → Estructura | `E` | ambas | Polígono del edificio con lados A–D automáticos |
+| Zonas → Área fuego | `F` | ambas | Zona con fuego, achurada en rojo |
+| Zonas → ZRM | `R` | ambas | Zona de resguardo de material mayor (ODD 093/2021, POE PMMA): roja semitransparente con borde rojo segmentado. Clic en los dos extremos de la fachada con riesgo de colapso y un tercer clic hacia la calle: la zona sale 1,5 veces la altura de la fachada y 45° hacia los costados. La altura y el lado se ajustan en el panel |
 | Colapso | `C` | Estructura | Zona de colapso |
 | Humo | `U` | Estructura | Marcador de nube gris donde hay humo, con nota y piso (como el foco). Al marcarlo *ventilado* queda como un ícono chico de viento |
 | Ventilación | `W` | Estructura | Ventilador que **inyecta aire** (azul) o **extrae humo** (gris), con flecha hacia donde va el aire (al ponerlo apunta solo hacia el edificio o hacia afuera), o **exutorio abierto** (salida de humo arriba de la caja de escala). Lleva piso |
@@ -233,7 +234,7 @@ Al ser de código abierto y funcionar en el navegador, busca evitar barreras de 
 |---|---|
 | `Tab` | Cambiar entre vista Territorio y Estructura |
 | `V` | Mover / seleccionar |
-| `E` `F` `C` | Estructura / Área fuego / Colapso |
+| `E` `F` `R` `C` | Estructura / Área fuego / ZRM / Colapso |
 | `U` `M` `W` | Humo / Muro con riesgo / Ventilación |
 | `X` | Víctima |
 | `B` `Q` | Línea de abastecimiento / Calle cortada |
