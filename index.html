@@ -580,18 +580,19 @@ body.sun #wind{border:3px solid #000;box-shadow:none}
       <button data-mode="select" title="Seleccionar y mover (V / Esc)"><svg class="i" viewBox="0 0 24 24"><path d="M6 3l13 8-6 1.5L10 19z"/></svg>Mover</button>
       <div class="sep"></div>
       <button class="grp" id="btnZonas" title="Zonas: estructura, área con fuego, ZRM, colapso y muro con riesgo"><svg class="i" viewBox="0 0 24 24"><path d="M3 9l6-4 7 3-1.5 8-9 1z"/><path d="M11 21l2-6h7l2 6z" stroke-dasharray="2.4 1.8"/></svg>Zonas <span class="chev">▸</span></button>
-      <button data-mode="mk:humo" data-sc="estr" title="Humo: clic o arrastra al mapa (U)"><svg class="i" viewBox="0 0 24 24"><path d="M5 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15.6 8 3.5 3.5 0 0 1 19 14.5"/><path d="M4 20h15M7 13.5h9"/></svg>Humo</button>
+      <button data-mode="sides" title="Sectorización: ubicar lados A, B, C, D a mano"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 16l3-8 3 8M10 13.5h4"/></svg>Lados A–D</button>
       <button data-mode="line:trazo" title="Trazo discontinuo libre (K)"><svg class="i" viewBox="0 0 24 24"><path d="M3 17L21 7" stroke-dasharray="3.5 3"/></svg>Trazo</button>
-      <div class="sep"></div>
+      <button data-mode="mk:texto" title="Texto libre (T)"><svg class="i" viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>Texto</button>
+      <div class="sep" data-sc="estr"></div>
       <button data-mode="mk:fuego" data-sc="estr" title="Foco del fuego (1)"><svg class="i" viewBox="0 0 24 24"><path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 1.2 1 2 2.3 2 4 1.4-2 2.3-5.2 2-9z"/></svg>Foco</button>
+      <button data-mode="mk:humo" data-sc="estr" title="Humo: clic o arrastra al mapa (U)"><svg class="i" viewBox="0 0 24 24"><path d="M5 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15.6 8 3.5 3.5 0 0 1 19 14.5"/><path d="M4 20h15M7 13.5h9"/></svg>Humo</button>
+      <div class="sep"></div>
       <button class="grp" id="btnEquipos" data-sc="estr" title="Equipos: agua, RIT, ventiladores, escalas, búsqueda y rescate, remoción"><svg class="i" viewBox="0 0 24 24"><path d="M6 3v18M12 3v18M6 7h6M6 12h6M6 17h6"/><path d="M15 21l6-9M19 9l2.5-2.5"/><path d="M17.5 13l-3-1.5"/></svg>Equipos <span class="chev">▸</span></button>
       <button data-mode="mk:victima" data-sc="estr" title="Víctima confirmada (X)"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><path d="M12 9.5v6M8 12h8M9 21l3-5.5 3 5.5"/></svg>Víctima</button>
+      <button data-mode="mk:mayday" data-sc="estr" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
       <button class="grp" id="btnInst" data-sc="terr" title="Instalaciones: Puesto de Comando, Zona de espera, ACV, PAP, PAS"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="9" height="6" rx="1"/><circle cx="17" cy="8" r="3.5"/><circle cx="12" cy="17.5" r="3.5"/></svg>Instalaciones <span class="chev">▸</span></button>
       <button data-mode="line:abast" data-sc="terr" title="Línea de abastecimiento: grifo → Z → PAP/PAS → bomba (B)"><svg class="i" viewBox="0 0 24 24"><path d="M3 18c4 0 4-6 9-6s5-6 9-6" stroke-width="3"/><path d="M17 3.5l4 2.5-3.5 3"/></svg>Abastec.</button>
       <button data-mode="line:corte" data-sc="terr" title="Calle cortada (Q)"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9l-3 6M12 9l-3 6M17 9l-3 6M21 10l-2 5"/><path d="M6 15v5M18 15v5"/></svg>Calle cortada</button>
-      <button data-mode="mk:mayday" data-sc="estr" title="Marcar ubicación de un MAYDAY (5)"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="9" rx="4.5"/><path d="M7 12.5h10"/></svg>Mayday</button>
-      <button data-mode="mk:texto" title="Texto libre (T)"><svg class="i" viewBox="0 0 24 24"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>Texto</button>
-      <button data-mode="sides" title="Ubicar lados A, B, C, D a mano"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 16l3-8 3 8M10 13.5h4"/></svg>Lados A–D</button>
     </nav>
     <div id="viewTabs" title="Dos escalas del croquis (Tab para cambiar)">
       <button data-view="terr" title="Escala urbana: carros, abastecimiento, instalaciones, calles cortadas (Tab)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Territorio</button>
