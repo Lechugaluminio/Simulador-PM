@@ -757,8 +757,8 @@ function colAnchor(c,b){if(!c.colRel)return {p:[b.x1,b.y0],tr:'translate(10px,0)
 function colXY(c,b,w,h){return c.colRel?[absAxis(c.colRel.x,w,b.x0,b.x1),absAxis(c.colRel.y,h,b.y0,b.y1)]:[b.x1+10,b.y0];}
 function autoFloor(o){if(!floorSel||settings.view!=='estr'||!canFloor(o))return;if(sidAt(posOf(o))===floorSel.sid)o.piso=floorSel.f;}
 function floorField(o){const sid=sidAt(posOf(o)),st=sid&&getShape(sid);const fl=(st?floorsOf(st):['T','3','2','1']).slice().reverse();
-  if(fl.length<=9)return `<label class="l">Piso</label>${segBtns('piso',[['','—'],...fl.map(f=>[f,floorTag(f)])],o.piso||'')}`;
-  return `<label class="l">Piso</label><div class="cnt"><button data-act="pisoStep" data-v="-1">−</button><b style="min-width:70px">${o.piso?floorTag(o.piso):'—'}</b><button data-act="pisoStep" data-v="1">+</button><button data-act="piso" data-v="" style="width:auto;font-size:14px;padding:6px 10px">Quitar</button></div>`;}
+  if(fl.length<=9)return `<label class="l">Piso</label>${segBtns('piso',fl.map(f=>[f,floorTag(f)]),o.piso||'')}`;
+  return `<label class="l">Piso</label><div class="cnt"><button data-act="pisoStep" data-v="-1">−</button><b style="min-width:70px">${o.piso?floorTag(o.piso):'—'}</b><button data-act="pisoStep" data-v="1">+</button></div>`;}
 const shapeText=(x,vw)=>x.kind==='zrm'?['ZRM',x.label||''].filter(Boolean).join(' · '):[(vw||settings.view)==='estr'&&FLOOR_SHAPES.has(x.kind)&&x.piso?floorTag(x.piso):'',x.label||''].filter(Boolean).join(' · ');
 function withMM(label,v){label=(label||'').trim();const re=/\b\d{2,3}\s?mm\b/;if(re.test(label))return label.replace(re,v);return label?v+' · '+label:v;}
 const DIRS=[['0','↑'],['45','↗'],['90','→'],['135','↘'],['180','↓'],['225','↙'],['270','←'],['315','↖']];
@@ -1859,7 +1859,7 @@ function renderPanel(){
     const m=o;
     h=`<div class="pn-h"><span class="ttl">${esc(m.kind==='lado'?'Lado '+m.letter:m.kind==='grifo'?(m.seco?'Grifo sin agua':'Grifo en uso'):MARK_LABEL[m.kind])}</span><button class="x" data-act="close">✕</button></div><div class="pn-b">`;
     if(m.kind==='texto'){h+=`<label class="l">Texto</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: red seca rota · RIT (19)">`;
-      if(sidAt(m.pos))h+=`<div class="seg" style="margin-top:6px">${['Red seca rota','Red seca operativa','Puerta cortafuego abierta','Ascensor bloqueado'].map(q=>`<button data-act="qtext" data-v="${q}" class="${m.text===q?'on':''}">${q}</button>`).join('')}</div>`;}
+      if(sidAt(m.pos))h+=`<div class="seg" style="margin-top:6px">${['Red seca rota','Conectado red seca','Ascensor bloqueado'].map(q=>`<button data-act="qtext" data-v="${q}" class="${m.text===q?'on':''}">${q}</button>`).join('')}</div>`;}
     if(m.kind==='mayday')h+=`<label class="l">Estado</label>${segBtns('mstate',[['activo','Activo'],['resuelto','✓ Resuelto (bombero fuera)']],m.mstate||'activo')}`;
     if(m.kind==='mayday')h+=`<label class="l">Rótulo bajo la pastilla (opcional)</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="ej: piso 2 · lado C">`;
     if(m.kind==='pm')h+=`<label class="l">Rótulo</label><input id="pnText" type="text" value="${esc(m.text||'')}" placeholder="PC">`;
